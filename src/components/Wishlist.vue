@@ -144,8 +144,7 @@ export default {
           setTimeout(this.getPricingResult, 1000)
         } else {
           this.loadingPricing = false
-          this.pricing = resp.job_result
-          console.log(this.pricing)
+          this.pricing = resp.job_result === null ? [] : resp.job_result;
         }
       })
     }

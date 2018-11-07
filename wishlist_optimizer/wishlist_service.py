@@ -38,7 +38,7 @@ class WishlistService:
     def add_card(self, wishlist_id, data):
         logger.debug("Adding card to wishlist %s: %s", wishlist_id, data)
         wishlist = Wishlist.query.get(wishlist_id)
-        card = Card(name=data['name'], quantity=data['quantity'])
+        card = Card(name=data['name'].title(), quantity=data['quantity'])
         wishlist.cards.append(card)
         db.session.commit()
         return card.to_dict()

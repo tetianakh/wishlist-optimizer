@@ -23,10 +23,6 @@ export default {}
     cursor: pointer;
   }
 
-  /* h1 {
-    margin-top: 40px;
-  } */
-
   .brand {
     color: #fff;
   }

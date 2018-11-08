@@ -19,7 +19,8 @@ def session(config, realm):
         realm=realm
     )
 
-GAMES = {'MTG': 1}
+
+MTG = 1
 
 
 class MkmApi:
@@ -36,8 +37,7 @@ class MkmApi:
         params = {
             'search': card_name,
             'exact': "true",
-            'idGame': GAMES['MTG'],
-            'idLanguage': LANGUAGES['English']
+            'idGame': MTG
         }
         with session(self._config, url) as api:
             resp = api.get(url, headers=headers, params=params)
@@ -51,9 +51,14 @@ class MkmApi:
             )
             return set()
 
-    def get_articles(self, product_id):
-        url = '{}/articles/{}'.format(self._base_url, product_id)
-        with session(self._config, url) as api:
+    def get_articles(self, product_id, language_id=None):
+        base_url = '{}/articles/{}'.format(self._base_url, product_id)
+
+        url = base_url
+        if language_id:
+            url = '{}?idLanguage={}'.format(base_url, language_id)
+
+        with session(self._config, base_url) as api:
             resp = api.get(url)
         resp.raise_for_status()
         articles = []
@@ -64,6 +69,7 @@ class MkmApi:
                 'Failed to parse articles response `%s`: `%s`',
                 resp.status_code, resp.text
             )
+
         return [self._get_article_data(a) for a in articles]
 
     def _get_article_data(self, full_data):

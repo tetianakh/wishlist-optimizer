@@ -129,7 +129,8 @@ export default {
   },
   methods: {
     addCard () {
-      if (!this.newCard.name || !this.newCard.quantity) {
+      if (!this.newCard.name || !this.newCard.quantity || this.newCard.languages.length === 0) {
+        this.errorMessage = 'Please fill in all the fields'
         return
       }
       this.wishlistClient.addCard(this.$route.params.id, this.newCard).then(resp => {

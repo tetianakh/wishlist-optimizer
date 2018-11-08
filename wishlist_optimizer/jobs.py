@@ -1,13 +1,14 @@
 import redis
-from rq import Queue, Connection
+from rq import Queue
 from flask import current_app
 
+from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.mkm_api import MkmApi
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 
 
 def get_pricing(wishlist):
-    cards = {card['name']: card['quantity'] for card in wishlist['cards']}
+    
     config = {
         "app_token": current_app.config['APP_TOKEN'],
         "app_secret": current_app.config['APP_SECRET'],
@@ -16,7 +17,7 @@ def get_pricing(wishlist):
         "url": current_app.config['MKM_URL']
     }
     api = MkmApi(config)
-    service = MkmPricingService(api, cards)
+    service = MkmPricingService(api, wishlist['cards'], LanguagesService())
     return service.run()
 
 

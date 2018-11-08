@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 const routerOptions = [
-  { path: '/', component: 'Home' },
+  { path: '/', name: 'Home', component: 'Home' },
   { path: '/wishlist/:id', name: 'wishlist', component: 'Wishlist' },
   { path: '*', component: 'NotFound' }
 ]

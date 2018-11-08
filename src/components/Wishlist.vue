@@ -1,14 +1,10 @@
 <template lang="html">
-  <div class="">
+  <page>
     <h1>{{ wishlist.name }}</h1>
     <spinner v-if="loadingPricing"></spinner>
 
     <pricing :pricing="pricing" v-if="pricing.length > 0"></pricing>
-    <b-button
-      variant="success"
-      @click="submitPricingJob"
-      :disabled="loadingPricing"
-      class="margin">Get Pricing</b-button>
+
     <b-alert variant="danger"
          dismissible
          :show="errorMessage !== null"
@@ -22,8 +18,29 @@
         {{ infoMessage }}
     </b-alert>
 
-    <div class="row centered">
+    <div class="row">
+      <b-button
+        variant="success"
+        @click="submitPricingJob"
+        :disabled="loadingPricing"
+        class="margin">Get Pricing</b-button>
+      <b-button
+        v-b-modal="'newCardModal'"
+        variant="info"
+        :disabled="loadingPricing"
+        class="margin">Add new card</b-button>
+    </div>
 
+    <b-modal id="newCardModal" ok-title="Add" @ok="addCard">
+      <template slot="modal-title">
+        Add new card
+      </template>
+      <b-alert variant="danger"
+           dismissible
+           :show="modalErrorMessage !== null"
+           @dismissed="modalErrorMessage=null">
+          {{ modalErrorMessage }}
+      </b-alert>
       <b-form inline>
       <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Card Name" v-model="newCard.name"/>
       <b-input-group left="@" class="mb-2 mr-sm-2 mb-sm-0">
@@ -32,10 +49,9 @@
       <select v-model="newCard.languages" multiple class="mb-2 mr-sm-2 mb-sm-0">
         <option v-for="language in availableLanguages" :key="language">{{ language }}</option>
       </select>
-      <b-button variant="primary" @click="addCard">Add card</b-button>
       </b-form>
 
-  </div>
+    </b-modal>
 
     <table class="table table-hover" v-if="wishlist.cards && wishlist.cards.length > 0">
       <thead>
@@ -73,7 +89,7 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </page>
 </template>
 
 <script>
@@ -82,9 +98,10 @@ import PricingClient from '../clients/PricingClient'
 import LanguagesClient from '../clients/LanguagesClient'
 import Spinner from './Spinner'
 import Pricing from './Pricing'
+import Page from './Page'
 
 export default {
-  components: {Spinner, Pricing},
+  components: {Spinner, Pricing, Page},
   data () {
     return {
       wishlist: {},
@@ -106,6 +123,7 @@ export default {
       pricing: [],
       errorMessage: null,
       infoMessage: null,
+      modalErrorMessage: null,
       availableLanguages: []
     }
   },
@@ -128,9 +146,11 @@ export default {
     }
   },
   methods: {
-    addCard () {
+    addCard (event) {
+
       if (!this.newCard.name || !this.newCard.quantity) {
-        this.errorMessage = 'Please fill in card name'
+        event.preventDefault()
+        this.modalErrorMessage = 'Please fill in card name'
         return
       }
       this.wishlistClient.addCard(this.$route.params.id, this.newCard).then(resp => {
@@ -202,9 +222,7 @@ export default {
 .margin {
   margin: 10px;
 }
-.hoverable {
-  cursor: pointer;
-}
+
 .col-centered{
     margin: 10px auto;
     float: none;

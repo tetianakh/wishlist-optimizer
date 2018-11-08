@@ -17,9 +17,14 @@ class MkmPricingService:
     def get_offers(self, card_name, card_languages):
         language_id_map = self._languages_service.get_language_mkm_ids()
         language_ids = [language_id_map[name] for name in card_languages]
+        if len(language_ids) == len(language_id_map):
+            language_ids = []  # selecting all is the same as not selecting any
 
         product_ids = self._api.find_product_ids(card_name)
-        logger.info("Card: `%s`, product ids: %s", card_name, product_ids)
+        logger.info(
+            "Card: `%s`, product ids: %s, language ids: %s",
+            card_name, product_ids, language_ids
+        )
         offers = defaultdict(list)
         for product_id in product_ids:
             if not language_ids:

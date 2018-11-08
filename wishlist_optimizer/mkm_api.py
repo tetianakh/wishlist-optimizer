@@ -42,6 +42,8 @@ class MkmApi:
         with session(self._config, url) as api:
             resp = api.get(url, headers=headers, params=params)
         resp.raise_for_status()
+        if resp.status_code == 204:
+            return set()
         try:
             return {p['idProduct'] for p in resp.json()['product']}
         except JSONDecodeError:
@@ -61,7 +63,8 @@ class MkmApi:
         with session(self._config, base_url) as api:
             resp = api.get(url)
         resp.raise_for_status()
-        articles = []
+        if resp.status_code == 204:
+            return []
         try:
             articles = resp.json()['article']
         except JSONDecodeError:

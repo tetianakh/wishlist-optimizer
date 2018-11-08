@@ -92,8 +92,8 @@ export default {
       pricingClient: new PricingClient(),
       languagesClient: new LanguagesClient(),
       newCard: {
-        name: null,
-        quantity: null,
+        name: '',
+        quantity: 1,
         languages: []
       },
       updatedCard: {
@@ -129,15 +129,15 @@ export default {
   },
   methods: {
     addCard () {
-      if (!this.newCard.name || !this.newCard.quantity || this.newCard.languages.length === 0) {
-        this.errorMessage = 'Please fill in all the fields'
+      if (!this.newCard.name || !this.newCard.quantity) {
+        this.errorMessage = 'Please fill in card name'
         return
       }
       this.wishlistClient.addCard(this.$route.params.id, this.newCard).then(resp => {
         this.wishlist.cards.push(resp.card)
         this.newCard = {
           name: '',
-          quantity: null,
+          quantity: 1,
           languages: []
         }
       })

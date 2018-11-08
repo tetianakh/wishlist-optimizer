@@ -1,7 +1,8 @@
+from contextlib import contextmanager
+import logging
+
 from json.decoder import JSONDecodeError
 import requests_oauthlib
-import logging
-from contextlib import contextmanager
 
 
 logging.basicConfig(level=logging.INFO)
@@ -19,6 +20,24 @@ def session(config, realm):
     )
 
 
+LANGUAGES = {
+    'English': 1,
+    'French': 2,
+    'German': 3,
+    'Spanish': 4,
+    'Italian': 5,
+    'Simplified Chinese': 6,
+    'Japanese': 7,
+    'Portuguese': 8,
+    'Russian': 9,
+    'Korean': 10,
+    'Chinese': 11
+}
+
+
+GAMES = {'MTG': 1}
+
+
 class MkmApi:
     def __init__(self, config):
         self._base_url = config['url']
@@ -33,8 +52,8 @@ class MkmApi:
         params = {
             'search': card_name,
             'exact': "true",
-            'idGame': 1,
-            'idLanguage': 1
+            'idGame': GAMES['MTG'],
+            'idLanguage': LANGUAGES['English']
         }
         with session(self._config, url) as api:
             resp = api.get(url, headers=headers, params=params)
@@ -53,6 +72,7 @@ class MkmApi:
         with session(self._config, url) as api:
             resp = api.get(url)
         resp.raise_for_status()
+        articles = []
         try:
             articles = resp.json()['article']
         except JSONDecodeError:
@@ -60,13 +80,13 @@ class MkmApi:
                 'Failed to parse articles response `%s`: `%s`',
                 resp.status_code, resp.text
             )
-            articles = []
-        return [
-            {
-                'price': a['price'],
-                'seller': a['seller'],
-                'count': a['count']
-            }
-            for a in articles
-            # if a['language']['idLanguage'] == 1
-        ]
+        return [self._get_article_data(a) for a in articles]
+
+    def _get_article_data(self, full_data):
+        return {
+            'language': full_data['language']['idLanguage'],
+            'price': full_data['price'],
+            'seller_username': full_data['seller']['username'],
+            'seller_id': full_data['seller']['idUser'],
+            'count': full_data['count']
+        }

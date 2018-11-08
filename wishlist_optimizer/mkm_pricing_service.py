@@ -20,7 +20,7 @@ class MkmPricingService:
         for product_id in product_ids:
             articles = self._api.get_articles(product_id)
             for article in articles:
-                offers[article['seller']['idUser']].append(article)
+                offers[article['seller_id']].append(article)
         return offers
 
     def run(self):
@@ -42,8 +42,8 @@ class MkmPricingService:
                 self._best_prices[seller_id] = {
                     'total_count': 0,
                     'total_price': 0,
-                    'seller': offer_list[0]['seller'],
-
+                    'seller_id': offer_list[0]['seller_id'],
+                    'seller_username': offer_list[0]['seller_username']
                 }
 
             offer_list = sorted(offer_list, key=lambda o: o['price'])

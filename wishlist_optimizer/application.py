@@ -29,7 +29,7 @@ def create_app(app_name='WISHLIST_OPTIMIZER'):
     from wishlist_optimizer.models import db
     db.init_app(app)
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=app.config.LOG_LEVEL)
 
     CORS(app)
 

@@ -1,9 +1,6 @@
 import logging
 from collections import defaultdict
-import json
 
-
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -15,10 +12,7 @@ class MkmPricingService:
         self._best_prices = {}
 
     def get_offers(self, card_name, card_languages):
-        language_id_map = self._languages_service.get_language_mkm_ids()
-        language_ids = [language_id_map[name] for name in card_languages]
-        if len(language_ids) == len(language_id_map):
-            language_ids = []  # selecting all is the same as not selecting any
+        language_ids = self._get_language_ids(card_languages)
 
         product_ids = self._api.find_product_ids(card_name)
         logger.info(
@@ -71,3 +65,11 @@ class MkmPricingService:
                 self._best_prices[seller_id]['total_price'] += found * offer['price']  # noqa
                 found_count += found
                 need_count -= found
+
+    def _get_language_ids(self, card_languages):
+        language_id_map = self._languages_service.get_language_mkm_ids()
+        language_ids = [language_id_map[name] for name in card_languages]
+        if len(language_ids) == len(language_id_map):
+            # selecting all is the same as not selecting any
+            language_ids = []
+        return language_ids

@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 class BaseConfig(object):
@@ -11,6 +12,7 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
+    LOG_LEVEL = logging.DEBUG
     SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
@@ -18,6 +20,7 @@ class DevelopmentConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
+    LOG_LEVEL = logging.INFO
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     REDIS_URL = os.getenv('REDIS_URL')

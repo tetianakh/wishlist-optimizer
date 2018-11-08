@@ -18,19 +18,20 @@ def get_pricing(wishlist):
     api = MkmApi(config)
     service = MkmPricingService(api, cards)
     return service.run()
-    # import time
-    # time.sleep(10)
-    # return "hello"
 
 
-def get_connection():
-    return Connection(
-        redis.from_url(current_app.config['REDIS_URL'])
-    )
+__redis = None
+
+
+def get_redis():
+    global __redis
+    if not __redis:
+        __redis = redis.from_url(current_app.config['REDIS_URL'])
+    return __redis
 
 
 def schedule_job(job, *args, **kwargs):
-    with get_connection():
+    with Connection(get_redis()):
         queue = Queue()
         task = queue.enqueue(job, *args, **kwargs)
         return _get_job_status(task)
@@ -45,7 +46,7 @@ def _get_job_status(job):
 
 
 def check_job_status(job_id):
-    with get_connection():
+    with Connection(get_redis()):
         queue = Queue()
         task = queue.fetch_job(job_id)
         if not task:

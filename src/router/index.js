@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 const routerOptions = [
   { path: '/', component: 'Home' },
-  { path: '/about', component: 'About' },
   { path: '/wishlist/:id', name: 'wishlist', component: 'Wishlist' },
   { path: '*', component: 'NotFound' }
 ]

@@ -1,3 +1,4 @@
+from json.decoder import JSONDecodeError
 import requests_oauthlib
 import logging
 from contextlib import contextmanager
@@ -35,32 +36,37 @@ class MkmApi:
             'idGame': 1,
             'idLanguage': 1
         }
-
         with session(self._config, url) as api:
             resp = api.get(url, headers=headers, params=params)
         resp.raise_for_status()
         try:
             return {p['idProduct'] for p in resp.json()['product']}
-        except json.decoder.JSONDecodeError as e:
+        except JSONDecodeError:
             logger.exception(
-                "Failed to parse response %s %s: %s",
-                resp.status_code, resp.text, e
+                "Failed to parse response `%s`: `%s`",
+                resp.status_code, resp.text
             )
-            return {}
+            return set()
 
     def get_articles(self, product_id):
         url = '{}/articles/{}'.format(self._base_url, product_id)
-
         with session(self._config, url) as api:
             resp = api.get(url)
         resp.raise_for_status()
-        articles = [
+        try:
+            articles = resp.json()['article']
+        except JSONDecodeError:
+            logger.exception(
+                'Failed to parse articles response `%s`: `%s`',
+                resp.status_code, resp.text
+            )
+            articles = []
+        return [
             {
                 'price': a['price'],
                 'seller': a['seller'],
                 'count': a['count']
             }
-            for a in resp.json()['article']
+            for a in articles
             # if a['language']['idLanguage'] == 1
         ]
-        return articles

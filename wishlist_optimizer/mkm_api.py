@@ -1,7 +1,9 @@
+from contextlib import contextmanager
+import logging
+
 from json.decoder import JSONDecodeError
 import requests_oauthlib
-import logging
-from contextlib import contextmanager
+from flask import current_app
 
 
 logging.basicConfig(level=logging.INFO)
@@ -19,6 +21,9 @@ def session(config, realm):
     )
 
 
+MTG = 1
+
+
 class MkmApi:
     def __init__(self, config):
         self._base_url = config['url']
@@ -33,12 +38,13 @@ class MkmApi:
         params = {
             'search': card_name,
             'exact': "true",
-            'idGame': 1,
-            'idLanguage': 1
+            'idGame': MTG
         }
         with session(self._config, url) as api:
             resp = api.get(url, headers=headers, params=params)
         resp.raise_for_status()
+        if resp.status_code == 204:
+            return set()
         try:
             return {p['idProduct'] for p in resp.json()['product']}
         except JSONDecodeError:
@@ -48,11 +54,18 @@ class MkmApi:
             )
             return set()
 
-    def get_articles(self, product_id):
-        url = '{}/articles/{}'.format(self._base_url, product_id)
-        with session(self._config, url) as api:
+    def get_articles(self, product_id, language_id=None):
+        base_url = '{}/articles/{}'.format(self._base_url, product_id)
+
+        url = base_url
+        if language_id:
+            url = '{}?idLanguage={}'.format(base_url, language_id)
+
+        with session(self._config, base_url) as api:
             resp = api.get(url)
         resp.raise_for_status()
+        if resp.status_code == 204:
+            return []
         try:
             articles = resp.json()['article']
         except JSONDecodeError:
@@ -60,13 +73,19 @@ class MkmApi:
                 'Failed to parse articles response `%s`: `%s`',
                 resp.status_code, resp.text
             )
-            articles = []
-        return [
-            {
-                'price': a['price'],
-                'seller': a['seller'],
-                'count': a['count']
-            }
-            for a in articles
-            # if a['language']['idLanguage'] == 1
-        ]
+
+        return [self._get_article_data(a) for a in articles]
+
+    def _get_article_data(self, full_data):
+        username = full_data['seller']['username']
+        seller_url = '{}/{}'.format(
+            current_app.config['MKM_USER_URL'], username
+        )
+        return {
+            'language': full_data['language']['idLanguage'],
+            'price': full_data['price'],
+            'seller_username': username,
+            'seller_url': seller_url,
+            'seller_id': full_data['seller']['idUser'],
+            'count': full_data['count']
+        }

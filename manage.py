@@ -4,7 +4,7 @@ import redis
 from rq import Connection, Worker
 
 from wishlist_optimizer.application import create_app
-from wishlist_optimizer.models import db, Card, Wishlist
+from wishlist_optimizer.models import db, Card, Wishlist, Language
 
 app = create_app()
 
@@ -33,6 +33,30 @@ def run_worker():
     with Connection(redis_connection):
         worker = Worker(app.config['QUEUES'])
         worker.work()
+
+
+@manager.command
+def populate_languages():
+    db.session.add(Language(name='English', mkm_id=1))
+    db.session.add(Language(name='French', mkm_id=2))
+    db.session.add(Language(name='German', mkm_id=3))
+    db.session.add(Language(name='Spanish', mkm_id=4))
+    db.session.add(Language(name='Italian', mkm_id=5))
+    db.session.add(Language(name='Simplified Chinese', mkm_id=6))
+    db.session.add(Language(name='Japanese', mkm_id=7))
+    db.session.add(Language(name='Portuguese', mkm_id=8))
+    db.session.add(Language(name='Russian', mkm_id=9))
+    db.session.add(Language(name='Korean', mkm_id=10))
+    db.session.add(Language(name='Chinese', mkm_id=11))
+    db.session.commit()
+
+
+@manager.command
+def set_default_language():
+    english = Language.query.filter_by(name='English', mkm_id=1).first()
+    for card in Card.query.filter(~Card.languages.any()).all():
+        card.languages.append(english)
+    db.session.commit()
 
 
 if __name__ == '__main__':

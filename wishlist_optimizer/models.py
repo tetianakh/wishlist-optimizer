@@ -24,6 +24,12 @@ class Wishlist(db.Model):
         )
 
 
+cards_to_languages = db.Table('cards_to_languages',
+    db.Column('card_id', db.Integer, db.ForeignKey('card.id'), primary_key=True),  # noqa
+    db.Column('language_id', db.Integer, db.ForeignKey('language.id'), primary_key=True)  # noqa
+)
+
+
 class Card(db.Model):
     __tablename__ = 'card'
 
@@ -32,10 +38,25 @@ class Card(db.Model):
     quantity = db.Column(db.Integer, default=lambda: 1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     wishlist_id = db.Column(db.Integer, db.ForeignKey('wishlist.id'))
+    languages = db.relationship(
+        'Language', secondary=cards_to_languages, lazy='subquery',
+        backref=db.backref('cards', lazy=True)
+    )
 
     def to_dict(self):
         return dict(
             id=self.id,
             name=self.name,
-            quantity=self.quantity
+            quantity=self.quantity,
+            languages=[l.name for l in self.languages]
         )
+
+
+class Language(db.Model):
+    __tablename__ = 'language'
+    __table_args__ = (
+        db.UniqueConstraint('name', 'mkm_id', name='unique_name_mkm_id'),
+    )
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    mkm_id = db.Column(db.Integer, nullable=False)

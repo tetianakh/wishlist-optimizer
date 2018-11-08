@@ -2,10 +2,14 @@ import logging
 
 from flask import Blueprint, jsonify, request
 from wishlist_optimizer.wishlist_service import WishlistService
+from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.jobs import check_job_status, schedule_job, get_pricing
 
+
 api = Blueprint('api', __name__)
-wishlist_service = WishlistService()
+languages_service = LanguagesService()
+wishlist_service = WishlistService(languages_service)
+
 logger = logging.getLogger(__name__)
 
 
@@ -70,3 +74,8 @@ def get_pricing_job_status(job_id):
     return jsonify(
         {'error': 'failed to fetch pricing calculation job status'}
     ), 404
+
+
+@api.route('/languages', methods=('GET',))
+def get_languages():
+    return jsonify(languages_service.get_all_languages())

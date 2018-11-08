@@ -15,6 +15,12 @@
          @dismissed="errorMessage=null">
         {{ errorMessage }}
     </b-alert>
+    <b-alert variant="info"
+         dismissible
+         :show="infoMessage !== null"
+         @dismissed="infoMessage=null">
+        {{ infoMessage }}
+    </b-alert>
 
     <div class="row">
         <div class="col-lg-5 col-centered">
@@ -88,7 +94,8 @@ export default {
       loadingPricing: false,
       pricingJobId: null,
       pricing: [],
-      errorMessage: null
+      errorMessage: null,
+      infoMessage: null
     }
   },
   mounted () {
@@ -154,7 +161,11 @@ export default {
           this.errorMessage = 'Failed to fetch pricing data'
         } else {
           this.loadingPricing = false
+          console.log(resp.job_result)
           this.pricing = resp.job_result === null ? [] : resp.job_result
+          if (this.pricing.length === 0) {
+            this.infoMessage = 'No data was found for these cards'
+          }
         }
       }).catch(e => {
         console.error(e)

@@ -35,20 +35,33 @@
       <template slot="modal-title">
         Add new card
       </template>
+
       <b-alert variant="danger"
            dismissible
            :show="modalErrorMessage !== null"
            @dismissed="modalErrorMessage=null">
           {{ modalErrorMessage }}
       </b-alert>
-      <b-form inline>
-      <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Card Name" v-model="newCard.name"/>
-      <b-input-group left="@" class="mb-2 mr-sm-2 mb-sm-0">
-        <b-form-input v-model="newCard.quantity" type="number" placeholder="Card Quantity"></b-form-input>
-      </b-input-group>
-      <select v-model="newCard.languages" multiple class="mb-2 mr-sm-2 mb-sm-0">
-        <option v-for="language in availableLanguages" :key="language">{{ language }}</option>
-      </select>
+
+      <b-form>
+        <b-form-group
+          label="Card Name:"
+          label-for="cardNameInput">
+          <b-form-input v-model="newCard.name" id="cardNameInput"></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label="Card quantity:"
+          label-for="cardQuantityInput">
+        <b-form-input v-model="newCard.quantity" id="cardQuantityInput" type="number"></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+        label="Card languages:"
+        label-for="cardLanguagesInput">
+        <b-form-select v-model="newCard.languages" :options="availableLanguages" id="cardLanguagesInput" multiple></b-form-select>
+      </b-form-group>
+
       </b-form>
 
     </b-modal>

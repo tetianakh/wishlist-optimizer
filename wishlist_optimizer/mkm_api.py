@@ -42,7 +42,7 @@ class MkmApi:
         try:
             return {p['idProduct'] for p in resp.json()['product']}
         except JSONDecodeError:
-            logger.exception(
+            logger.warning(
                 "Failed to parse response `%s`: `%s`",
                 resp.status_code, resp.text
             )
@@ -56,7 +56,7 @@ class MkmApi:
         try:
             articles = resp.json()['article']
         except JSONDecodeError:
-            logger.exception(
+            logger.warning(
                 'Failed to parse articles response `%s`: `%s`',
                 resp.status_code, resp.text
             )

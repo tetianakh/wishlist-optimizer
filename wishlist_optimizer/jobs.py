@@ -20,21 +20,22 @@ def get_pricing(wishlist):
     return service.run()
 
 
-__redis = None
+__queue = None
 
 
-def get_redis():
-    global __redis
-    if not __redis:
-        __redis = redis.from_url(current_app.config['REDIS_URL'])
-    return __redis
+def get_queue():
+    global __queue
+    if not __queue:
+        __queue = Queue(
+            name='default',
+            connection=redis.from_url(current_app.config['REDIS_URL'])
+        )
+    return __queue
 
 
 def schedule_job(job, *args, **kwargs):
-    with Connection(get_redis()):
-        queue = Queue()
-        task = queue.enqueue(job, *args, **kwargs)
-        return _get_job_status(task)
+    task = get_queue().enqueue(job, *args, **kwargs)
+    return _get_job_status(task)
 
 
 def _get_job_status(job):
@@ -46,9 +47,7 @@ def _get_job_status(job):
 
 
 def check_job_status(job_id):
-    with Connection(get_redis()):
-        queue = Queue()
-        task = queue.fetch_job(job_id)
-        if not task:
-            return None
-        return _get_job_status(task)
+    task = get_queue().fetch_job(job_id)
+    if not task:
+        return None
+    return _get_job_status(task)

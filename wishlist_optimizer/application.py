@@ -3,6 +3,7 @@ import os
 
 import requests
 from flask import Flask, render_template
+from flask_cors import CORS
 
 
 def create_app(app_name='WISHLIST_OPTIMIZER'):
@@ -29,5 +30,7 @@ def create_app(app_name='WISHLIST_OPTIMIZER'):
     db.init_app(app)
 
     logging.basicConfig(level=logging.DEBUG)
+
+    CORS(app)
 
     return app

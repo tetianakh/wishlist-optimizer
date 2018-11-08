@@ -22,24 +22,28 @@
         {{ infoMessage }}
     </b-alert>
 
-    <div class="row">
-        <div class="col-lg-5 col-centered">
+    <div class="row centered">
+
       <b-form inline>
       <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Card Name" v-model="newCard.name"/>
       <b-input-group left="@" class="mb-2 mr-sm-2 mb-sm-0">
         <b-form-input v-model="newCard.quantity" type="number" placeholder="Card Quantity"></b-form-input>
       </b-input-group>
+      <select v-model="newCard.languages" multiple class="mb-2 mr-sm-2 mb-sm-0">
+        <option v-for="language in availableLanguages" :key="language">{{ language }}</option>
+      </select>
       <b-button variant="primary" @click="addCard">Add card</b-button>
       </b-form>
-    </div>
+
   </div>
 
     <table class="table table-hover" v-if="wishlist.cards && wishlist.cards.length > 0">
       <thead>
         <tr>
           <th>#</th>
-          <th>Card name</th>
-          <th>Card quantity</th>
+          <th>Card Name</th>
+          <th>Card Quantity</th>
+          <th>Card Languages</th>
           <th></th>
           <th></th>
         </tr>
@@ -54,6 +58,9 @@
           <td>
             <p v-if="updatedCard.id !== card.id" @click="activateUpdate(idx)" class='hoverable'>{{ card.quantity }}</p>
             <b-form-input v-else v-model="updatedCard.quantity" type="number" @keydown.enter.native="updateCard(idx)"></b-form-input>
+          </td>
+          <td>
+            {{ card.languages | join }}
           </td>
           <td>
             <font-awesome-icon v-if="updatedCard.id !== card.id" icon="edit" @click="activateUpdate(idx)" class="hoverable"/>
@@ -72,6 +79,7 @@
 <script>
 import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
+import LanguagesClient from '../clients/LanguagesClient'
 import Spinner from './Spinner'
 import Pricing from './Pricing'
 
@@ -82,9 +90,11 @@ export default {
       wishlist: {},
       wishlistClient: new WishlistClient(),
       pricingClient: new PricingClient(),
+      languagesClient: new LanguagesClient(),
       newCard: {
         name: null,
-        quantity: null
+        quantity: null,
+        languages: []
       },
       updatedCard: {
         id: null,
@@ -95,10 +105,11 @@ export default {
       pricingJobId: null,
       pricing: [],
       errorMessage: null,
-      infoMessage: null
+      infoMessage: null,
+      availableLanguages: []
     }
   },
-  mounted () {
+  created () {
     this.wishlistClient.getWishlist(this.$route.params.id).then(resp => {
       this.wishlist = {
         id: resp.wishlist.id,
@@ -107,6 +118,14 @@ export default {
         cards: resp.wishlist.cards
       }
     })
+    this.languagesClient.getAvailableLanguages().then(resp => {
+      this.availableLanguages = resp
+    })
+  },
+  filters: {
+    join: function (values) {
+      return values.join(', ')
+    }
   },
   methods: {
     addCard () {
@@ -117,7 +136,8 @@ export default {
         this.wishlist.cards.push(resp.card)
         this.newCard = {
           name: '',
-          quantity: null
+          quantity: null,
+          languages: []
         }
       })
     },

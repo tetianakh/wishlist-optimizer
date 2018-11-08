@@ -19,22 +19,6 @@ def session(config, realm):
         realm=realm
     )
 
-
-LANGUAGES = {
-    'English': 1,
-    'French': 2,
-    'German': 3,
-    'Spanish': 4,
-    'Italian': 5,
-    'Simplified Chinese': 6,
-    'Japanese': 7,
-    'Portuguese': 8,
-    'Russian': 9,
-    'Korean': 10,
-    'Chinese': 11
-}
-
-
 GAMES = {'MTG': 1}
 
 

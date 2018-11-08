@@ -1,10 +1,13 @@
 import logging
-from wishlist_optimizer.models import Wishlist, Card, db
+from wishlist_optimizer.models import Wishlist, Card, db, Language
 
 logger = logging.getLogger(__name__)
 
 
 class WishlistService:
+    def __init__(self, languages_service):
+        self._languages_service = languages_service
+
     def get_wishlists(self):
         return [w.to_dict() for w in Wishlist.query.all()]
 
@@ -17,31 +20,26 @@ class WishlistService:
         self._save(wishlist)
         return wishlist.to_dict()
 
-    def replace_wishlist(self, wishlist_id, data):
-        old_wishlist = Wishlist.query.get(wishlist_id)
-        new_wishlist = self._create_wishlist(data)
-        new_wishlist.id = wishlist_id
-        new_wishlist.created_at = old_wishlist.created_at
-        db.session.delete(old_wishlist)
-        db.session.commit()
-        self._save(new_wishlist)
-        return new_wishlist.to_dict()
-
     def _create_wishlist(self, data):
         wishlist = Wishlist(name=data['name'])
-        wishlist.cards = [
-            Card(name=c['name'].title(), quantity=c['quantity'])
-            for c in data['cards']
-        ]
+        wishlist.cards = [self._create_card(c) for c in data['cards']]
         return wishlist
 
     def add_card(self, wishlist_id, data):
         logger.debug("Adding card to wishlist %s: %s", wishlist_id, data)
         wishlist = Wishlist.query.get(wishlist_id)
-        card = Card(name=data['name'].title(), quantity=data['quantity'])
+        card = self._create_card(data)
         wishlist.cards.append(card)
         db.session.commit()
         return card.to_dict()
+
+    def _create_card(self, data):
+        languages = self._languages_service.find_by_name(data['languages'])
+        return Card(
+            name=data['name'].title(),
+            quantity=data['quantity'],
+            languages=[l for l in languages if l]
+        )
 
     def remove_card(self, card_id):
         logger.debug("Removing card %s", card_id)

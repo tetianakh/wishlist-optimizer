@@ -51,13 +51,5 @@ def populate_languages():
     db.session.commit()
 
 
-@manager.command
-def set_default_language():
-    english = Language.query.filter_by(name='English', mkm_id=1).first()
-    for card in Card.query.filter(~Card.languages.any()).all():
-        card.languages.append(english)
-    db.session.commit()
-
-
 if __name__ == '__main__':
     manager.run()

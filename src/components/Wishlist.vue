@@ -4,12 +4,17 @@
     <spinner v-if="loadingPricing"></spinner>
 
     <pricing :pricing="pricing" v-if="pricing.length > 0"></pricing>
-
     <b-button
       variant="success"
       @click="submitPricingJob"
       :disabled="loadingPricing"
       class="margin">Get Pricing</b-button>
+    <b-alert variant="danger"
+         dismissible
+         :show="errorMessage !== null"
+         @dismissed="errorMessage=null">
+        {{ errorMessage }}
+    </b-alert>
 
     <div class="row">
         <div class="col-lg-5 col-centered">
@@ -82,7 +87,8 @@ export default {
       },
       loadingPricing: false,
       pricingJobId: null,
-      pricing: []
+      pricing: [],
+      errorMessage: null
     }
   },
   mounted () {
@@ -130,6 +136,7 @@ export default {
       }
     },
     submitPricingJob () {
+      this.pricing = []
       this.pricingClient.submitPricingCalculationJob(this.wishlist.id).then(resp => {
         console.log(resp)
         this.pricingJobId = resp.job_id
@@ -140,12 +147,19 @@ export default {
       console.log('Getting pricing result')
       this.loadingPricing = true
       this.pricingClient.getPricingJobResult(this.pricingJobId).then(resp => {
-        if (resp.job_result === null && resp.job_status === 'started') {
+        if (resp.job_result === null && (resp.job_status === 'started' || resp.job_status === 'queued')) {
           setTimeout(this.getPricingResult, 1000)
+        } else if (resp.job_status === 'failed') {
+          this.loadingPricing = false
+          this.errorMessage = 'Failed to fetch pricing data'
         } else {
           this.loadingPricing = false
-          this.pricing = resp.job_result === null ? [] : resp.job_result;
+          this.pricing = resp.job_result === null ? [] : resp.job_result
         }
+      }).catch(e => {
+        console.error(e)
+        this.loadingPricing = false
+        this.errorMessage = 'Failed to fetch pricing data'
       })
     }
   }

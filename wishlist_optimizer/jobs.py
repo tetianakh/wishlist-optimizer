@@ -8,7 +8,6 @@ from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 
 
 def get_pricing(wishlist):
-    
     config = {
         "app_token": current_app.config['APP_TOKEN'],
         "app_secret": current_app.config['APP_SECRET'],

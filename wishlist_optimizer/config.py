@@ -17,6 +17,7 @@ class DevelopmentConfig(BaseConfig):
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
     MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"
+    MKM_USER_URL = "https://sandbox.cardmarket.com/en/Magic/Users"
 
 
 class ProductionConfig(BaseConfig):
@@ -25,3 +26,4 @@ class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     REDIS_URL = os.getenv('REDIS_URL')
     MKM_URL = "https://api.cardmarket.com/ws/v2.0/output.json"
+    MKM_USER_URL = "https://www.cardmarket.com/en/Magic/Users"

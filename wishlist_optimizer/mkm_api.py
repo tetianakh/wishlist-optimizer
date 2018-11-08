@@ -3,6 +3,7 @@ import logging
 
 from json.decoder import JSONDecodeError
 import requests_oauthlib
+from flask import current_app
 
 
 logging.basicConfig(level=logging.INFO)
@@ -76,10 +77,15 @@ class MkmApi:
         return [self._get_article_data(a) for a in articles]
 
     def _get_article_data(self, full_data):
+        username = full_data['seller']['username']
+        seller_url = '{}/{}'.format(
+            current_app.config['MKM_USER_URL'], username
+        )
         return {
             'language': full_data['language']['idLanguage'],
             'price': full_data['price'],
-            'seller_username': full_data['seller']['username'],
+            'seller_username': username,
+            'seller_url': seller_url,
             'seller_id': full_data['seller']['idUser'],
             'count': full_data['count']
         }

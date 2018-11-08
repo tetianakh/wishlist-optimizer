@@ -160,7 +160,6 @@ export default {
   },
   methods: {
     addCard (event) {
-
       if (!this.newCard.name || !this.newCard.quantity) {
         event.preventDefault()
         this.modalErrorMessage = 'Please fill in card name'

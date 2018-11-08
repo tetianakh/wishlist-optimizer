@@ -51,7 +51,8 @@ class MkmPricingService:
                     'total_count': 0,
                     'total_price': 0,
                     'seller_id': offer_list[0]['seller_id'],
-                    'seller_username': offer_list[0]['seller_username']
+                    'seller_username': offer_list[0]['seller_username'],
+                    'seller_url': offer_list[0]['seller_url']
                 }
 
             offer_list = sorted(offer_list, key=lambda o: o['price'])

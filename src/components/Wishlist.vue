@@ -27,7 +27,6 @@
       <b-button
         v-b-modal="'newCardModal'"
         variant="info"
-        :disabled="loadingPricing"
         class="margin">Add new card</b-button>
       <b-button
         @click="deleteWishlist"
@@ -51,7 +50,14 @@
         <b-form-group
           label="Card Name:"
           label-for="cardNameInput">
-          <b-form-input v-model="newCard.name" id="cardNameInput"></b-form-input>
+          <!-- <b-form-input v-model="newCard.name" id="cardNameInput"></b-form-input> -->
+          <v-select
+            :filterable="false"
+            :options="searchedCardNames"
+            v-model="newCard.name"
+            label="name"
+            @search="onCardSearch">
+          </v-select>
         </b-form-group>
 
         <b-form-group
@@ -110,21 +116,32 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import vSelect from 'vue-select'
 import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
 import LanguagesClient from '../clients/LanguagesClient'
+import MtgClient from '../clients/MtgClient'
 import Spinner from './Spinner'
 import Pricing from './Pricing'
 import Page from './Page'
 
+const searchCardByName = _.debounce((searchTerm, loading, self) => {
+  self.mtgClient.getCards(searchTerm).then(res => {
+    self.searchedCards = res
+    loading(false)
+  })
+}, 350)
+
 export default {
-  components: {Spinner, Pricing, Page},
+  components: {Spinner, Pricing, Page, vSelect},
   data () {
     return {
       wishlist: {},
       wishlistClient: new WishlistClient(),
       pricingClient: new PricingClient(),
       languagesClient: new LanguagesClient(),
+      mtgClient: new MtgClient(),
       newCard: {
         name: '',
         quantity: 1,
@@ -141,7 +158,13 @@ export default {
       errorMessage: null,
       infoMessage: null,
       modalErrorMessage: null,
-      availableLanguages: []
+      availableLanguages: [],
+      searchedCards: []
+    }
+  },
+  computed: {
+    searchedCardNames () {
+      return this.searchedCards.map(c => c.name)
     }
   },
   created () {
@@ -234,6 +257,13 @@ export default {
         this.loadingPricing = false
         this.errorMessage = 'Failed to fetch pricing data'
       })
+    },
+    onCardSearch (searchTerm, loading) {
+      if (searchTerm.length < 2) {
+        return
+      }
+      loading(true)
+      searchCardByName(searchTerm, loading, this)
     }
   }
 }

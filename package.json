@@ -18,9 +18,12 @@
     "@fortawesome/vue-fontawesome": "^0.1.2",
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
+    "lodash": "^4.17.11",
+    "mtgsdk": "^0.4.2",
     "npm": "^6.4.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-select": "^2.5.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

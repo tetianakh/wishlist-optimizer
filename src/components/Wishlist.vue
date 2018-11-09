@@ -199,6 +199,7 @@ export default {
           quantity: 1,
           languages: []
         }
+        this.searchedCards = []
       })
     },
     deleteCard (cardId, idx) {

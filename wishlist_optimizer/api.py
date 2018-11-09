@@ -29,6 +29,12 @@ def get_wishlist(wishlist_id):
     )
 
 
+@api.route('/wishlists/<int:wishlist_id>', methods=('DELETE',))
+def delete_wishlist(wishlist_id):
+    wishlist_service.remove_wishlist(wishlist_id)
+    return ('', 204)
+
+
 @api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET', 'POST'))
 def get_cards(wishlist_id):
     if request.method == 'GET':

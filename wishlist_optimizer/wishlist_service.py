@@ -47,6 +47,12 @@ class WishlistService:
         db.session.delete(card)
         db.session.commit()
 
+    def remove_wishlist(self, wishlist_id):
+        logger.info("Removing wishlist %s", wishlist_id)
+        wishlist = Wishlist.query.get(wishlist_id)
+        db.session.delete(wishlist)
+        db.session.commit()
+
     def update_card(self, card_id, data):
         logger.debug("Updating card %s: %s", card_id, data)
         card = Card.query.get(card_id)

@@ -4,7 +4,7 @@
     <h1>Wishlists</h1>
 
     <div class="row">
-      <div class="col-lg-4 col-centered">
+      <div class="centered col-lg-6">
         <b-form inline>
           <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Wishlist Name" v-model="newWishlistName" />
           <button type="button" class="btn btn-success" @click="addNewWishlist">
@@ -14,12 +14,15 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-5 col-centered">
-
-        <ul class="list-group list-group-flush list-group-item-action ">
-          <li v-for="wishlist in wishlists" :key="wishlist.id" @click="openWishlist(wishlist.id)" class="list-group-item list-group-item-action hoverable">
-            {{ wishlist.name }}</li>
-        </ul>
+      <div class="col-lg-6 centered">
+        <table>
+          <tbody>
+            <tr v-for="(wishlist, idx) in wishlists" :key="wishlist.id">
+              <td @click="openWishlist(wishlist.id)" class="hoverable">{{ wishlist.name }}</td>
+              <td><font-awesome-icon icon="trash" @click="deleteWishlist(wishlist.id, idx)" class="hoverable"/></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </table>
@@ -64,13 +67,25 @@ export default {
           }
         })
       })
+    },
+    deleteWishlist (wishlistId, idx) {
+      this.client.removeWishlist(wishlistId).then(() => {
+        this.wishlists.splice(idx, 1)
+      })
     }
   }
 }
 </script>
 <style>
-.col-centered {
-  margin: 10px auto;
-  float: none;
+
+.centered {
+  margin-left: auto;
+  margin-right: auto
 }
+
+table {
+  width:70%;
+  margin-top: 20px;
+}
+
 </style>

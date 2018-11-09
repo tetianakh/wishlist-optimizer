@@ -34,4 +34,7 @@ export default class WishlistClient {
     return this.http.put(`wishlists/${wishlistId}/cards/${card.id}`, card
     ).then(resp => resp.data)
   }
+  removeWishlist (wishlistId) {
+    return this.http.delete(`wishlists/${wishlistId}`).then(resp => resp.data)
+  }
 }

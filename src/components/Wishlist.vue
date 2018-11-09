@@ -18,7 +18,7 @@
         {{ infoMessage }}
     </b-alert>
 
-    <div class="row">
+    <div class="row btn-group">
       <b-button
         variant="success"
         @click="submitPricingJob"
@@ -29,6 +29,10 @@
         variant="info"
         :disabled="loadingPricing"
         class="margin">Add new card</b-button>
+      <b-button
+        @click="deleteWishlist"
+        variant="danger"
+        class="margin">Delete wishlist</b-button>
     </div>
 
     <b-modal id="newCardModal" ok-title="Add" @ok="addCard">
@@ -179,6 +183,11 @@ export default {
         this.wishlist.cards.splice(idx, 1)
       })
     },
+    deleteWishlist () {
+      this.wishlistClient.removeWishlist(this.$route.params.id).then(() => {
+        this.$router.push({'name': 'Home'})
+      })
+    },
     activateUpdate (cardIdx) {
       this.updatedCard = this.wishlist.cards[cardIdx]
     },
@@ -235,9 +244,9 @@ export default {
   margin: 10px;
 }
 
-.col-centered{
-    margin: 10px auto;
-    float: none;
+.btn-group {
+  display: flex;
+  justify-content: center;
 }
 
 </style>

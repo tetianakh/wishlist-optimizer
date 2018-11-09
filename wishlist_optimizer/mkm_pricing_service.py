@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections import defaultdict
 
@@ -6,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 class MkmPricingService:
     def __init__(self, api, wishlist, languages_service):
+        self._loop = asyncio.get_event_loop()
         self._api = api
         self._wishlist = wishlist
         self._languages_service = languages_service
@@ -14,7 +16,10 @@ class MkmPricingService:
     def get_offers(self, card_name, card_languages):
         language_ids = self._get_language_ids(card_languages)
 
-        product_ids = self._api.find_product_ids(card_name)
+        product_ids = self._loop.run_until_complete(
+            self._api.a_find_product_ids(card_name)
+        )
+        # product_ids = self._api.find_product_ids(card_name)
         logger.info(
             "Card: `%s`, product ids: %s, language ids: %s",
             card_name, product_ids, language_ids

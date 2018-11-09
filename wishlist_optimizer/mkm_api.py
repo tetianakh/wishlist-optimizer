@@ -10,20 +10,8 @@ from flask import current_app
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-@contextmanager
-def session(config, realm):
-    yield requests_oauthlib.OAuth1Session(
-        config['app_token'],
-        client_secret=config['app_secret'],
-        resource_owner_key=config['access_token'],
-        resource_owner_secret=config['access_token_secret'],
-        realm=realm
-    )
-
-
 MTG = 1
+CARD = 'Magic Single'
 
 
 class HttpClient:
@@ -77,7 +65,7 @@ class MkmApi:
         }
         params = {
             'search': card_name,
-            'exact': "true",
+            'exact': "false",
             'idGame': MTG
         }
         data = await self._http.get(
@@ -86,16 +74,25 @@ class MkmApi:
         if not data:
             return set()
         try:
-            return {p['idProduct'] for p in data['product']}
+            return {
+                p['idProduct'] for p in data['product']
+                if self._matches(card_name, p)
+            }
         except KeyError:
             logger.warning('Failed to parse product id response: %s', data)
             return set()
 
-    async def get_articles(self, product_id, language_id=None):
-        logger.info(
-            'Getting articles for pid %s and language id %s',
-            product_id, language_id
+    @staticmethod
+    def _matches(card_name, product):
+        product_name = product['enName'].lower()
+        card_name = card_name.lower()
+        return product['categoryName'] == CARD and (
+            product_name == card_name
+            or card_name + ' /' in product_name
+            or '/ ' + card_name in product_name
         )
+
+    async def get_articles(self, product_id, language_id=None):
         params = None
         if language_id:
             params = {'idLanguage': language_id}

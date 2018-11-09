@@ -3,7 +3,7 @@
   <table class="table table-hover">
     <h1>Wishlists</h1>
 
-    <div class="row">
+    <div class="row centered">
       <div class="centered col-lg-6">
         <b-form inline>
           <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Wishlist Name" v-model="newWishlistName" />
@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row centered">
       <div class="col-lg-6 centered">
         <table>
           <tbody>
@@ -78,14 +78,9 @@ export default {
 </script>
 <style>
 
-.centered {
-  margin-left: auto;
-  margin-right: auto
-}
-
 table {
   width:70%;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 </style>

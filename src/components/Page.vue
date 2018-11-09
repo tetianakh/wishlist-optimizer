@@ -26,4 +26,10 @@ export default {}
   .brand {
     color: #fff;
   }
+
+  .centered {
+    display: flex;
+    justify-content: center;
+  }
+
 </style>

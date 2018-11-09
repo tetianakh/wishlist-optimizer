@@ -18,7 +18,7 @@
         {{ infoMessage }}
     </b-alert>
 
-    <div class="row btn-group">
+    <div class="row centered">
       <b-button
         variant="success"
         @click="submitPricingJob"
@@ -242,11 +242,6 @@ export default {
 <style lang="css">
 .margin {
   margin: 10px;
-}
-
-.btn-group {
-  display: flex;
-  justify-content: center;
 }
 
 </style>

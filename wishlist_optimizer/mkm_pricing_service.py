@@ -13,43 +13,68 @@ class MkmPricingService:
         self._languages_service = languages_service
         self._best_prices = {}
 
-    def get_offers(self, card_name, card_languages):
-        language_ids = self._get_language_ids(card_languages)
-
-        product_ids = self._loop.run_until_complete(
-            self._api.a_find_product_ids(card_name)
-        )
-        # product_ids = self._api.find_product_ids(card_name)
-        logger.info(
-            "Card: `%s`, product ids: %s, language ids: %s",
-            card_name, product_ids, language_ids
-        )
-        offers = defaultdict(list)
-        for product_id in product_ids:
-            if not language_ids:
-                articles = self._api.get_articles(product_id)
-            else:
-                articles = []
-                for language_id in language_ids:
-                    articles += self._api.get_articles(product_id, language_id)
-            for article in articles:
-                offers[article['seller_id']].append(article)
+    @staticmethod
+    def _group_by_seller(articles):
+        offers = {}
+        for card, article in articles:
+            card_name = card['name']
+            seller_id = article['seller_id']
+            if card_name not in offers:
+                offers[card_name] = {'card': card, 'offers': {}}
+            if seller_id not in offers[card_name]['offers']:
+                offers[card_name]['offers'][seller_id] = []
+            offers[card_name]['offers'][seller_id].append(article)
         return offers
 
+    async def _get_card_articles(self, card, product_id, language_id):
+        if language_id is None:
+            return card, await self._api.get_articles(product_id)
+        return card, await self._api.get_articles(product_id, language_id)
+
+    def _get_card_product_ids(self, cards):
+        tasks = [self._api.find_product_ids(c['name']) for c in cards]
+        results = self._loop.run_until_complete(asyncio.gather(*tasks))
+        for card, product_ids in zip(cards, results):
+            for product_id in product_ids:
+                if card['language_ids']:
+                    for lang_id in card['language_ids']:
+                        yield card, product_id, lang_id
+                else:
+                    yield card, product_id, None
+
+    def _get_articles(self, product_ids):
+        tasks = [
+            self._get_card_articles(c, p_id, l_id)
+            for (c, p_id, l_id) in product_ids
+        ]
+        results = self._loop.run_until_complete(asyncio.gather(*tasks))
+
+        for (card, articles) in results:
+            for article in articles:
+                yield card, article
+
     def run(self):
+        language_id_map = self._languages_service.get_language_mkm_ids()
         for card in self._wishlist:
-            offers = self.get_offers(card['name'], card['languages'])
+            self._set_language_ids(card, language_id_map)
 
-            self.calculate_best_prices(card['quantity'], offers)
+        product_ids = self._get_card_product_ids(self._wishlist)
+        articles = self._get_articles(product_ids)
+
+        offers = self._group_by_seller(articles)
+
+        for card_name, card_offers in offers.items():
+            quantity = card_offers['card']['quantity']
+            self._calculate_best_prices(quantity, card_offers['offers'])
+
         result = list(self._best_prices.values())
-
         result.sort(
             key=lambda a: (a['total_count'], -a['total_price']),
             reverse=True
         )
         return result[:10]
 
-    def calculate_best_prices(self, card_count, offers):
+    def _calculate_best_prices(self, card_count, offers):
         for seller_id, offer_list in offers.items():
             if seller_id not in self._best_prices:
                 self._best_prices[seller_id] = {
@@ -72,10 +97,9 @@ class MkmPricingService:
                 found_count += found
                 need_count -= found
 
-    def _get_language_ids(self, card_languages):
-        language_id_map = self._languages_service.get_language_mkm_ids()
-        language_ids = [language_id_map[name] for name in card_languages]
+    def _set_language_ids(self, card, language_id_map):
+        language_ids = [language_id_map[name] for name in card['languages']]
         if len(language_ids) == len(language_id_map):
             # selecting all is the same as not selecting any
             language_ids = []
-        return language_ids
+        card['language_ids'] = language_ids

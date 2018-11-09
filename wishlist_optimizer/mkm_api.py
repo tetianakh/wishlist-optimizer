@@ -3,13 +3,12 @@ import logging
 import urllib
 
 import aiohttp
-from json.decoder import JSONDecodeError
 from requests_oauthlib import OAuth1
 import requests_oauthlib
 from flask import current_app
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -72,8 +71,7 @@ class MkmApi:
         self._http = HttpClient(config)
         logger.info("Base URL: %s", self._base_url)
 
-    async def a_find_product_ids(self, card_name):
-        # url = '{}/products/find'.format(self._base_url)
+    async def find_product_ids(self, card_name):
         headers = {
             'Content-Type': 'application/json'
         }
@@ -82,68 +80,36 @@ class MkmApi:
             'exact': "true",
             'idGame': MTG
         }
-        # with session(self._config, url) as api:
-        #     resp = api.get(url, headers=headers, params=params)
-        # resp.raise_for_status()
-        # if resp.status_code == 204:
-        #     return set()
-        # try:
-        #     return {p['idProduct'] for p in resp.json()['product']}
-        # except JSONDecodeError:
-        #     logger.warning(
-        #         "Failed to parse response `%s`: `%s`",
-        #         resp.status_code, resp.text
-        #     )
-        #     return set()
         data = await self._http.get(
             'products/find', params=params, headers=headers
         )
         if not data:
             return set()
-        return {p['idProduct'] for p in data['product']}
-
-    def find_product_ids(self, card_name):
-        url = '{}/products/find'.format(self._base_url)
-        headers = {
-            'Content-Type': 'application/json'
-        }
-        params = {
-            'search': card_name,
-            'exact': "true",
-            'idGame': MTG
-        }
-        with session(self._config, url) as api:
-            resp = api.get(url, headers=headers, params=params)
-        resp.raise_for_status()
-        if resp.status_code == 204:
-            return set()
         try:
-            return {p['idProduct'] for p in resp.json()['product']}
-        except JSONDecodeError:
-            logger.warning(
-                "Failed to parse response `%s`: `%s`",
-                resp.status_code, resp.text
-            )
+            return {p['idProduct'] for p in data['product']}
+        except KeyError:
+            logger.warning('Failed to parse product id response: %s', data)
             return set()
 
-    def get_articles(self, product_id, language_id=None):
-        base_url = '{}/articles/{}'.format(self._base_url, product_id)
-
-        url = base_url
+    async def get_articles(self, product_id, language_id=None):
+        logger.info(
+            'Getting articles for pid %s and language id %s',
+            product_id, language_id
+        )
+        params = None
         if language_id:
-            url = '{}?idLanguage={}'.format(base_url, language_id)
+            params = {'idLanguage': language_id}
 
-        with session(self._config, base_url) as api:
-            resp = api.get(url)
-        resp.raise_for_status()
-        if resp.status_code == 204:
+        data = await self._http.get(
+            'articles/{}'.format(product_id), params=params
+        )
+        if not data:
             return []
         try:
-            articles = resp.json()['article']
-        except JSONDecodeError:
+            articles = data['article']
+        except KeyError:
             logger.warning(
-                'Failed to parse articles response `%s`: `%s`',
-                resp.status_code, resp.text
+                'Failed to parse articles response `%s`', data
             )
 
         return [self._get_article_data(a) for a in articles]

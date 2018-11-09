@@ -23,6 +23,9 @@ class MkmPricingService:
         results = self._loop.run_until_complete(asyncio.gather(*tasks))
         for card, product_ids in zip(cards, results):
             for product_id in product_ids:
+                logger.info(
+                    'Card: %s, product id: %s', card['name'], product_id
+                )
                 if card['language_ids']:
                     for lang_id in card['language_ids']:
                         yield card, product_id, lang_id
@@ -52,7 +55,7 @@ class MkmPricingService:
         offers = self._group_by_seller(articles)
 
         for card_name, card_offers in offers.items():
-            quantity = card_offers['card']['quantity']
+            quantity = card_offers['card_quantity']
             self._calculate_best_prices(quantity, card_offers['offers'])
 
         result = list(self._best_prices.values())
@@ -95,7 +98,7 @@ class MkmPricingService:
             card_name = card['name']
             seller_id = article['seller_id']
             if card_name not in offers:
-                offers[card_name] = {'card': card, 'offers': {}}
+                offers[card_name] = {'card_quantity': card['quantity'], 'offers': {}}  # noqa
             if seller_id not in offers[card_name]['offers']:
                 offers[card_name]['offers'][seller_id] = []
             offers[card_name]['offers'][seller_id].append(article)

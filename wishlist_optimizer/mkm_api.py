@@ -1,10 +1,8 @@
-from contextlib import contextmanager
 import logging
 import urllib
 
 import aiohttp
 from requests_oauthlib import OAuth1
-import requests_oauthlib
 from flask import current_app
 
 
@@ -43,9 +41,10 @@ class HttpClient:
             k.decode('utf-8'): v.decode('utf-8') for k, v in headers.items()
         }
         url = url.decode('utf-8')
-
+        logger.debug('Headers: %s', headers)
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers) as response:
+                logger.debug(response.headers)
                 response.raise_for_status()
                 if response.status == 204:
                     return None
@@ -54,10 +53,7 @@ class HttpClient:
 
 class MkmApi:
     def __init__(self, config):
-        self._base_url = config['url']
-        self._config = dict(config)
         self._http = HttpClient(config)
-        logger.info("Base URL: %s", self._base_url)
 
     async def find_product_ids(self, card_name):
         headers = {

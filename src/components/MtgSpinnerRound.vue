@@ -64,7 +64,7 @@ export default {
 
 .sk-fading-circle .sk-circle1:before {
   background-color: #CDC9AD;  /* W */
-  background: radial-gradient(circle at 50% 50%, #D5D5B9, #A59E83);
+  background: radial-gradient(circle at 50% 50%, #faf8f2, #C6C3A8);
 }
 
 .sk-fading-circle .sk-circle2:before {

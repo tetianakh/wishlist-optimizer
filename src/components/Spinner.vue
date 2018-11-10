@@ -9,6 +9,7 @@ export default {
 </script>
 
 <style lang="css">
+
 .loader {
   margin: 100px auto;
   font-size: 25px;

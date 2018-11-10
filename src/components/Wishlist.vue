@@ -122,7 +122,7 @@ import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
 import LanguagesClient from '../clients/LanguagesClient'
 import MtgClient from '../clients/MtgClient'
-import Spinner from './Spinner'
+import Spinner from './MtgSpinnerRound'
 import Pricing from './Pricing'
 import Page from './Page'
 

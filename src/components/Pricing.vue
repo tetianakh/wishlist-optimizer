@@ -9,7 +9,7 @@
       <tr v-for="item in pricing" :key="item.seller_id">
         <td><a :href="item.seller_url" target="_blank">{{ item.seller_username }}</a></td>
         <td>{{ item.total_count }}</td>
-        <td>{{ item.total_price }}</td>
+        <td>{{ item.total_price.toFixed(2) }}€</td>
       </tr>
     </tbody>
   </table>

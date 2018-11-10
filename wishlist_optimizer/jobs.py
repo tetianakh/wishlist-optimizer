@@ -1,3 +1,4 @@
+import asyncio
 import redis
 from rq import Queue
 from flask import current_app
@@ -15,9 +16,12 @@ def get_pricing(wishlist):
         "access_token_secret": current_app.config['ACCESS_TOKEN_SECRET'],
         "url": current_app.config['MKM_URL']
     }
+    loop = asyncio.get_event_loop()
     api = MkmApi(config)
-    service = MkmPricingService(api, wishlist['cards'], LanguagesService())
-    return service.run()
+    service = MkmPricingService(loop, api, wishlist['cards'], LanguagesService())
+    result = service.run()
+    loop.run_until_complete(api.close())
+    return result
 
 
 __queue = None

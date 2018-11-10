@@ -6,8 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 class MkmPricingService:
-    def __init__(self, api, wishlist, languages_service):
-        self._loop = asyncio.get_event_loop()
+    def __init__(self, loop, api, wishlist, languages_service):
+        self._loop = loop
         self._api = api
         self._wishlist = wishlist
         self._languages_service = languages_service

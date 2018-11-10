@@ -164,7 +164,7 @@ export default {
   },
   computed: {
     searchedCardNames () {
-      return this.searchedCards.map(c => c.name)
+      return Array.from(new Set(this.searchedCards.map(c => c.name)))
     }
   },
   created () {

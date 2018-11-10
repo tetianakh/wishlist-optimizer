@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from urllib import parse
 
@@ -14,12 +13,12 @@ CARD = 'Magic Single'
 
 
 class HttpClient:
-    def __init__(self, config):
+    def __init__(self, loop, config):
         self._base_url = config.pop('url')
         logger.info("Base URL: %s", self._base_url)
         self._config = dict(config)
         self._session = aiohttp.ClientSession(
-            loop=asyncio.get_event_loop(), headers={
+            loop=loop, headers={
                 'Content-Type': 'application/json'
             }
         )
@@ -66,8 +65,8 @@ class HttpClient:
 
 
 class MkmApi:
-    def __init__(self, config):
-        self._http = HttpClient(config)
+    def __init__(self, client):
+        self._http = client
 
     async def find_product_ids(self, card_name):
         logger.info('Searching product ids for card %s', card_name)
@@ -136,6 +135,3 @@ class MkmApi:
             'seller_id': full_data['seller']['idUser'],
             'count': full_data['count']
         }
-
-    async def close(self):
-        await self._http.close()

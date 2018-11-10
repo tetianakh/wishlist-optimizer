@@ -4,7 +4,7 @@ from rq import Queue
 from flask import current_app
 
 from wishlist_optimizer.languages_service import LanguagesService
-from wishlist_optimizer.mkm_api import MkmApi
+from wishlist_optimizer.mkm_api import MkmApi, HttpClient
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 
 
@@ -17,10 +17,13 @@ def get_pricing(wishlist):
         "url": current_app.config['MKM_URL']
     }
     loop = asyncio.get_event_loop()
-    api = MkmApi(config)
-    service = MkmPricingService(loop, api, wishlist['cards'], LanguagesService())
+    client = HttpClient(loop, config)
+    api = MkmApi(client)
+    service = MkmPricingService(
+        loop, api, wishlist['cards'], LanguagesService()
+    )
     result = service.run()
-    loop.run_until_complete(api.close())
+    loop.run_until_complete(client.close())
     return result
 
 

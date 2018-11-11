@@ -1,3 +1,4 @@
+*.rdb
 *_config.json
 *_config.sh
 .venv

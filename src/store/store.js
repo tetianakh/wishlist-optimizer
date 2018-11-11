@@ -5,14 +5,14 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    user: null
+    token: null
   },
   mutations: {
-    logIn (state, {user}) {
-      state.user = user
+    logIn (state, {token}) {
+      state.token = token
     },
     logOut (state) {
-      state.user = null
+      state.token = null
     }
   }
 })

@@ -18,6 +18,8 @@ def create_app(app_name='WISHLIST_OPTIMIZER'):
 
     from wishlist_optimizer.api import api
     app.register_blueprint(api, url_prefix="/api")
+    from wishlist_optimizer.auth import auth
+    app.register_blueprint(auth, url_prefix='/auth')
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')

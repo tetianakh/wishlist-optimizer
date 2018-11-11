@@ -1,11 +1,8 @@
 <template lang="html">
   <div class="">
 
-    <b-navbar toggleable="md" type="dark" variant="info" fixed=top>
-      <b-navbar-brand>
-        <router-link to="/" class='brand'>Wishlists</router-link>
-      </b-navbar-brand>
-    </b-navbar>
+    <navbar>
+    </navbar>
 
     <div class="container">
       <slot></slot>
@@ -15,16 +12,16 @@
 </template>
 
 <script>
-export default {}
+import Navbar from './Navbar'
+
+export default {
+  components: {Navbar}
+}
 </script>
 
 <style lang="css" scoped>
   .hoverable {
     cursor: pointer;
-  }
-
-  .brand {
-    color: #fff;
   }
 
   .centered {

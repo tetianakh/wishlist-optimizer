@@ -9,6 +9,8 @@ class BaseConfig(object):
     APP_SECRET = os.getenv('MKM_APP_SECRET')
     ACCESS_TOKEN = os.getenv('MKM_ACCESS_TOKEN')
     ACCESS_TOKEN_SECRET = os.getenv('MKM_ACCESS_TOKEN_SECRET')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 
 class DevelopmentConfig(BaseConfig):

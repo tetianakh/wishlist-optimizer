@@ -14,6 +14,7 @@ class Wishlist(db.Model):
     cards = db.relationship(
         'Card', backref="wishlist", lazy=False, cascade="all, delete-orphan"
     )
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def to_dict(self):
         return dict(
@@ -68,3 +69,6 @@ class User(db.Model):
     sub = db.Column(db.Text, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    wishlists = db.relationship(
+        'Wishlist', backref="user", lazy=False, cascade="all, delete-orphan"
+    )

@@ -5,6 +5,7 @@ import logging
 class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     QUEUES = ['default']
+    GOOGLE_ISS = 'https://accounts.google.com'
     APP_TOKEN = os.getenv('MKM_APP_TOKEN')
     APP_SECRET = os.getenv('MKM_APP_SECRET')
     ACCESS_TOKEN = os.getenv('MKM_ACCESS_TOKEN')

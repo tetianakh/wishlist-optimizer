@@ -93,6 +93,6 @@ $button-active-blue: #1669F2;
   }
 }
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:500);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400);
 
 </style>

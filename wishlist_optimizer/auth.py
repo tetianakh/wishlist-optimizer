@@ -1,5 +1,8 @@
 import logging
 
+import cachecontrol
+from google.oauth2 import id_token
+import google.auth.transport.requests
 import requests
 from flask import Blueprint, request, jsonify, current_app
 
@@ -30,10 +33,16 @@ def log_in_with_google():
     resp_data = resp.json()
     if 'error' in resp_data:
         return resp_data['error'], 401
-    return jsonify({'token': resp_data['id_token']})
+    jwt_token = resp_data['id_token']
+    session = requests.session()
+    cached_session = cachecontrol.CacheControl(session)
+    r = google.auth.transport.requests.Request(session=cached_session)
+    id_info = id_token.verify_oauth2_token(
+        jwt_token, r, current_app.config['GOOGLE_CLIENT_ID'])
 
+    if id_info['iss'] != current_app.config['GOOGLE_ISS']:
+        raise ValueError('Wrong issuer.')
 
-@auth.route('/google-redirect', methods=['POST'])
-def complete_google_auth():
-    logger.info(request.get_json())
-    return '', 200
+    user_id = id_info['sub']
+    logger.info('%s: %s', user_id, id_info)
+    return jsonify({'token': jwt_token})

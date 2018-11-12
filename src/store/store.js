@@ -15,11 +15,19 @@ const store = new Vuex.Store({
   mutations: {
     logIn (state, {token}) {
       state.token = token
-      localStorage.setItem('user-token', token)
     },
     logOut (state) {
       state.token = null
+    }
+  },
+  actions: {
+    logIn (context, {token}) {
+      localStorage.setItem('user-token', token)
+      context.commit('logIn', token)
+    },
+    logOut (context) {
       localStorage.removeItem('user-token')
+      context.commit('logOut')
     }
   }
 })

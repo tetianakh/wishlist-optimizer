@@ -28,16 +28,13 @@ export default {
   methods: {
     onLogIn (provider) {
       this.$auth.authenticate(provider).then((authResponse) => {
-        console.log(authResponse)
         const token = authResponse.data.token
-        this.$store.commit('logIn', {token: token})
+        this.$store.dispatch('logIn', {token: token})
       }).catch(e => console.error(e))
     },
     onLogOut () {
-      console.log('logging out')
-      console.log(this.$store.state.token)
       this.$auth.logout().then(() => {
-        this.$store.commit('logOut')
+        this.$store.dispatch('logOut')
       }).catch(e => console.error(e.message))
     }
   }

@@ -37,6 +37,7 @@ def delete_wishlist(wishlist_id):
 
 @api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET', 'POST'))
 def get_cards(wishlist_id):
+    logger.info(request.headers)
     if request.method == 'GET':
         return jsonify(
             {'cards': wishlist_service.get_wishlist(wishlist_id)['cards']}

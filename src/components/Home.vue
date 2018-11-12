@@ -5,11 +5,15 @@
 
     <div class="row centered">
       <div class="centered col-lg-6">
-        <b-form inline>
-          <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Wishlist Name" v-model="newWishlistName" />
-          <button type="button" class="btn btn-success" @click="addNewWishlist">
+
+        <b-form inline @submit.prevent="addNewWishlist">
+          <b-input class="mb-2 mr-sm-2 mb-sm-0"
+            placeholder="Wishlist Name"
+            v-model="newWishlistName"/>
+          <button class="btn btn-success" type="submit">
       Add new wishlist</button>
         </b-form>
+
       </div>
     </div>
 

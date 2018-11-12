@@ -72,3 +72,9 @@ class User(db.Model):
     wishlists = db.relationship(
         'Wishlist', backref="user", lazy=False, cascade="all, delete-orphan"
     )
+
+
+class RevokedToken(db.Model):
+    __tablename__ = 'revoked_token'
+    id = db.Column(db.Integer, primary_key=True)
+    jwt = db.Column(db.String(2000))

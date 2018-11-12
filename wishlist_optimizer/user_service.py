@@ -1,5 +1,5 @@
 import logging
-from wishlist_optimizer.models import User, db
+from wishlist_optimizer.models import User, db, RevokedToken
 
 import cachecontrol
 import requests
@@ -21,6 +21,8 @@ class UserService:
         self._session = cachecontrol.CacheControl(session)
 
     def validate_token(self, jwt_token):
+        if RevokedToken.query.filter_by(jwt=jwt_token).first():
+            raise TokenValidationError()
         try:
             r = google.auth.transport.requests.Request(session=self._session)
             id_info = id_token.verify_oauth2_token(

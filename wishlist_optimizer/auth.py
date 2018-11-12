@@ -6,8 +6,13 @@ import google.auth.transport.requests
 import requests
 from flask import Blueprint, request, jsonify, current_app
 
+from wishlist_optimizer.user_service import UserService
+
 auth = Blueprint('auth', __name__)
 logger = logging.getLogger(__name__)
+
+
+user_service = UserService()
 
 
 @auth.route('/google', methods=['POST'])
@@ -24,7 +29,7 @@ def log_in_with_google():
         'code': request_data['code'],
         'client_id': client_id,
         'client_secret': client_secret,
-        'redirect_uri': 'http://localhost:5000',
+        'redirect_uri': current_app.config['GOOGLE_REDIRECT_URL'],
         'grant_type': 'authorization_code'
     }
 
@@ -34,15 +39,5 @@ def log_in_with_google():
     if 'error' in resp_data:
         return resp_data['error'], 401
     jwt_token = resp_data['id_token']
-    session = requests.session()
-    cached_session = cachecontrol.CacheControl(session)
-    r = google.auth.transport.requests.Request(session=cached_session)
-    id_info = id_token.verify_oauth2_token(
-        jwt_token, r, current_app.config['GOOGLE_CLIENT_ID'])
-
-    if id_info['iss'] != current_app.config['GOOGLE_ISS']:
-        raise ValueError('Wrong issuer.')
-
-    user_id = id_info['sub']
-    logger.info('%s: %s', user_id, id_info)
+    user_service.validate_token(jwt_token)
     return jsonify({'token': jwt_token})

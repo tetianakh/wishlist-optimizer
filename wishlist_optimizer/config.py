@@ -16,7 +16,8 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     LOG_LEVEL = logging.DEBUG
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
+    SQLALCHEMY_DATABASE_URI = 'postgres://localhost:5432/wishlists'
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
     MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"

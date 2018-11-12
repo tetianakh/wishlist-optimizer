@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class Wishlist(db.Model):
     __tablename__ = 'wishlist'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     cards = db.relationship(
@@ -33,7 +33,7 @@ cards_to_languages = db.Table('cards_to_languages',
 class Card(db.Model):
     __tablename__ = 'card'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
     quantity = db.Column(db.Integer, default=lambda: 1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -57,6 +57,14 @@ class Language(db.Model):
     __table_args__ = (
         db.UniqueConstraint('name', 'mkm_id', name='unique_name_mkm_id'),
     )
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False)
     mkm_id = db.Column(db.Integer, nullable=False)
+
+
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sub = db.Column(db.Text, nullable=False)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

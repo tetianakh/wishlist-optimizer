@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request
 from wishlist_optimizer.wishlist_service import WishlistService
 from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.jobs import check_job_status, schedule_job, get_pricing
+from wishlist_optimizer.auth import login_required
 
 
 api = Blueprint('api', __name__)
@@ -14,49 +15,67 @@ logger = logging.getLogger(__name__)
 
 
 @api.route('/wishlists', methods=('GET', 'POST'))
-def get_wishlists():
+@login_required
+def get_wishlists(user_id):
     if request.method == 'GET':
-        return jsonify({'wishlists': wishlist_service.get_wishlists()})
+        return jsonify({'wishlists': wishlist_service.get_wishlists(user_id)})
     return jsonify(
-        {'wishlist': wishlist_service.create_wishlist(request.get_json())}
+        {
+            'wishlist': wishlist_service.create_wishlist(
+                user_id, request.get_json()
+            )
+         }
     ), 201
 
 
 @api.route('/wishlists/<int:wishlist_id>', methods=('GET',))
-def get_wishlist(wishlist_id):
+@login_required
+def get_wishlist(user_id, wishlist_id):
     return jsonify(
-        {'wishlist': wishlist_service.get_wishlist(wishlist_id)}
+        {'wishlist': wishlist_service.get_wishlist(user_id, wishlist_id)}
     )
 
 
 @api.route('/wishlists/<int:wishlist_id>', methods=('DELETE',))
-def delete_wishlist(wishlist_id):
-    wishlist_service.remove_wishlist(wishlist_id)
+@login_required
+def delete_wishlist(user_id, wishlist_id):
+    wishlist_service.remove_wishlist(user_id, wishlist_id)
     return ('', 204)
 
 
 @api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET', 'POST'))
-def get_cards(wishlist_id):
-    logger.info(request.headers)
+@login_required
+def get_cards(user_id, wishlist_id):
     if request.method == 'GET':
         return jsonify(
-            {'cards': wishlist_service.get_wishlist(wishlist_id)['cards']}
+            {
+                'cards': wishlist_service.get_wishlist(
+                    user_id, wishlist_id
+                )['cards']
+             }
         )
     data = request.get_json()
     return jsonify(
-        {'card': wishlist_service.add_card(wishlist_id, data)}
+        {'card': wishlist_service.add_card(user_id, wishlist_id, data)}
     ), 201
 
+
 @api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['DELETE',])  # noqa
-def delete_card(wishlist_id, card_id):
-    wishlist_service.remove_card(card_id)
+@login_required
+def delete_card(user_id, wishlist_id, card_id):
+    wishlist_service.remove_card(user_id, card_id)
     return '', 204
 
 
 @api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['PUT',])  # noqa
-def update_card(wishlist_id, card_id):
+@login_required
+def update_card(user_id, wishlist_id, card_id):
     return jsonify(
-        {'card': wishlist_service.update_card(card_id, request.get_json())}
+        {
+            'card': wishlist_service.update_card(
+                user_id, card_id, request.get_json()
+            )
+         }
     )
 
 

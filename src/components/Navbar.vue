@@ -31,10 +31,10 @@ export default {
     },
     onLogOut () {
       const token = this.$store.state.token
-      this.$auth.logout()
-      this.$http.post('/auth/logout', {token}).then(r => {
-        this.$store.dispatch('logOut')
-        location.reload()
+      this.$store.dispatch('logOut').then(() => {
+        this.$http.post('/auth/logout', {token})
+          .then(() => this.$auth.logout())
+          .then(() => location.reload())
       })
     }
   }

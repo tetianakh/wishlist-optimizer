@@ -9,11 +9,11 @@ const store = new Vuex.Store({
   },
   getters: {
     isAuthenticated: state => {
-      return state.token !== null
+      return Boolean(state.token)
     }
   },
   mutations: {
-    logIn (state, {token}) {
+    logIn (state, token) {
       state.token = token
     },
     logOut (state) {
@@ -21,9 +21,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    logIn (context, {token}) {
+    logIn ({commit}, {token}) {
       localStorage.setItem('user-token', token)
-      context.commit('logIn', token)
+      commit('logIn', token)
     },
     logOut (context) {
       localStorage.removeItem('user-token')

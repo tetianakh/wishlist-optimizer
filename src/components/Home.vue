@@ -55,12 +55,14 @@ export default {
     loadWishlists () {
       console.log('Loading wishlists')
       this.client.getWishlists().then(resp => {
-        this.wishlists = resp.wishlists
-      }).catch(e => console.error(e))
+        if (resp) {
+          this.wishlists = resp.wishlists
+        }
+      })
     },
     openWishlist (wishlistId) {
       this.$router.push({
-        name: 'wishlist',
+        name: 'Wishlist',
         params: {
           id: wishlistId
         }
@@ -69,7 +71,7 @@ export default {
     addNewWishlist () {
       this.client.addNewWishlist(this.newWishlistName).then(resp => {
         this.$router.push({
-          name: 'wishlist',
+          name: 'Wishlist',
           params: {
             id: resp.wishlist.id
           }

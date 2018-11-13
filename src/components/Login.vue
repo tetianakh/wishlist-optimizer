@@ -18,11 +18,6 @@ export default {
   components: {
     Page
   },
-  created () {
-    if (this.authenticated) {
-      this.$router.push({name: 'Home'})
-    }
-  },
   computed: {
     authenticated () {
       return this.$store.state.token !== null
@@ -32,8 +27,9 @@ export default {
     onLogIn (provider) {
       this.$auth.authenticate(provider).then((authResponse) => {
         const token = authResponse.data.token
-        this.$store.dispatch('logIn', {token: token})
-        this.$router.push({name: 'Home'})
+        this.$store.dispatch('logIn', {token: token}).then(() => {
+          this.$router.push({name: 'Home'})
+        })
       }).catch(e => {
         console.error(e)
         this.$store.dispatch('logOut')

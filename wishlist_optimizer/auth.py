@@ -29,7 +29,9 @@ def log_in_with_google():
         'client_id': client_id,
         'client_secret': client_secret,
         'redirect_uri': current_app.config['GOOGLE_REDIRECT_URL'],
-        'grant_type': 'authorization_code'
+        'grant_type': 'authorization_code',
+        'access_type': 'offline',
+        'prompt': 'concent'
     }
 
     resp = requests.post(url, data=data, headers=headers)
@@ -44,8 +46,11 @@ def log_in_with_google():
 
 @auth.route('/logout', methods=['POST'])
 def logout():
-    user_service.revoke(request.get_json()['token'])
-    return 'Token has been revoked', 200
+    token = request.get_json().get('token')
+    if token:
+        user_service.revoke(token)
+        return 'Token has been revoked', 200
+    return '', 400
 
 
 def login_required(view):

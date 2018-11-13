@@ -3,7 +3,6 @@ from functools import wraps
 
 import requests
 from flask import Blueprint, request, jsonify, current_app
-
 from wishlist_optimizer.user_service import UserService, TokenValidationError
 from wishlist_optimizer.wishlist_service import ObjectNotFound
 
@@ -17,7 +16,6 @@ user_service = UserService()
 @auth.route('/google', methods=['POST'])
 def log_in_with_google():
     request_data = request.get_json()
-    logger.info('Response: `%s`, `%s`', request.args, request_data)
     if 'code' not in request_data or 'error' in request_data:
         return jsonify(request_data), 401
     client_id = current_app.config['GOOGLE_CLIENT_ID']
@@ -33,14 +31,15 @@ def log_in_with_google():
     }
 
     resp = requests.post(url, data=data, headers=headers)
-    logger.info('Google response: %s', resp.text)
     resp_data = resp.json()
     if 'error' in resp_data:
-        return resp_data['error'], 401
+        return jsonify(resp_data['error']), 400
     jwt_token = resp_data['id_token']
     refresh_token = resp_data.get('refresh_token')
     user_id = user_service.validate_token(jwt_token)
-    user_service.save_refresh_token(user_id, refresh_token)
+    if refresh_token:
+        # refresh token is sent only during 1st login
+        user_service.save_refresh_token(user_id, refresh_token)
     return jsonify({'token': jwt_token})
 
 
@@ -56,7 +55,7 @@ def logout():
 def login_required(view):
     @wraps(view)
     def inner(*args, **kwargs):
-        jwt_token = request.headers['Authorization']
+        jwt_token = request.headers['Authorization'].replace('Bearer ', '')
         try:
             user_id = user_service.validate_token(jwt_token)
         except TokenValidationError:
@@ -67,3 +66,24 @@ def login_required(view):
             return 'Object not found', 404
 
     return inner
+
+
+@auth.route('/refresh', methods=['POST'])
+def refresh():
+    try:
+        token = request.headers['Authorization'].replace('Bearer ', '')
+    except KeyError:
+        return 'Missing auth header', 401
+    refresh_token = user_service.get_refresh_token(token)
+    if not refresh_token:
+        return 'Failed to get refresh token', 401
+    data = {
+        'client_id': current_app.config['GOOGLE_CLIENT_ID'],
+        'client_secret': current_app.config['GOOGLE_CLIENT_SECRET'],
+        'refresh_token': refresh_token,
+        'grant_type': 'refresh_token'
+    }
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    url = 'https://www.googleapis.com/oauth2/v4/token'
+    resp = requests.post(url, data=data, headers=headers)
+    return jsonify({'token': resp.json()['id_token']})

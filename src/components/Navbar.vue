@@ -33,8 +33,10 @@ export default {
       const token = this.$store.state.token
       this.$store.dispatch('logOut').then(() => {
         this.$http.post('/auth/logout', {token})
-          .then(() => this.$auth.logout())
-          .then(() => location.reload())
+          .then(() => {
+            this.$auth.logout()
+            location.reload()
+          })
       })
     }
   }

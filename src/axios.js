@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {logOut} from './auth'
 import store from './store/store'
 
 const instance = axios.create({
@@ -11,19 +12,40 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   config => {
-    config.headers.authorization = store.state.token
+    if (store.getters.isAuthenticated) {
+      config.headers.Authorization = 'Bearer ' + store.state.token
+    }
     return config
   },
   error => Promise.reject(error)
 )
 
-axios.interceptors.response.use(function (response) {
-  if (response.status === 401) {
-    console.log(response)
+const BASE_AUTH_URL = process.env.API_URL.replace('/api', '/auth')
+const INVALID_TOKEN = 'Invalid auth token'
+
+const updateToken = () => {
+  const headers = {'Authorization': store.state.token}
+  return axios.post(`${BASE_AUTH_URL}/refresh`, {}, {headers})
+    .then(resp => resp.data.token).catch(e => {
+      if (e.response.status === 401) {
+        logOut()
+        throw e
+      }
+    })
+}
+
+instance.interceptors.response.use(null, (error) => {
+  console.log(error)
+  if (error.config && error.response && error.response.status === 401 && error.response.data.error === INVALID_TOKEN && store.getters.isAuthenticated) {
+    return updateToken().then((token) => {
+      store.dispatch('logIn', {token}).then(() => {
+        error.config.headers.Authorization = 'Bearer ' + token
+        return axios.request(error.config)
+      })
+    })
+  } else if (error.response.status === 401) {
+    logOut()
   }
-  return response
-}, function (error) {
-  // Do something with response error
   return Promise.reject(error)
 })
 

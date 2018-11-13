@@ -74,6 +74,12 @@ class User(db.Model):
         'Wishlist', backref="user", lazy=False, cascade="all, delete-orphan"
     )
 
+    def __repr__(self):
+        return 'User(id=%s, sub=%s, refresh_token=%s)' % (
+            self.id, self.sub,
+            '<token>' if self.refresh_token else self.refresh_token
+        )
+
 
 class RevokedToken(db.Model):
     __tablename__ = 'revoked_token'

@@ -7,9 +7,7 @@ export default class WishlistClient {
   getWishlists () {
     return this.http.get('wishlists').then(resp => resp.data)
       .catch(e => {
-        if (e.response.status !== 401) {
-          console.error(e)
-        }
+        console.log(e.response)
       })
   }
 

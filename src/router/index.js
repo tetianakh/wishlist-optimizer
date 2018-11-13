@@ -35,7 +35,6 @@ router.beforeEach((to, from, next) => {
   if (authRequired && !isLoggedIn) {
     return next('/login')
   }
-  
   return next()
 })
 

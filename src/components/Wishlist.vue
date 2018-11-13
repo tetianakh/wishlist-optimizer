@@ -21,6 +21,7 @@
     <div class="row centered">
       <b-button
         variant="success"
+        v-if="hasCards"
         @click="submitPricingJob"
         :disabled="loadingPricing"
         class="margin">Get Pricing</b-button>
@@ -76,7 +77,7 @@
 
     </b-modal>
 
-    <table class="table table-hover" v-if="wishlist.cards && wishlist.cards.length > 0">
+    <table class="table table-hover" v-if="hasCards">
       <thead>
         <tr>
           <th>#</th>
@@ -99,7 +100,8 @@
             <b-form-input v-else v-model="updatedCard.quantity" type="number" @keydown.enter.native="updateCard(idx)"></b-form-input>
           </td>
           <td>
-            {{ card.languages | join }}
+            <p v-if="updatedCard.id !== card.id" @click="activateUpdate(idx)" class='hoverable'>{{ card.languages | join }}</p>
+            <b-form-select v-else  v-model="updatedCard.languages" :options="availableLanguages" multiple ></b-form-select>
           </td>
           <td>
             <font-awesome-icon v-if="updatedCard.id !== card.id" icon="edit" @click="activateUpdate(idx)" class="hoverable"/>
@@ -165,6 +167,9 @@ export default {
   computed: {
     searchedCardNames () {
       return Array.from(new Set(this.searchedCards.map(c => c.name)))
+    },
+    hasCards () {
+      return this.wishlist && this.wishlist.cards && this.wishlist.cards.length > 0
     }
   },
   created () {

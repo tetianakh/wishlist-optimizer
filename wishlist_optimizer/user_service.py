@@ -58,7 +58,6 @@ class UserService:
             return
         user.refresh_token = refresh_token
         logger.info('Saving refresh token for user %s', user)
-        db.session.add(user)
         db.session.commit()
 
     def get_refresh_token(self, jwt_token):

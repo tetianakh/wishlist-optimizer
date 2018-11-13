@@ -51,7 +51,7 @@ class WishlistService:
         return Card(
             name=data['name'].title(),
             quantity=data['quantity'],
-            languages=[l for l in languages if l]
+            languages=languages
         )
 
     def remove_card(self, user_id, card_id):
@@ -77,6 +77,7 @@ class WishlistService:
             raise ObjectNotFound
         card.name = data['name']
         card.quantity = data['quantity']
+        card.languages = self._languages_service.find_by_name(data['languages'])  # noqa
         db.session.commit()
         return card.to_dict()
 

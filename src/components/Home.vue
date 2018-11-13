@@ -49,11 +49,15 @@ export default {
     }
   },
   mounted () {
-    this.client.getWishlists().then(resp => {
-      this.wishlists = resp.wishlists
-    }).catch(e => console.error(e))
+    this.loadWishlists()
   },
   methods: {
+    loadWishlists () {
+      console.log('Loading wishlists')
+      this.client.getWishlists().then(resp => {
+        this.wishlists = resp.wishlists
+      }).catch(e => console.error(e))
+    },
     openWishlist (wishlistId) {
       this.$router.push({
         name: 'wishlist',

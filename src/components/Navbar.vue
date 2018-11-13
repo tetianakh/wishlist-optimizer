@@ -6,12 +6,7 @@
     </b-navbar-brand>
 
     <b-navbar-nav class="ml-auto">
-      <div class="google-btn" v-if="!authenticated" @click="onLogIn('google')">
-        <div class="google-icon-wrapper">
-          <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-        </div>
-        <p class="btn-text"><b>Sign in with google</b></p>
-      </div>
+      <a href='#' v-if="!authenticated" @click="onLogIn" class="link">Log in</a>
       <a href='#' v-else @click="onLogOut" class="link">Log out</a>
     </b-navbar-nav>
 
@@ -19,77 +14,36 @@
 </template>
 
 <script>
+import eventBus from '../EventBus'
+
 export default {
+  mounted () {
+    this.eventBus = eventBus
+  },
   computed: {
     authenticated () {
       return this.$store.state.token !== null
     }
   },
   methods: {
-    onLogIn (provider) {
-      this.$auth.authenticate(provider).then((authResponse) => {
-        const token = authResponse.data.token
-        this.$store.dispatch('logIn', {token: token})
-      }).catch(e => console.error(e))
+    onLogIn () {
+      this.$router.push({'name': 'Login'})
     },
     onLogOut () {
-      this.$auth.logout().then(() => {
+      const token = this.$store.state.token
+      this.$auth.logout()
+      this.$http.post('/auth/logout', {token}).then(r => {
         this.$store.dispatch('logOut')
-      }).catch(e => console.error(e.message))
+        location.reload()
+      })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 .link {
   color: #fff;
 }
-
-$white: #fff;
-$google-blue: #4285f4;
-$button-active-blue: #1669F2;
-
-.google-btn {
-  width: 184px;
-  height: 42px;
-  background-color: $white;
-  border-radius: 2px;
-  box-shadow: 0 3px 4px 0 rgba(0,0,0,.25);
-  text-align: center;
-  cursor: pointer;
-  .google-icon-wrapper {
-    position: absolute;
-    margin-top: 1px;
-    margin-left: 0px;
-    width: 40px;
-    height: 40px;
-    border-radius: 2px;
-    background-color: $white;
-  }
-  .google-icon {
-    position: absolute;
-    margin-top: 11px;
-    margin-left: 0px;
-    width: 18px;
-    height: 18px;
-  }
-  .btn-text {
-    float: right;
-    margin: 11px 20px 0 0;
-    color: $google-blue;
-    font-size: 14px;
-    letter-spacing: 0.2px;
-    font-family: "Roboto";
-  }
-  &:hover {
-    box-shadow: 0 0 6px $google-blue;
-  }
-  &:active {
-    background: $button-active-blue;
-  }
-}
-
-@import url(https://fonts.googleapis.com/css?family=Roboto:400);
 
 </style>

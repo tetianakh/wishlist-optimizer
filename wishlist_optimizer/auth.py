@@ -42,6 +42,12 @@ def log_in_with_google():
     return jsonify({'token': jwt_token})
 
 
+@auth.route('/logout', methods=['POST'])
+def logout():
+    user_service.revoke(request.get_json()['token'])
+    return 'Token has been revoked', 200
+
+
 def login_required(view):
     @wraps(view)
     def inner(*args, **kwargs):

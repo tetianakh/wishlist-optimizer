@@ -46,3 +46,8 @@ class UserService:
             db.session.add(user)
             db.session.commit()
         return user.id
+
+    def revoke(self, jwt_token):
+        token = RevokedToken(jwt=jwt_token)
+        db.session.add(token)
+        db.session.commit()

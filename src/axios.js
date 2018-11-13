@@ -17,4 +17,14 @@ instance.interceptors.request.use(
   error => Promise.reject(error)
 )
 
+axios.interceptors.response.use(function (response) {
+  if (response.status === 401) {
+    console.log(response)
+  }
+  return response
+}, function (error) {
+  // Do something with response error
+  return Promise.reject(error)
+})
+
 export default instance

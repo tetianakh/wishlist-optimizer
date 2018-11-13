@@ -27,8 +27,9 @@ Vue.use(VueAuthenticate, {
 
   providers: {
     google: {
-      clientId: '1000794530745-gnf0qu137rac5kgcskkphuohfqlp8ahu.apps.googleusercontent.com'
-      // redirectUri: 'http://localhost:8080/auth/callback' // Your client app URL
+      clientId: '1000794530745-gnf0qu137rac5kgcskkphuohfqlp8ahu.apps.googleusercontent.com',
+      requiredUrlParams: ['scope', 'access_type'],
+      accessType: 'offline'
     }
   }
 })

@@ -51,3 +51,8 @@ class UserService:
         token = RevokedToken(jwt=jwt_token)
         db.session.add(token)
         db.session.commit()
+
+    def save_refresh_token(self, user_id, refresh_token):
+        user = User.query.get(user_id)
+        user.refresh_token = refresh_token
+        db.session.commit()

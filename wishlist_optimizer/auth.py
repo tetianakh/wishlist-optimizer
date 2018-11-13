@@ -30,8 +30,6 @@ def log_in_with_google():
         'client_secret': client_secret,
         'redirect_uri': current_app.config['GOOGLE_REDIRECT_URL'],
         'grant_type': 'authorization_code',
-        'access_type': 'offline',
-        'prompt': 'concent'
     }
 
     resp = requests.post(url, data=data, headers=headers)
@@ -40,7 +38,9 @@ def log_in_with_google():
     if 'error' in resp_data:
         return resp_data['error'], 401
     jwt_token = resp_data['id_token']
-    user_service.validate_token(jwt_token)
+    refresh_token = resp_data.get('refresh_token')
+    user_id = user_service.validate_token(jwt_token)
+    user_service.save_refresh_token(user_id, refresh_token)
     return jsonify({'token': jwt_token})
 
 

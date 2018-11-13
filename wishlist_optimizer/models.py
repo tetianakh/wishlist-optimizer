@@ -69,6 +69,7 @@ class User(db.Model):
     sub = db.Column(db.Text, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    refresh_token = db.Column(db.String(128))
     wishlists = db.relationship(
         'Wishlist', backref="user", lazy=False, cascade="all, delete-orphan"
     )

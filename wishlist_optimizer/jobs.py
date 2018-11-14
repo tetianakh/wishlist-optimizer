@@ -1,3 +1,4 @@
+import logging
 import asyncio
 import redis
 from rq import Queue
@@ -6,6 +7,9 @@ from flask import current_app
 from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.mkm_api import MkmApi, HttpClient, RateLimitReached
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_pricing(wishlist):
@@ -28,7 +32,7 @@ def get_pricing(wishlist):
     except RateLimitReached:
         error = 'Rate limit reached'
     except Exception as e:
-        logger.exception(e)
+        logger.exception('Exception occured in a pricing job: %s', e)
         error = e.message
     finally:
         loop.run_until_complete(client.close())

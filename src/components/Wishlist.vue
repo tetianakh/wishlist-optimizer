@@ -247,13 +247,13 @@ export default {
       this.pricingClient.getPricingJobResult(this.pricingJobId).then(resp => {
         if (resp.job_result === null && (resp.job_status === 'started' || resp.job_status === 'queued')) {
           setTimeout(this.getPricingResult, 1000)
-        } else if (resp.job_status === 'failed') {
+        } else if (resp.job_status === 'failed' || resp.result.error !== null) {
           this.loadingPricing = false
-          this.errorMessage = 'Failed to fetch pricing data'
+          this.errorMessage = resp.result.error || 'Failed to fetch pricing data'
         } else {
           this.loadingPricing = false
           console.log(resp.job_result)
-          this.pricing = resp.job_result === null ? [] : resp.job_result
+          this.pricing = resp.job_result.result === null ? [] : resp.job_result.result
           if (this.pricing.length === 0) {
             this.infoMessage = 'No data was found for these cards'
           }

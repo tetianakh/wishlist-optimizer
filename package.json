@@ -19,6 +19,7 @@
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "jquery": "^1.9.1",
+    "jwt-decode": "^2.2.0",
     "lodash": "^4.17.11",
     "mtgsdk": "^0.4.2",
     "npm": "^6.4.1",

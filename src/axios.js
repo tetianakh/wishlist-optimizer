@@ -27,23 +27,20 @@ const updateToken = () => {
   const headers = {'Authorization': store.state.token}
   return axios.post(`${BASE_AUTH_URL}/refresh`, {}, {headers})
     .then(resp => resp.data.token).catch(e => {
-      if (e.response.status === 401) {
-        logOut()
-        throw e
-      }
+      logOut()
+      throw e
     })
 }
 
 instance.interceptors.response.use(null, (error) => {
-  console.log(error)
   if (error.config && error.response && error.response.status === 401 && error.response.data.error === INVALID_TOKEN && store.getters.isAuthenticated) {
     return updateToken().then((token) => {
       store.dispatch('logIn', {token}).then(() => {
         error.config.headers.Authorization = 'Bearer ' + token
-        return axios.request(error.config)
+        return instance.request(error.config)
       })
     })
-  } else if (error.response.status === 401) {
+  } else if (error.response && error.response.status === 401) {
     logOut()
   }
   return Promise.reject(error)

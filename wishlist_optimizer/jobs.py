@@ -33,7 +33,7 @@ def get_pricing(wishlist):
         error = 'Rate limit reached'
     except Exception as e:
         logger.exception('Exception occured in a pricing job: %s', e)
-        error = e.message
+        error = str(e)
     finally:
         loop.run_until_complete(client.close())
     return {

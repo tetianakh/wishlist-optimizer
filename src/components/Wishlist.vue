@@ -247,9 +247,10 @@ export default {
       this.pricingClient.getPricingJobResult(this.pricingJobId).then(resp => {
         if (resp.job_result === null && (resp.job_status === 'started' || resp.job_status === 'queued')) {
           setTimeout(this.getPricingResult, 1000)
-        } else if (resp.job_status === 'failed' || resp.result.error !== null) {
+        } else if (resp.job_status === 'failed' || resp.job_result.error !== null) {
           this.loadingPricing = false
-          this.errorMessage = resp.result.error || 'Failed to fetch pricing data'
+          console.error(resp.job_result.error)
+          this.errorMessage = 'Failed to fetch pricing data'
         } else {
           this.loadingPricing = false
           console.log(resp.job_result)

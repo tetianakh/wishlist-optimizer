@@ -80,6 +80,6 @@ def refresh():
     try:
         return jsonify({'token': resp.json()['id_token']}), 200
     except Exception as e:
-        logger.exception(e)
+        logger.exception('Failed to refresh token for user %s: %s', user_id, e)
         user_service.invalidate_token(user_id)
         return 'Failed to refresh token', 401

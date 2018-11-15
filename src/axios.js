@@ -44,8 +44,7 @@ instance.interceptors.request.use((config) => {
     }
     if (tokenExpired) {
       return updateToken().then((token) => {
-        return tokenStore.logIn(token)
-      }).then(() => {
+        tokenStore.logIn(token)
         originalRequest['Authorization'] = 'Bearer ' + tokenStore.getToken()
         return Promise.resolve(originalRequest)
       }).catch(e => {
@@ -57,23 +56,9 @@ instance.interceptors.request.use((config) => {
   return config
 }, err => Promise.reject(err)
 )
-//
-// instance.interceptors.response.use(null, (error) => {
-//  if (error.config && error.response && error.response.status === 401 && error.response.data.error === INVALID_TOKEN && tokenStore.getters.isAuthenticated) {
-//    return updateToken().then((token) => {
-//      tokenStore.dispatch('logIn', {token}).then(() => {
-//        error.config.headers.Authorization = 'Bearer ' + token
-//        return instance.request(error.config)
-//      })
-//    })
-//  } else if (error.response && error.response.status === 401) {
-//    logOut()
-//  }
-//  return Promise.reject(error)
-// })
 
 instance.interceptors.response.use(null, (error) => {
-  if (error.config && error.response && error.response.status === 404){
+  if (error.config && error.response && error.response.status === 404) {
     router.push({'name': 'NotFound'})
     return
   }

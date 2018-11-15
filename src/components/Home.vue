@@ -5,11 +5,15 @@
 
     <div class="row centered">
       <div class="centered col-lg-6">
-        <b-form inline>
-          <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Wishlist Name" v-model="newWishlistName" />
-          <button type="button" class="btn btn-success" @click="addNewWishlist">
+
+        <b-form inline @submit.prevent="addNewWishlist">
+          <b-input class="mb-2 mr-sm-2 mb-sm-0"
+            placeholder="Wishlist Name"
+            v-model="newWishlistName"/>
+          <button class="btn btn-success" type="submit">
       Add new wishlist</button>
         </b-form>
+
       </div>
     </div>
 
@@ -45,14 +49,19 @@ export default {
     }
   },
   mounted () {
-    this.client.getWishlists().then(resp => {
-      this.wishlists = resp.wishlists
-    }).catch(e => console.error(e))
+    this.loadWishlists()
   },
   methods: {
+    loadWishlists () {
+      this.client.getWishlists().then(resp => {
+        if (resp) {
+          this.wishlists = resp.wishlists
+        }
+      })
+    },
     openWishlist (wishlistId) {
       this.$router.push({
-        name: 'wishlist',
+        name: 'Wishlist',
         params: {
           id: wishlistId
         }
@@ -61,7 +70,7 @@ export default {
     addNewWishlist () {
       this.client.addNewWishlist(this.newWishlistName).then(resp => {
         this.$router.push({
-          name: 'wishlist',
+          name: 'Wishlist',
           params: {
             id: resp.wishlist.id
           }

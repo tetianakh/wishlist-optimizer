@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import tokenStore from '../store/token'
 
 const routerOptions = [
   { path: '/', name: 'Home', component: 'Home' },
-  { path: '/wishlist/:id', name: 'wishlist', component: 'Wishlist' },
-  { path: '*', component: 'NotFound' }
+  { path: '/wishlist/:id', name: 'Wishlist', component: 'Wishlist' },
+  { path: '/login', name: 'Login', component: 'Login' },
+  { path: '*', component: 'NotFound', name: 'NotFound' }
 ]
 const routes = routerOptions.map(route => {
   return {
@@ -14,7 +16,25 @@ const routes = routerOptions.map(route => {
 })
 
 Vue.use(Router)
-export default new Router({
+
+const router = new Router({
   routes,
   mode: 'history'
 })
+
+const publicPages = ['Login', 'NotFound']
+
+router.beforeEach((to, from, next) => {
+  // redirect to home page if logged in and trying to access login page
+  if (to.name === 'Login' && tokenStore.isAuthenticated()) {
+    return next('/')
+  }
+  // redirect to login page if not logged in and trying to access a restricted page
+  const authRequired = !publicPages.includes(to.name)
+  if (authRequired && !tokenStore.isAuthenticated()) {
+    return next({name: 'Login'})
+  }
+  return next()
+})
+
+export default router

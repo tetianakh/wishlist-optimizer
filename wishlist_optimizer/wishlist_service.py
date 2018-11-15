@@ -21,7 +21,7 @@ class WishlistService:
 
     def get_wishlist(self, user_id, wishlist_id):
         wl = Wishlist.query.get(wishlist_id)
-        if wl.user_id != user_id:
+        if not wl or wl.user_id != user_id:
             raise ObjectNotFound
         return wl.to_dict() if wl else None
 

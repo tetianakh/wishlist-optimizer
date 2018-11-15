@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import {logOut, tokenIsExpired} from './auth'
 import tokenStore from './store/token'
+import router from './router'
 
 const instance = axios.create({
   baseURL: process.env.API_URL,
@@ -70,5 +71,13 @@ instance.interceptors.request.use((config) => {
 //  }
 //  return Promise.reject(error)
 // })
+
+instance.interceptors.response.use(null, (error) => {
+  if (error.config && error.response && error.response.status === 404){
+    router.push({'name': 'NotFound'})
+    return
+  }
+  Promise.reject(error)
+})
 
 export default instance

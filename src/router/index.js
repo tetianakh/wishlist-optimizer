@@ -6,7 +6,7 @@ const routerOptions = [
   { path: '/', name: 'Home', component: 'Home' },
   { path: '/wishlist/:id', name: 'Wishlist', component: 'Wishlist' },
   { path: '/login', name: 'Login', component: 'Login' },
-  { path: '*', component: 'NotFound' }
+  { path: '*', component: 'NotFound', name: 'NotFound' }
 ]
 const routes = routerOptions.map(route => {
   return {
@@ -22,17 +22,17 @@ const router = new Router({
   mode: 'history'
 })
 
-const publicPages = ['/login']
+const publicPages = ['Login', 'NotFound']
 
 router.beforeEach((to, from, next) => {
   // redirect to home page if logged in and trying to access login page
-  if (to.path === '/login' && tokenStore.isAuthenticated()) {
+  if (to.name === 'Login' && tokenStore.isAuthenticated()) {
     return next('/')
   }
   // redirect to login page if not logged in and trying to access a restricted page
-  const authRequired = !publicPages.includes(to.path)
+  const authRequired = !publicPages.includes(to.name)
   if (authRequired && !tokenStore.isAuthenticated()) {
-    return next('/login')
+    return next({name: 'Login'})
   }
   return next()
 })

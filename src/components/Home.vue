@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     loadWishlists () {
-      console.log('Loading wishlists')
       this.client.getWishlists().then(resp => {
         if (resp) {
           this.wishlists = resp.wishlists

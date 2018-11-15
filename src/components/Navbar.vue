@@ -15,6 +15,7 @@
 
 <script>
 import eventBus from '../EventBus'
+import tokenStore from '../store/token'
 
 export default {
   mounted () {
@@ -22,7 +23,7 @@ export default {
   },
   computed: {
     authenticated () {
-      return this.$store.state.token !== null
+      return tokenStore.isAuthenticated()
     }
   },
   methods: {
@@ -30,14 +31,9 @@ export default {
       this.$router.push({'name': 'Login'})
     },
     onLogOut () {
-      const token = this.$store.state.token
-      this.$store.dispatch('logOut').then(() => {
-        this.$http.post('/auth/logout', {token})
-          .then(() => {
-            this.$auth.logout()
-            location.reload()
-          })
-      })
+      tokenStore.logOut()
+      this.$auth.logout()
+      location.reload()
     }
   }
 }

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '../store/store'
+import tokenStore from '../store/token'
 
 const routerOptions = [
   { path: '/', name: 'Home', component: 'Home' },
@@ -25,14 +25,13 @@ const router = new Router({
 const publicPages = ['/login']
 
 router.beforeEach((to, from, next) => {
-  // redirect to login page if not logged in and trying to access a restricted page
-  const isLoggedIn = store.getters.isAuthenticated
-  if (to.path === '/login' && isLoggedIn) {
+  // redirect to home page if logged in and trying to access login page
+  if (to.path === '/login' && tokenStore.isAuthenticated()) {
     return next('/')
   }
-
+  // redirect to login page if not logged in and trying to access a restricted page
   const authRequired = !publicPages.includes(to.path)
-  if (authRequired && !isLoggedIn) {
+  if (authRequired && !tokenStore.isAuthenticated()) {
     return next('/login')
   }
   return next()

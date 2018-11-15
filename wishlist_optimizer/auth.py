@@ -55,6 +55,7 @@ def logout():
 def login_required(view):
     @wraps(view)
     def inner(*args, **kwargs):
+        # return jsonify({'error': 'Invalid auth token'}), 401
         jwt_token = request.headers['Authorization'].replace('Bearer ', '')
         try:
             user_id = user_service.validate_token(jwt_token)

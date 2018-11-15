@@ -13,6 +13,7 @@
 
 <script>
 import Page from './Page'
+import tokenStore from '../store/token'
 
 export default {
   components: {
@@ -20,19 +21,19 @@ export default {
   },
   computed: {
     authenticated () {
-      return this.$store.state.token !== null
+      return tokenStore.isAuthenticated()
     }
   },
   methods: {
     onLogIn (provider) {
       this.$auth.authenticate(provider).then((authResponse) => {
         const token = authResponse.data.token
-        this.$store.dispatch('logIn', {token}).then(() => {
-          this.$router.push({name: 'Home'})
-        })
+        return tokenStore.logIn(token)
+      }).then(() => {
+        this.$router.push({name: 'Home'})
       }).catch(e => {
         console.error(e)
-        this.$store.dispatch('logOut')
+        tokenStore.logOut()
       })
     }
   }

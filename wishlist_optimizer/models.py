@@ -79,9 +79,3 @@ class User(db.Model):
             self.id, self.sub,
             '<token>' if self.refresh_token else self.refresh_token
         )
-
-
-class RevokedToken(db.Model):
-    __tablename__ = 'revoked_token'
-    id = db.Column(db.Integer, primary_key=True)
-    jwt = db.Column(db.String(2000))

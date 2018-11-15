@@ -1,5 +1,5 @@
 import logging
-from wishlist_optimizer.models import User, db, RevokedToken
+from wishlist_optimizer.models import User, db
 
 import cachecontrol
 import requests
@@ -22,8 +22,6 @@ class UserService:
         self._session = cachecontrol.CacheControl(session)
 
     def validate_token(self, jwt_token):
-        if RevokedToken.query.filter_by(jwt=jwt_token).first():
-            raise TokenValidationError()
         try:
             id_info = self._get_id_info(jwt_token)
             if id_info['iss'] != current_app.config['GOOGLE_ISS']:
@@ -44,12 +42,8 @@ class UserService:
         logger.debug('User: %s', user)
         return user.id
 
-    def revoke(self, jwt_token):
-        token = RevokedToken(jwt=jwt_token)
-        db.session.add(token)
-        db.session.commit()
-
-    def save_refresh_token(self, user_id, refresh_token):
+    @staticmethod
+    def save_refresh_token(user_id, refresh_token):
         user = User.query.get(user_id)
         if not user:
             logger.warning(
@@ -60,7 +54,8 @@ class UserService:
         logger.info('Saving refresh token for user %s', user)
         db.session.commit()
 
-    def get_refresh_token(self, jwt_token):
+    @staticmethod
+    def get_refresh_token(jwt_token):
         try:
             decoded = jwt.decode(jwt_token, verify=False)
         except ValueError:
@@ -70,10 +65,16 @@ class UserService:
             return None
         user = User.query.filter_by(sub=decoded['sub']).first()
         logger.info(User.query.all())
-        return user.refresh_token if user else None
+        return (user.id, user.refresh_token) if user else None, None
 
     def _get_id_info(self, jwt_token):
         r = google.auth.transport.requests.Request(session=self._session)
         return id_token.verify_oauth2_token(
             jwt_token, r, current_app.config['GOOGLE_CLIENT_ID']
         )
+
+    @staticmethod
+    def invalidate_token(user_id):
+        user = User.query.get(user_id)
+        user.refresh_token = ''
+        db.session.commit()

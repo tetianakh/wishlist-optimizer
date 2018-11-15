@@ -43,19 +43,9 @@ def log_in_with_google():
     return jsonify({'token': jwt_token})
 
 
-@auth.route('/logout', methods=['POST'])
-def logout():
-    token = request.get_json().get('token')
-    if token:
-        user_service.revoke(token)
-        return 'Token has been revoked', 200
-    return '', 400
-
-
 def login_required(view):
     @wraps(view)
     def inner(*args, **kwargs):
-        # return jsonify({'error': 'Invalid auth token'}), 401
         jwt_token = request.headers['Authorization'].replace('Bearer ', '')
         try:
             user_id = user_service.validate_token(jwt_token)
@@ -75,7 +65,7 @@ def refresh():
         token = request.headers['Authorization'].replace('Bearer ', '')
     except KeyError:
         return 'Missing auth header', 401
-    refresh_token = user_service.get_refresh_token(token)
+    user_id, refresh_token = user_service.get_refresh_token(token)
     if not refresh_token:
         return 'Failed to get refresh token', 401
     data = {
@@ -87,4 +77,9 @@ def refresh():
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     url = 'https://www.googleapis.com/oauth2/v4/token'
     resp = requests.post(url, data=data, headers=headers)
-    return jsonify({'token': resp.json()['id_token']})
+    try:
+        return jsonify({'token': resp.json()['id_token']}), 200
+    except Exception as e:
+        logger.exception(e)
+        user_service.invalidate_token(user_id)
+        return 'Failed to refresh token', 401

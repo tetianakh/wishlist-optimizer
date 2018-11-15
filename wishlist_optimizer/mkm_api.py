@@ -72,13 +72,13 @@ class HttpClient:
         url = url.decode('utf-8')
         logger.debug('Request headers: %s', headers)
 
-        async with self._session.get(url, headers=headers, allow_redirects=False) as response:
+        async with self._session.get(
+                url, headers=headers, allow_redirects=False) as response:
             logger.debug(response.headers)
             logger.info('Received response %s', response.status)
             await response.text()
 
         return response
-
 
     async def _paginate(self, url, params, headers, field):
         # maxResults=100 start=0

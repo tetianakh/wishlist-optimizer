@@ -1,6 +1,16 @@
 <template lang="html">
   <page>
     <div class="wrapper">
+      <div>
+        <b-alert variant="danger"
+             dismissible
+             :show="errorMessage !== null"
+             @dismissed="errorMessage=null">
+            {{ errorMessage }}
+        </b-alert>
+      </div>
+    </div>
+    <div class="wrapper">
       <div class="google-btn" v-if="!authenticated" @click="onLogIn('google')">
         <div class="google-icon-wrapper">
           <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
@@ -19,6 +29,11 @@ export default {
   components: {
     Page
   },
+  data () {
+    return {
+      errorMessage: null
+    }
+  },
   computed: {
     authenticated () {
       return tokenStore.isAuthenticated()
@@ -26,11 +41,13 @@ export default {
   },
   methods: {
     onLogIn (provider) {
+      this.errorMessage = null
       this.$auth.authenticate(provider).then((authResponse) => {
         tokenStore.logIn(authResponse.data.token)
         this.$router.push({name: 'Home'})
       }).catch(e => {
         console.error(e)
+        this.errorMessage = "Authentication failed"
         tokenStore.logOut()
       })
     }

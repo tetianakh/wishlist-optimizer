@@ -6,7 +6,7 @@ import router from './router'
 
 const instance = axios.create({
   baseURL: process.env.API_URL,
-  timeout: 1000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -39,15 +39,19 @@ instance.interceptors.request.use((config) => {
       tokenExpired = tokenIsExpired()
     } catch (e) {
       // token is invalid and couldn't be decoded, clear it
+      console.log('Failed to check if foken is valid')
+      console.error(e)
       logOut()
       return Promise.reject(e)
     }
     if (tokenExpired) {
       return updateToken().then((token) => {
         tokenStore.logIn(token)
-        originalRequest['Authorization'] = 'Bearer ' + tokenStore.getToken()
+        originalRequest.headers.Authorization = 'Bearer ' + tokenStore.getToken()
         return Promise.resolve(originalRequest)
       }).catch(e => {
+        logger.info('Failed to refresh token')
+        logger.error(e)
         logOut()
         return Promise.reject(e)
       })

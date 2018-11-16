@@ -27,9 +27,7 @@ export default {
   methods: {
     onLogIn (provider) {
       this.$auth.authenticate(provider).then((authResponse) => {
-        const token = authResponse.data.token
-        return tokenStore.logIn(token)
-      }).then(() => {
+        tokenStore.logIn(authResponse.data.token)
         this.$router.push({name: 'Home'})
       }).catch(e => {
         console.error(e)

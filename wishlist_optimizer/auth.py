@@ -33,7 +33,7 @@ def log_in_with_google():
     resp = requests.post(url, data=data, headers=headers)
     resp_data = resp.json()
     if 'error' in resp_data:
-        return jsonify(resp_data['error']), 400
+        return jsonify(resp_data), 400
     jwt_token = resp_data['id_token']
     refresh_token = resp_data.get('refresh_token')
     user_id = user_service.validate_token(jwt_token)

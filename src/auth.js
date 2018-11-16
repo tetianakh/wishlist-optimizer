@@ -1,12 +1,14 @@
 import jwtDecode from 'jwt-decode'
 
 import tokenStore from './store/token'
+import router from './router'
 
 const EXP_TIME_WINDOW = 10 // seconds
 
 const logOut = () => {
   tokenStore.logOut()
-  location.reload()
+  // location.reload()
+  router.push({name: 'Login'})
 }
 
 const tokenIsExpired = () => {

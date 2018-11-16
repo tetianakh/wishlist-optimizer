@@ -64,8 +64,8 @@ class UserService:
         if 'sub' not in decoded:
             return None
         user = User.query.filter_by(sub=decoded['sub']).first()
-        logger.info(User.query.all())
-        return (user.id, user.refresh_token) if user else None, None
+        logger.info('Found user: %s', user)
+        return (user.id, user.refresh_token) if user else (None, None)
 
     def _get_id_info(self, jwt_token):
         r = google.auth.transport.requests.Request(session=self._session)

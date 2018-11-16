@@ -50,8 +50,8 @@ instance.interceptors.request.use((config) => {
         originalRequest.headers.Authorization = 'Bearer ' + tokenStore.getToken()
         return Promise.resolve(originalRequest)
       }).catch(e => {
-        logger.info('Failed to refresh token')
-        logger.error(e)
+        console.log('Failed to refresh token')
+        console.error(e)
         logOut()
         return Promise.reject(e)
       })

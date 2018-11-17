@@ -22,7 +22,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"
     MKM_USER_URL = "https://sandbox.cardmarket.com/en/Magic/Users"
-    GOOGLE_REDIRECT_URL = 'http://localhost:5000'
+    GOOGLE_REDIRECT_URL = 'http://localhost:5000/oauth'
 
 
 class ProductionConfig(BaseConfig):
@@ -32,4 +32,4 @@ class ProductionConfig(BaseConfig):
     REDIS_URL = os.getenv('REDIS_URL')
     MKM_URL = "https://api.cardmarket.com/ws/v2.0/output.json"
     MKM_USER_URL = "https://www.cardmarket.com/en/Magic/Users"
-    GOOGLE_REDIRECT_URL = 'http://www.vampirictutor.com'
+    GOOGLE_REDIRECT_URL = 'http://www.vampirictutor.com/oauth'

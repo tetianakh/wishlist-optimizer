@@ -22,14 +22,20 @@ library.add(faTimes)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueAxios, axios)
+
+const baseApiUrl = process.env.API_URL.replace('/api', '')
+const oauthRedirectUri = baseApiUrl + '/oauth'
+console.log(oauthRedirectUri)
+console.log(baseApiUrl)
 Vue.use(VueAuthenticate, {
-  baseUrl: process.env.API_URL.replace('/api', ''), // Your API domain
+  baseUrl: baseApiUrl, // Your API domain
 
   providers: {
     google: {
       clientId: '1000794530745-gnf0qu137rac5kgcskkphuohfqlp8ahu.apps.googleusercontent.com',
       requiredUrlParams: ['scope', 'access_type'],
-      accessType: 'offline'
+      accessType: 'offline',
+      redirectUri: oauthRedirectUri
     }
   }
 })

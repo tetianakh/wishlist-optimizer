@@ -6,6 +6,7 @@ const routerOptions = [
   { path: '/', name: 'Home', component: 'Home' },
   { path: '/wishlist/:id', name: 'Wishlist', component: 'Wishlist' },
   { path: '/login', name: 'Login', component: 'Login' },
+  { path: '/oauth', name: 'Blank', component: 'Blank' },
   { path: '*', component: 'NotFound', name: 'NotFound' }
 ]
 const routes = routerOptions.map(route => {
@@ -22,7 +23,7 @@ const router = new Router({
   mode: 'history'
 })
 
-const publicPages = ['Login', 'NotFound']
+const publicPages = ['Login', 'NotFound', 'Blank']
 
 router.beforeEach((to, from, next) => {
   // redirect to home page if logged in and trying to access login page

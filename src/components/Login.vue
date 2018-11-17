@@ -47,7 +47,7 @@ export default {
         this.$router.push({name: 'Home'})
       }).catch(e => {
         console.error(e)
-        this.errorMessage = "Authentication failed"
+        this.errorMessage = 'Authentication failed'
         tokenStore.logOut()
       })
     }
@@ -98,6 +98,7 @@ $button-active-blue: #1669F2;
     font-size: 14px;
     letter-spacing: 0.2px;
     font-family: "Roboto";
+    font-weight: 400;
   }
   &:hover {
     box-shadow: 0 0 6px $google-blue;

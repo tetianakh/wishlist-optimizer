@@ -25,57 +25,14 @@
         @click="submitPricingJob"
         :disabled="loadingPricing"
         class="margin">Get Pricing</b-button>
-      <b-button
-        v-b-modal="'newCardModal'"
-        variant="info"
-        class="margin">Add new card</b-button>
+      <new-card-button></new-card-button>
       <b-button
         @click="deleteWishlist"
         variant="danger"
         class="margin">Delete wishlist</b-button>
     </div>
 
-    <b-modal id="newCardModal" ok-title="Add" @ok="addCard">
-      <template slot="modal-title">
-        Add new card
-      </template>
-
-      <b-alert variant="danger"
-           dismissible
-           :show="modalErrorMessage !== null"
-           @dismissed="modalErrorMessage=null">
-          {{ modalErrorMessage }}
-      </b-alert>
-
-      <b-form>
-        <b-form-group
-          label="Card Name:"
-          label-for="cardNameInput">
-          <!-- <b-form-input v-model="newCard.name" id="cardNameInput"></b-form-input> -->
-          <v-select
-            :filterable="false"
-            :options="searchedCardNames"
-            v-model="newCard.name"
-            label="name"
-            @search="onCardSearch">
-          </v-select>
-        </b-form-group>
-
-        <b-form-group
-          label="Card quantity:"
-          label-for="cardQuantityInput">
-        <b-form-input v-model="newCard.quantity" id="cardQuantityInput" type="number"></b-form-input>
-      </b-form-group>
-
-      <b-form-group
-        label="Card languages:"
-        label-for="cardLanguagesInput">
-        <b-form-select v-model="newCard.languages" :options="availableLanguages" id="cardLanguagesInput" multiple></b-form-select>
-      </b-form-group>
-
-      </b-form>
-
-    </b-modal>
+    <new-card modalId="newCardModal"></new-card>
 
     <table class="table table-hover" v-if="hasCards">
       <thead>
@@ -118,37 +75,22 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import vSelect from 'vue-select'
 import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
-import LanguagesClient from '../clients/LanguagesClient'
-import MtgClient from '../clients/MtgClient'
+import NewCardButton from './NewCardButton'
 import Spinner from './MtgSpinnerRound'
 import Pricing from './Pricing'
 import Page from './Page'
-
-const searchCardByName = _.debounce((searchTerm, loading, self) => {
-  self.mtgClient.getCards(searchTerm).then(res => {
-    self.searchedCards = res
-    loading(false)
-  })
-}, 350)
+import NewCard from './NewCard'
+import {NEW_CARD} from '../events'
 
 export default {
-  components: {Spinner, Pricing, Page, vSelect},
+  components: {Spinner, Pricing, Page, NewCard, NewCardButton},
   data () {
     return {
       wishlist: {},
       wishlistClient: new WishlistClient(),
       pricingClient: new PricingClient(),
-      languagesClient: new LanguagesClient(),
-      mtgClient: new MtgClient(),
-      newCard: {
-        name: '',
-        quantity: 1,
-        languages: []
-      },
       updatedCard: {
         id: null,
         name: null,
@@ -159,15 +101,13 @@ export default {
       pricing: [],
       errorMessage: null,
       infoMessage: null,
-      modalErrorMessage: null,
-      availableLanguages: [],
       searchedCards: []
     }
   },
+  mounted () {
+    this.$eventBus.$on(NEW_CARD, this.addCard)
+  },
   computed: {
-    searchedCardNames () {
-      return Array.from(new Set(this.searchedCards.map(c => c.name)))
-    },
     hasCards () {
       return this.wishlist && this.wishlist.cards && this.wishlist.cards.length > 0
     }
@@ -181,9 +121,6 @@ export default {
         cards: resp.wishlist.cards
       }
     })
-    this.languagesClient.getAvailableLanguages().then(resp => {
-      this.availableLanguages = resp
-    })
   },
   filters: {
     join: function (values) {
@@ -191,20 +128,9 @@ export default {
     }
   },
   methods: {
-    addCard (event) {
-      if (!this.newCard.name || !this.newCard.quantity) {
-        event.preventDefault()
-        this.modalErrorMessage = 'Please fill in card name'
-        return
-      }
-      this.wishlistClient.addCard(this.$route.params.id, this.newCard).then(resp => {
+    addCard (card) {
+      this.wishlistClient.addCard(this.$route.params.id, card).then(resp => {
         this.wishlist.cards.push(resp.card)
-        this.newCard = {
-          name: '',
-          quantity: 1,
-          languages: []
-        }
-        this.searchedCards = []
       })
     },
     deleteCard (cardId, idx) {
@@ -264,13 +190,6 @@ export default {
         this.loadingPricing = false
         this.errorMessage = 'Failed to fetch pricing data'
       })
-    },
-    onCardSearch (searchTerm, loading) {
-      if (searchTerm.length < 2) {
-        return
-      }
-      loading(true)
-      searchCardByName(searchTerm, loading, this)
     }
   }
 }

@@ -14,13 +14,9 @@
 </template>
 
 <script>
-import eventBus from '../EventBus'
 import tokenStore from '../store/token'
 
 export default {
-  mounted () {
-    this.eventBus = eventBus
-  },
   computed: {
     authenticated () {
       return tokenStore.isAuthenticated()

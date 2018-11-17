@@ -46,7 +46,6 @@
 import _ from 'lodash'
 import vSelect from 'vue-select'
 import {NEW_CARD} from '../events'
-import LanguagesClient from '../clients/LanguagesClient'
 import MtgClient from '../clients/MtgClient'
 
 const searchCardByName = _.debounce((searchTerm, loading, self) => {
@@ -58,7 +57,7 @@ const searchCardByName = _.debounce((searchTerm, loading, self) => {
 
 export default {
   components: {vSelect},
-  props: ['modalId'],
+  props: ['modalId', 'availableLanguages'],
   data () {
     return {
       modalErrorMessage: null,
@@ -68,8 +67,6 @@ export default {
         quantity: 1,
         languages: []
       },
-      availableLanguages: [],
-      languagesClient: new LanguagesClient(),
       mtgClient: new MtgClient()
     }
   },
@@ -79,9 +76,6 @@ export default {
     }
   },
   mounted () {
-    this.languagesClient.getAvailableLanguages().then(resp => {
-      this.availableLanguages = resp
-    })
   },
   methods: {
     addCard (event) {

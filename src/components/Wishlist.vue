@@ -32,7 +32,7 @@
         class="margin">Delete wishlist</b-button>
     </div>
 
-    <new-card modalId="newCardModal"></new-card>
+    <new-card modalId="newCardModal" :availableLanguages="availableLanguages"></new-card>
 
     <table class="table table-hover" v-if="hasCards">
       <thead>
@@ -46,29 +46,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(card, idx) in wishlist.cards" :key="card.id">
-          <td>{{ idx + 1 }}</td>
-          <td>
-            <p v-if="updatedCard.id !== card.id" @click="activateUpdate(idx)" class='hoverable'>{{ card.name }}</p>
-            <b-form-input v-else v-model="updatedCard.name" type="text" @keydown.enter.native="updateCard(idx)"></b-form-input>
-          </td>
-          <td>
-            <p v-if="updatedCard.id !== card.id" @click="activateUpdate(idx)" class='hoverable'>{{ card.quantity }}</p>
-            <b-form-input v-else v-model="updatedCard.quantity" type="number" @keydown.enter.native="updateCard(idx)"></b-form-input>
-          </td>
-          <td>
-            <p v-if="updatedCard.id !== card.id" @click="activateUpdate(idx)" class='hoverable'>{{ card.languages | join }}</p>
-            <b-form-select v-else  v-model="updatedCard.languages" :options="availableLanguages" multiple ></b-form-select>
-          </td>
-          <td>
-            <font-awesome-icon v-if="updatedCard.id !== card.id" icon="edit" @click="activateUpdate(idx)" class="hoverable"/>
-            <font-awesome-icon v-else icon="check" @click="updateCard(idx)" class="hoverable"/>
-          </td>
-          <td>
-            <font-awesome-icon v-if="updatedCard.id !== card.id" icon="trash" @click="deleteCard(card.id, idx)" class="hoverable"/>
-            <font-awesome-icon v-else icon="times" @click="closeUpdate()" class="hoverable"/>
-          </td>
-        </tr>
+        <card-row :idx="idx" :card="card" :availableLanguages="availableLanguages"
+          v-for="(card, idx) in wishlist.cards" :key="card.id"></card-row>
       </tbody>
     </table>
   </page>
@@ -77,35 +56,39 @@
 <script>
 import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
+import LanguagesClient from '../clients/LanguagesClient'
 import NewCardButton from './NewCardButton'
+import CardRow from './CardRow'
 import Spinner from './MtgSpinnerRound'
 import Pricing from './Pricing'
 import Page from './Page'
 import NewCard from './NewCard'
-import {NEW_CARD} from '../events'
+import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
 
 export default {
-  components: {Spinner, Pricing, Page, NewCard, NewCardButton},
+  components: {Spinner, Pricing, Page, NewCard, NewCardButton, CardRow},
   data () {
     return {
       wishlist: {},
       wishlistClient: new WishlistClient(),
       pricingClient: new PricingClient(),
-      updatedCard: {
-        id: null,
-        name: null,
-        quantity: null
-      },
+      languagesClient: new LanguagesClient(),
       loadingPricing: false,
       pricingJobId: null,
       pricing: [],
       errorMessage: null,
       infoMessage: null,
-      searchedCards: []
+      searchedCards: [],
+      availableLanguages: []
     }
   },
   mounted () {
+    this.languagesClient.getAvailableLanguages().then(resp => {
+      this.availableLanguages = resp
+    })
     this.$eventBus.$on(NEW_CARD, this.addCard)
+    this.$eventBus.$on(UPDATE_CARD, this.updateCard)
+    this.$eventBus.$on(DELETE_CARD, this.deleteCard)
   },
   computed: {
     hasCards () {
@@ -122,18 +105,13 @@ export default {
       }
     })
   },
-  filters: {
-    join: function (values) {
-      return values.join(', ')
-    }
-  },
   methods: {
     addCard (card) {
       this.wishlistClient.addCard(this.$route.params.id, card).then(resp => {
         this.wishlist.cards.push(resp.card)
       })
     },
-    deleteCard (cardId, idx) {
+    deleteCard ({idx, cardId}) {
       this.wishlistClient.removeCard(this.$route.params.id, cardId).then(() => {
         this.wishlist.cards.splice(idx, 1)
       })
@@ -143,21 +121,10 @@ export default {
         this.$router.push({'name': 'Home'})
       })
     },
-    activateUpdate (cardIdx) {
-      this.updatedCard = this.wishlist.cards[cardIdx]
-    },
-    updateCard (cardIdx) {
-      this.wishlistClient.updateCard(this.$route.params.id, this.updatedCard).then(resp => {
-        this.wishlist.cards[cardIdx] = resp.card
-        this.closeUpdate()
+    updateCard ({idx, card}) {
+      this.wishlistClient.updateCard(this.$route.params.id, card).then(resp => {
+        this.wishlist.cards[idx] = resp.card
       })
-    },
-    closeUpdate () {
-      this.updatedCard = {
-        id: null,
-        name: null,
-        quantity: null
-      }
     },
     submitPricingJob () {
       this.pricing = []

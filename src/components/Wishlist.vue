@@ -4,6 +4,7 @@
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
+      <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
       <b-button
         @click="deleteWishlist"
@@ -24,11 +25,12 @@ import Pricing from './Pricing'
 import Page from './Page'
 import NewCard from './NewCard'
 import hasCards from '../mixins/hasCards'
+import PricingButton from './PricingButton'
 import languagesLoader from '../mixins/languagesLoader'
 import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
 
 export default {
-  components: {Pricing, Page, NewCard, NewCardButton, CardsTable},
+  components: {Pricing, Page, NewCard, NewCardButton, CardsTable, PricingButton},
   data () {
     return {
       wishlist: {},

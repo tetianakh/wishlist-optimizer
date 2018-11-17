@@ -18,12 +18,6 @@
     </table>
 
     <div class="centered">
-      <b-button
-        variant="success"
-        v-if="hasCards"
-        @click="submitPricingJob"
-        class="margin">Get Pricing</b-button>
-    </div>
     <b-alert variant="danger"
          dismissible
          :show="errorMessage !== null"
@@ -37,12 +31,15 @@
         {{ infoMessage }}
     </b-alert>
   </div>
+
+  </div>
 </template>
 
 <script>
 import PricingClient from '../clients/PricingClient'
 import Spinner from './MtgSpinnerRound'
 import hasCards from '../mixins/hasCards'
+import {CALCULATE_PRICING} from '../events'
 
 export default {
   props: ['wishlist'],
@@ -58,6 +55,9 @@ export default {
     }
   },
   mixins: [hasCards],
+  mounted () {
+    this.$eventBus.$on(CALCULATE_PRICING, this.submitPricingJob)
+  },
   methods: {
     submitPricingJob () {
       if (!this.wishlist || !this.wishlist.cards) {

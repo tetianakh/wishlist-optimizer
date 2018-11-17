@@ -34,22 +34,7 @@
 
     <new-card modalId="newCardModal" :availableLanguages="availableLanguages"></new-card>
 
-    <table class="table table-hover" v-if="hasCards">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Card Name</th>
-          <th>Card Quantity</th>
-          <th>Card Languages</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <card-row :idx="idx" :card="card" :availableLanguages="availableLanguages"
-          v-for="(card, idx) in wishlist.cards" :key="card.id"></card-row>
-      </tbody>
-    </table>
+    <cards-table  v-if="hasCards" :cards="wishlist.cards"></cards-table>
   </page>
 </template>
 
@@ -58,7 +43,7 @@ import WishlistClient from '../clients/WishlistClient'
 import PricingClient from '../clients/PricingClient'
 import LanguagesClient from '../clients/LanguagesClient'
 import NewCardButton from './NewCardButton'
-import CardRow from './CardRow'
+import CardsTable from './CardsTable'
 import Spinner from './MtgSpinnerRound'
 import Pricing from './Pricing'
 import Page from './Page'
@@ -66,7 +51,7 @@ import NewCard from './NewCard'
 import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
 
 export default {
-  components: {Spinner, Pricing, Page, NewCard, NewCardButton, CardRow},
+  components: {Spinner, Pricing, Page, NewCard, NewCardButton, CardsTable},
   data () {
     return {
       wishlist: {},
@@ -83,8 +68,8 @@ export default {
     }
   },
   mounted () {
-    this.languagesClient.getAvailableLanguages().then(resp => {
-      this.availableLanguages = resp
+    this.languagesClient.getAvailableLanguages().then(languages => {
+      this.$store.commit('setLanguages', languages)
     })
     this.$eventBus.$on(NEW_CARD, this.addCard)
     this.$eventBus.$on(UPDATE_CARD, this.updateCard)

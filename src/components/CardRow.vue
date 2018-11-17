@@ -11,7 +11,8 @@
     </td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.languages | join }}</p>
-      <b-form-select v-else  v-model="card.languages" :options="availableLanguages" multiple ></b-form-select>
+      <b-form-select v-else  v-model="card.languages"
+        :options="$store.state.availableLanguages" multiple ></b-form-select>
     </td>
     <td>
       <font-awesome-icon v-if="!editing" icon="edit" @click="activateUpdate()" class="hoverable"/>
@@ -28,14 +29,9 @@
 <script>
 import {UPDATE_CARD, DELETE_CARD} from '../events'
 export default {
-  props: ['idx', 'card', 'availableLanguages'],
+  props: ['idx', 'card'],
   data () {
     return {
-      // card: {
-      //   id: null,
-      //   name: null,
-      //   quantity: null
-      // }
       editing: false
     }
   },

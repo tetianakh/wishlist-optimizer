@@ -34,7 +34,9 @@
     <b-form-group
       label="Card languages:"
       label-for="cardLanguagesInput">
-      <b-form-select v-model="newCard.languages" :options="availableLanguages" id="cardLanguagesInput" multiple></b-form-select>
+      <b-form-select v-model="newCard.languages"
+        :options="$store.state.availableLanguages"
+        id="cardLanguagesInput" multiple></b-form-select>
     </b-form-group>
 
     </b-form>
@@ -57,7 +59,7 @@ const searchCardByName = _.debounce((searchTerm, loading, self) => {
 
 export default {
   components: {vSelect},
-  props: ['modalId', 'availableLanguages'],
+  props: ['modalId'],
   data () {
     return {
       modalErrorMessage: null,

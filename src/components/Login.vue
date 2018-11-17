@@ -66,7 +66,8 @@ $button-active-blue: #1669F2;
 }
 
 .google-btn {
-  width: 184px;
+  // width: 184px;
+  width: 203px;
   height: 42px;
   background-color: $white;
   border-radius: 2px;

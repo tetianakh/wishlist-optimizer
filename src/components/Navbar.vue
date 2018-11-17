@@ -6,8 +6,8 @@
     </b-navbar-brand>
 
     <b-navbar-nav class="ml-auto">
-      <a href='#' v-if="!authenticated" @click="onLogIn" class="link">Log in</a>
-      <a href='#' v-else @click="onLogOut" class="link">Log out</a>
+      <a href='#' v-if="!authenticated && $router.history.current.name !== 'Login'" @click="onLogIn" class="link">Log in</a>
+      <a href='#' v-if="authenticated" @click="onLogOut" class="link">Log out</a>
     </b-navbar-nav>
 
   </b-navbar>

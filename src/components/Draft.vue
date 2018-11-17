@@ -1,17 +1,20 @@
 <template lang="html">
   <page>
     <h1>Unsaved wishlist</h1>
-    <h4>Log in to save the wishlist draft</h4>
+    <p></p>
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
       <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
-      <b-button
-        v-b-modal="'saveWishlistModal'"
-        variant="success"
-        v-if="authenticated && hasCards"
-        class="margin">Save wishlist</b-button>
+      <div v-b-tooltip.hover title="Log In To Save">
+        <b-button
+          v-b-modal="'saveWishlistModal'"
+          variant="success"
+          :disabled="!authenticated"
+          v-if="hasCards"
+          class="margin">Save wishlist</b-button>
+      </div>
     </div>
 
     <b-modal id="saveWishlistModal" ok-title="Save" @ok="saveWishlist">

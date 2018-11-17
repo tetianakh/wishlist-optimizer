@@ -1,5 +1,5 @@
 <template lang="html">
-  <b-navbar toggleable="md" type="dark" variant="info" fixed=top>
+  <b-navbar toggleable="md" type="light" fixed=top class="header">
 
     <b-navbar-brand>
       <img src="/static/logo.png" alt="Logo" height="40" width="40" id="imglogo">
@@ -47,8 +47,17 @@ export default {
   color: #fff;
 }
 
+.header {
+  background-color: #AA7251;
+}
+
 #imglogo {
-  -webkit-filter: drop-shadow(0px 0px 3px rgba(255,255,255,0.8));
-  filter: drop-shadow(0px 0px 3px  rgba(255,255,255,1));
+  -webkit-filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8));
+  filter: drop-shadow(1px 1px 1px  rgba(0,0,0,1));
+}
+
+.link:hover {
+    text-decoration: underline;
+    color: #fff;
 }
 </style>

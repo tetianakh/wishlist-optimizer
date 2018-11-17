@@ -80,14 +80,11 @@ def update_card(user_id, wishlist_id, card_id):
 
 
 @api.route('/pricing', methods=('POST', ))
-@login_required
-def submit_pricing_job(user_id):
-    wishlist_id = request.get_json().get('wishlist_id')
-    if not wishlist_id:
-        return jsonify({'error': 'wishlist id is missing'}), 400
-    job_result = schedule_job(
-        get_pricing, wishlist_service.get_wishlist(user_id, wishlist_id)
-    )
+def submit_pricing_job():
+    wishlist = request.get_json().get('wishlist')
+    if not wishlist:
+        return jsonify({'error': 'wishlist is missing'}), 400
+    job_result = schedule_job(get_pricing, wishlist)
     if job_result:
         return jsonify(job_result), 202
     return jsonify({'error': 'failed to submit pricing calculation job'}), 400

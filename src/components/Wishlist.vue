@@ -235,7 +235,7 @@ export default {
     },
     submitPricingJob () {
       this.pricing = []
-      this.pricingClient.submitPricingCalculationJob(this.wishlist.id).then(resp => {
+      this.pricingClient.submitPricingCalculationJob(this.wishlist).then(resp => {
         console.log(resp)
         this.pricingJobId = resp.job_id
         this.getPricingResult()

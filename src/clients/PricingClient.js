@@ -5,9 +5,8 @@ export default class PricingClient {
     this.http = axios
   }
 
-  submitPricingCalculationJob (wishlistId) {
-    const payload = {'wishlist_id': wishlistId}
-    return this.http.post('pricing', payload).then(resp => {
+  submitPricingCalculationJob (wishlist) {
+    return this.http.post('pricing', {'wishlist': wishlist}).then(resp => {
       console.log(resp.data.job_status)
       return resp.data
     })

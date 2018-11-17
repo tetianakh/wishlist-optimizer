@@ -4,6 +4,7 @@ import tokenStore from '../store/token'
 
 const routerOptions = [
   { path: '/', name: 'Home', component: 'Home' },
+  { path: '/draft', name: 'Draft', component: 'Draft' },
   { path: '/wishlist/:id', name: 'Wishlist', component: 'Wishlist' },
   { path: '/login', name: 'Login', component: 'Login' },
   { path: '/oauth', name: 'Blank', component: 'Blank' },
@@ -23,7 +24,7 @@ const router = new Router({
   mode: 'history'
 })
 
-const publicPages = ['Login', 'NotFound', 'Blank']
+const publicPages = ['Login', 'NotFound', 'Draft', 'Blank']
 
 router.beforeEach((to, from, next) => {
   // redirect to home page if logged in and trying to access login page

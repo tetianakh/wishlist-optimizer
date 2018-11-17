@@ -12,12 +12,8 @@ export default class WishlistClient {
     return this.http.get(`wishlists/${wishlistId}`).then(resp => resp.data)
   }
 
-  addNewWishlist (wishlistName) {
-    const wishlist = {
-      name: wishlistName,
-      cards: []
-    }
-    return this.http.post('wishlists', wishlist).then(resp => resp.data)
+  saveWishlist (wishlist) {
+    return this.http.post('wishlists', wishlist).then(resp => resp.data.wishlist)
   }
 
   addCard (wishlistId, card) {

@@ -24,6 +24,7 @@
 <script>
 import Page from './Page'
 import tokenStore from '../store/token'
+import draftStore from '../store/draft'
 
 export default {
   components: {
@@ -44,7 +45,11 @@ export default {
       this.errorMessage = null
       this.$auth.authenticate(provider).then((authResponse) => {
         tokenStore.logIn(authResponse.data.token)
-        this.$router.push({name: 'Home'})
+        if (draftStore.hasDraft()) {
+          this.$router.push({name: 'Draft'})
+        } else {
+          this.$router.push({name: 'Home'})
+        }
       }).catch(e => {
         console.error(e)
         this.errorMessage = 'Authentication failed'

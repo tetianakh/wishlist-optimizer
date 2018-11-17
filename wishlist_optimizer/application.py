@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 def create_app(app_name='WISHLIST_OPTIMIZER'):
     app = Flask(
-        app_name, static_folder="./static"  # , template_folder="./dist"
+        app_name, static_folder="./static", template_folder="./dist"
     )
     app_settings = os.getenv(
         'APP_SETTINGS',

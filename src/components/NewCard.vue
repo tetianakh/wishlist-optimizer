@@ -15,7 +15,6 @@
       <b-form-group
         label="Card Name:"
         label-for="cardNameInput">
-        <!-- <b-form-input v-model="newCard.name" id="cardNameInput"></b-form-input> -->
         <v-select
           :filterable="false"
           :options="searchedCardNames"

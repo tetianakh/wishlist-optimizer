@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 .sk-fading-circle {
   margin: 100px auto;
   width: 120px;

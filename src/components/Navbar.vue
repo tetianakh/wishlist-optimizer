@@ -5,16 +5,14 @@
       <img src="/static/logo.png" alt="Logo" height="40" width="40" id="imglogo">
     </b-navbar-brand>
 
-    <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
-        <b-nav-item><router-link to="/" class='link'>Wishlists</router-link></b-nav-item>
-        <b-nav-item><router-link to="/draft" class='link'>Unsaved</router-link></b-nav-item>
+        <b-nav-item><router-link to="/" :class="getClasses('Home')" >Wishlists</router-link></b-nav-item>
+        <b-nav-item><router-link to="/draft" :class="getClasses('Draft')">New wishlist</router-link></b-nav-item>
       </b-navbar-nav>
-    </b-collapse>
 
     <b-navbar-nav class="ml-auto">
-      <a href='#' v-if="!authenticated && $router.history.current.name !== 'Login'" @click="onLogIn" class="link">Log in</a>
-      <a href='#' v-if="authenticated" @click="onLogOut" class="link">Log out</a>
+      <a href='#' v-if="!authenticated" @click="onLogIn" :class="getClasses('Login')">Log in</a>
+      <a href='#' v-if="authenticated" @click="onLogOut" :class="getClasses()">Log out</a>
     </b-navbar-nav>
 
   </b-navbar>
@@ -37,6 +35,13 @@ export default {
       tokenStore.logOut()
       this.$auth.logout()
       location.reload()
+    },
+    getClasses (name) {
+      const classes = {link: true}
+      if (name === this.$router.history.current.name) {
+        classes.active = true
+      }
+      return classes
     }
   }
 }
@@ -57,7 +62,11 @@ export default {
 }
 
 .link:hover {
-    text-decoration: underline;
+    font-weight: bold;
+    text-decoration: none;
     color: #fff;
+}
+.active {
+  text-decoration: underline;
 }
 </style>

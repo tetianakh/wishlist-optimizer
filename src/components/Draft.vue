@@ -1,13 +1,13 @@
 <template lang="html">
   <page>
-    <h1>Unsaved wishlist</h1>
+    <h1>New wishlist</h1>
     <p></p>
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
       <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
-      <div v-b-tooltip.hover title="Log In To Save">
+      <div v-b-tooltip.hover :title="tooltipTitle">
         <b-button
           v-b-modal="'saveWishlistModal'"
           variant="success"
@@ -79,6 +79,9 @@ export default {
   computed: {
     authenticated () {
       return tokenStore.isAuthenticated()
+    },
+    tooltipTitle () {
+      return this.authenticated ? null : 'Log In To Save'
     }
   },
   methods: {

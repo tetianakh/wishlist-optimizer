@@ -6,12 +6,14 @@
     <div class="row centered">
       <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
+      <file-upload-button></file-upload-button>
       <b-button
         @click="deleteWishlist"
         variant="danger"
         class="margin">Delete wishlist</b-button>
     </div>
 
+    <file-upload-modal></file-upload-modal>
     <new-card modalId="newCardModal"></new-card>
     <cards-table v-if="hasCards" :cards="wishlist.cards"></cards-table>
   </page>
@@ -27,10 +29,21 @@ import NewCard from './NewCard'
 import hasCards from '../mixins/hasCards'
 import PricingButton from './PricingButton'
 import languagesLoader from '../mixins/languagesLoader'
+import FileUploadButton from './FileUploadButton'
+import FileUploadModal from './FileUploadModal'
 import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
 
 export default {
-  components: {Pricing, Page, NewCard, NewCardButton, CardsTable, PricingButton},
+  components: {
+    Pricing,
+    Page,
+    NewCard,
+    NewCardButton,
+    CardsTable,
+    PricingButton,
+    FileUploadModal,
+    FileUploadButton
+  },
   data () {
     return {
       wishlist: {},

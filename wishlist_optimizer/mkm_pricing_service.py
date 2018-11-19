@@ -112,7 +112,6 @@ class MkmPricingService:
 
     def _update_missing_cards(self, best_sellers):
         for seller in best_sellers:
-            logger.info('Pricing job result: %s', seller)
             missing_cards = dict(self._missing_cards)
             found_cards = seller.pop('found_cards')
             for card in self._wishlist:

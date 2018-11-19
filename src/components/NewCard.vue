@@ -24,7 +24,7 @@
           :searchable="true"
           :close-on-select="true"
           placeholder="Search card by name"
-          :clear-on-select="false"
+          :clear-on-select="true"
           :allow-empty="false"
           :loading="isLoading"></multiselect>
 
@@ -95,7 +95,6 @@ export default {
       this.searchedCards = []
     },
     onCardSearch (query) {
-      console.log(query)
       if (query.length < 3) {
         return
       }

@@ -124,15 +124,29 @@ class MkmApi:
         logger.info('Card: %s, product ids: %s', card_name, ids)
         return ids
 
-    @staticmethod
-    def _matches(card_name, product):
+    def _matches(self, card_name, product):
+        if product['categoryName'] != CARD:
+            # not a card, skip it
+            return False
         product_name = product['enName'].lower()
         card_name = card_name.lower()
-        return product['categoryName'] == CARD and (
-                product_name == card_name
-                or card_name + ' /' in product_name
-                or '/ ' + card_name in product_name
-        )
+        if product_name == card_name:
+            return True
+        if '/' in product_name:
+            # flip card or a split card, check if we have the name for one
+            # side only
+            if card_name + ' /' in product_name or '/ ' + card_name in product_name:  # noqa
+                return True
+            # flip/split cards can have one or two slashes
+            # and may or may not have spaces around them
+            card_name = self._remove_slashes_and_spaces(card_name)
+            product_name = self._remove_slashes_and_spaces(product_name)
+            return card_name == product_name
+        return False
+
+    @staticmethod
+    def _remove_slashes_and_spaces(card_name):
+        return card_name.replace(' ', '').replace('/', '')
 
     async def get_articles(self, product_id, language_id=None):
         params = None

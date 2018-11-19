@@ -15,13 +15,20 @@
       <b-form-group
         label="Card Name:"
         label-for="cardNameInput">
-        <v-select
-          :filterable="false"
+        <div>
+          <multiselect
           :options="searchedCardNames"
+          @search-change="onCardSearch"
           v-model="newCard.name"
-          label="name"
-          @search="onCardSearch">
-        </v-select>
+          :multiple="false"
+          :searchable="true"
+          :close-on-select="true"
+          placeholder="Search card by name"
+          :clear-on-select="false"
+          :allow-empty="false"
+          :loading="isLoading"></multiselect>
+
+        </div>
       </b-form-group>
 
       <b-form-group
@@ -44,20 +51,12 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import vSelect from 'vue-select'
+import Multiselect from 'vue-multiselect'
 import {NEW_CARD} from '../events'
 import MtgClient from '../clients/MtgClient'
 
-const searchCardByName = _.debounce((searchTerm, loading, self) => {
-  self.mtgClient.getCards(searchTerm).then(res => {
-    self.searchedCards = res
-    loading(false)
-  })
-}, 350)
-
 export default {
-  components: {vSelect},
+  components: {Multiselect},
   props: ['modalId'],
   data () {
     return {
@@ -68,6 +67,7 @@ export default {
         quantity: 1,
         languages: []
       },
+      isLoading: false,
       mtgClient: new MtgClient()
     }
   },
@@ -76,9 +76,10 @@ export default {
       return Array.from(new Set(this.searchedCards.map(c => c.name)))
     }
   },
-  mounted () {
-  },
   methods: {
+    limitText (count) {
+      return `and ${count} other cards`
+    },
     addCard (event) {
       if (!this.newCard.name || !this.newCard.quantity) {
         event.preventDefault()
@@ -93,16 +94,17 @@ export default {
       }
       this.searchedCards = []
     },
-    onCardSearch (searchTerm, loading) {
-      if (searchTerm.length < 2) {
+    onCardSearch (query) {
+      console.log(query)
+      if (query.length < 3) {
         return
       }
-      loading(true)
-      searchCardByName(searchTerm, loading, this)
+      this.isLoading = true
+      this.mtgClient.getCards(query).then(response => {
+        this.searchedCards = response
+        this.isLoading = false
+      })
     }
   }
 }
 </script>
-
-<style lang="css">
-</style>

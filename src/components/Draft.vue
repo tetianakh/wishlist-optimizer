@@ -7,6 +7,7 @@
     <div class="row centered">
       <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
+      <file-upload-button></file-upload-button>
       <div v-b-tooltip.hover :title="tooltipTitle">
         <b-button
           v-b-modal="'saveWishlistModal'"
@@ -16,6 +17,8 @@
           class="margin">Save wishlist</b-button>
       </div>
     </div>
+
+    <file-upload-modal></file-upload-modal>
 
     <b-modal id="saveWishlistModal" ok-title="Save" @ok="saveWishlist">
       <template slot="modal-title">
@@ -50,12 +53,23 @@ import NewCard from './NewCard'
 import hasCards from '../mixins/hasCards'
 import PricingButton from './PricingButton'
 import languagesLoader from '../mixins/languagesLoader'
-import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
+import FileUploadButton from './FileUploadButton'
+import FileUploadModal from './FileUploadModal'
+import {NEW_CARD, UPDATE_CARD, DELETE_CARD, NEW_CARDS} from '../events'
 import tokenStore from '../store/token'
 import draftStore from '../store/draft'
 
 export default {
-  components: {Pricing, Page, NewCard, NewCardButton, CardsTable, PricingButton},
+  components: {
+    Pricing,
+    Page,
+    NewCard,
+    NewCardButton,
+    CardsTable,
+    PricingButton,
+    FileUploadModal,
+    FileUploadButton
+  },
   data () {
     return {
       nextCardId: 0,
@@ -74,6 +88,10 @@ export default {
     this.$eventBus.$on(NEW_CARD, this.addCard)
     this.$eventBus.$on(UPDATE_CARD, this.updateCard)
     this.$eventBus.$on(DELETE_CARD, this.deleteCard)
+    this.$eventBus.$on(NEW_CARDS, this.addCards)
+    if (this.wishlist.cards.length > 0) {
+      this.nextCardId = this.wishlist.cards[this.wishlist.cards.length - 1].id + 1
+    }
   },
   mixins: [hasCards, languagesLoader],
   computed: {
@@ -113,6 +131,13 @@ export default {
           }
         })
       })
+    },
+    addCards (cards) {
+      for (let card of cards) {
+        card.id = this.nextCardId++
+        this.wishlist.cards.push(card)
+      }
+      draftStore.setDraft(this.wishlist)
     }
   }
 }

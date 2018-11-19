@@ -9,18 +9,19 @@
          @dismissed="errorMessage=null">
         {{ errorMessage }}
     </b-alert>
-    <b-form-file v-model="file" :state="Boolean(file)" placeholder="Choose a file..."></b-form-file>
+    <b-form-file v-model="file" :state="Boolean(file)" accept=".txt" placeholder="Choose a file..."></b-form-file>
   </b-modal>
 </template>
 
 <script>
+import {NEW_CARDS} from '../events'
+
 export default {
   data () {
     return {
       file: null,
       errorMessage: null,
-      fileReader: null,
-      content: null
+      fileReader: null
     }
   },
   methods: {
@@ -36,8 +37,24 @@ export default {
       this.fileReader.readAsText(this.file)
     },
     handleFileRead (e) {
-      this.content = this.fileReader.result
-      console.log(this.content)
+      const content = this.fileReader.result
+      const result = []
+      for (let line of content.split('\n')) {
+        line = line.split(' ')
+        const quantity = parseInt(line[0].trim())
+        // quantity cannot be 0 or NaN
+        if (!quantity) {
+          continue
+        }
+        const card = {
+          quantity: quantity,
+          // make sure there are no multiple spaces between words
+          name: line.slice(1).map(word => word.trim()).join(' '),
+          languages: []
+        }
+        result.push(card)
+      }
+      this.$eventBus.$emit(NEW_CARDS, result)
     }
   }
 }

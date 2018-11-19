@@ -31,7 +31,7 @@ import PricingButton from './PricingButton'
 import languagesLoader from '../mixins/languagesLoader'
 import FileUploadButton from './FileUploadButton'
 import FileUploadModal from './FileUploadModal'
-import {NEW_CARD, UPDATE_CARD, DELETE_CARD} from '../events'
+import {NEW_CARD, UPDATE_CARD, DELETE_CARD, NEW_CARDS} from '../events'
 
 export default {
   components: {
@@ -54,6 +54,7 @@ export default {
     this.$eventBus.$on(NEW_CARD, this.addCard)
     this.$eventBus.$on(UPDATE_CARD, this.updateCard)
     this.$eventBus.$on(DELETE_CARD, this.deleteCard)
+    this.$eventBus.$on(NEW_CARDS, this.addCards)
   },
   mixins: [hasCards, languagesLoader],
   created () {
@@ -80,6 +81,11 @@ export default {
     updateCard ({idx, card}) {
       this.wishlistClient.updateCard(this.$route.params.id, card).then(resp => {
         this.wishlist.cards[idx] = resp.card
+      })
+    },
+    addCards (cards) {
+      this.wishlistClient.addCards(this.$route.params.id, {cards}).then(resp => {
+        this.wishlist = resp.wishlist
       })
     }
   }

@@ -38,16 +38,31 @@ class WishlistService:
 
     def add_card(self, user_id, wishlist_id, data):
         logger.debug("Adding card to wishlist %s: %s", wishlist_id, data)
-        wishlist = Wishlist.query.get(wishlist_id)
-        if wishlist.user_id != user_id:
-            raise ObjectNotFound
+        wishlist = self._get_wishlist(user_id, wishlist_id)
         card = self._create_card(data)
         wishlist.cards.append(card)
         db.session.commit()
         return card.to_dict()
 
+    def add_cards(self, user_id, wishlist_id, data):
+        logger.info('Creating a batch of cards: %s', data)
+        card_data = data.get('cards', [])
+        new_cards = [self._create_card(d) for d in card_data]
+        wishlist = self._get_wishlist(user_id, wishlist_id)
+        wishlist.cards.extend(new_cards)
+        db.session.commit()
+        return wishlist.to_dict()
+
+    def _get_wishlist(self, user_id, wishlist_id):
+        wishlist = Wishlist.query.get(wishlist_id)
+        if wishlist.user_id != user_id:
+            raise ObjectNotFound
+        return wishlist
+
     def _create_card(self, data):
-        languages = self._languages_service.find_by_name(data['languages'])
+        languages = self._languages_service.find_by_name(
+            data.get('languages', [])
+        )
         return Card(
             name=data['name'].title(),
             quantity=data['quantity'],
@@ -57,7 +72,7 @@ class WishlistService:
     def remove_card(self, user_id, card_id):
         logger.debug("Removing card %s", card_id)
         card = Card.query.get(card_id)
-        if card.wishlist.user_id != user_id:
+        if not card or card.wishlist.user_id != user_id:
             raise ObjectNotFound
         db.session.delete(card)
         db.session.commit()

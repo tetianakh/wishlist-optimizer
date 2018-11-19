@@ -43,20 +43,44 @@ def delete_wishlist(user_id, wishlist_id):
     return ('', 204)
 
 
-@api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET', 'POST'))
+@api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET',))
 @login_required
 def get_cards(user_id, wishlist_id):
-    if request.method == 'GET':
-        return jsonify(
-            {
-                'cards': wishlist_service.get_wishlist(
-                    user_id, wishlist_id
-                )['cards']
-             }
-        )
-    data = request.get_json()
+    return jsonify(
+        {
+            'cards': wishlist_service.get_wishlist(
+                user_id, wishlist_id
+            )['cards']
+         }
+    )
+
+
+@api.route('/wishlists/<int:wishlist_id>/cards', methods=('POST',))
+@login_required
+def add_card(user_id, wishlist_id):
+    try:
+        data = request.get_json()
+    except Exception as e:
+        logger.exception('Failed to read json request: %s', e)
+        return 'Failed to read json request', 400
     return jsonify(
         {'card': wishlist_service.add_card(user_id, wishlist_id, data)}
+    ), 201
+
+
+@api.route('/wishlists/<int:wishlist_id>/cards_batch', methods=('POST',))
+@login_required
+def add_cards(user_id, wishlist_id):
+    """Adds multiple cards in a single request"""
+    try:
+        data = request.get_json()
+    except Exception as e:
+        logger.exception('Failed to read json request: %s', e)
+        return 'Failed to read json request', 400
+    if 'cards' not in data:
+        return 'No cards in request body', 400
+    return jsonify(
+        {'wishlist': wishlist_service.add_cards(user_id, wishlist_id, data)}
     ), 201
 
 

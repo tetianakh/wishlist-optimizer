@@ -21,6 +21,11 @@ export default class WishlistClient {
     ).then(resp => resp.data)
   }
 
+  addCards (wishlistId, cards) {
+    return this.http.post(`wishlists/${wishlistId}/cards_batch`, cards
+    ).then(resp => resp.data)
+  }
+
   removeCard (wishlistId, cardId) {
     return this.http.delete(`wishlists/${wishlistId}/cards/${cardId}`
     ).then(resp => resp.data)

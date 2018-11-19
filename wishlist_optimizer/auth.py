@@ -82,4 +82,4 @@ def refresh():
     except Exception as e:
         logger.exception('Failed to refresh token for user %s: %s', user_id, e)
         user_service.invalidate_token(user_id)
-        return 'Failed to refresh token', 401
+        return 'Failed to get a new jwt token', 401

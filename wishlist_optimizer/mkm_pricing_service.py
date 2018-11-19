@@ -12,6 +12,7 @@ class MkmPricingService:
         self._wishlist = wishlist
         self._languages_service = languages_service
         self._best_prices = {}
+        self._missing_cards = []
 
     async def _get_card_articles(self, card, product_id, language_id):
         if language_id is None:
@@ -22,6 +23,11 @@ class MkmPricingService:
         tasks = [self._api.find_product_ids(c['name']) for c in cards]
         results = self._loop.run_until_complete(asyncio.gather(*tasks))
         for card, product_ids in zip(cards, results):
+            if not product_ids:
+                self._missing_cards.append(
+                    {'name': card['name'], 'quantity': card['quantity']}
+                )
+                continue
             for product_id in product_ids:
                 logger.info(
                     'Card: %s, product id: %s', card['name'], product_id
@@ -40,6 +46,10 @@ class MkmPricingService:
         results = self._loop.run_until_complete(asyncio.gather(*tasks))
 
         for (card, articles) in results:
+            if not articles:
+                self._missing_cards.append(
+                    {'name': card['name'], 'quantity': card['quantity']}
+                )
             for article in articles:
                 yield card, article
 
@@ -56,7 +66,9 @@ class MkmPricingService:
 
         for card_name, card_offers in offers.items():
             quantity = card_offers['card_quantity']
-            self._calculate_best_prices(quantity, card_offers['offers'])
+            self._calculate_best_prices(
+                card_name, quantity, card_offers['offers']
+            )
 
         result = list(self._best_prices.values())
         result.sort(
@@ -65,14 +77,17 @@ class MkmPricingService:
         )
         logger.info('FINISH run, lasted %s', time.time() - start)
 
-        return result[:10]
+        best_prices = result[:10]
+        self._update_missing_cards(best_prices)
+        return best_prices
 
-    def _calculate_best_prices(self, card_count, offers):
+    def _calculate_best_prices(self, card_name, card_count, offers):
         for seller_id, offer_list in offers.items():
             if seller_id not in self._best_prices:
                 self._best_prices[seller_id] = {
                     'total_count': 0,
                     'total_price': 0,
+                    'missing_cards': [],
                     'seller_id': offer_list[0]['seller_id'],
                     'seller_username': offer_list[0]['seller_username'],
                     'seller_url': offer_list[0]['seller_url']
@@ -89,6 +104,14 @@ class MkmPricingService:
                 self._best_prices[seller_id]['total_price'] += found * offer['price']  # noqa
                 found_count += found
                 need_count -= found
+            if found_count < card_count:
+                self._best_prices[seller_id]['missing_cards'].append(
+                    {'name': card_name, 'quantity': card_count - found_count}
+                )
+
+    def _update_missing_cards(self, best_prices):
+        for price in best_prices:
+            price['missing_cards'].extend(self._missing_cards)
 
     @staticmethod
     def _group_by_seller(articles):

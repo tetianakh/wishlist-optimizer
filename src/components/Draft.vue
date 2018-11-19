@@ -5,7 +5,6 @@
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
-      <pricing-button :hasCards="hasCards"></pricing-button>
       <new-card-button></new-card-button>
       <file-upload-button></file-upload-button>
       <div v-b-tooltip.hover :title="tooltipTitle">
@@ -51,7 +50,6 @@ import Pricing from './Pricing'
 import Page from './Page'
 import NewCard from './NewCard'
 import hasCards from '../mixins/hasCards'
-import PricingButton from './PricingButton'
 import languagesLoader from '../mixins/languagesLoader'
 import FileUploadButton from './FileUploadButton'
 import FileUploadModal from './FileUploadModal'
@@ -66,7 +64,6 @@ export default {
     NewCard,
     NewCardButton,
     CardsTable,
-    PricingButton,
     FileUploadModal,
     FileUploadButton
   },

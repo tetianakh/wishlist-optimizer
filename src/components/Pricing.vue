@@ -1,5 +1,12 @@
 <template lang="html">
   <div>
+    <div class="margin">
+      <b-button
+        variant="success"
+        v-if="hasCards"
+        :disabled="loading"
+        @click="submitPricingJob">Get Pricing</b-button>
+    </div>
     <spinner v-if="loading"></spinner>
 
     <table class='table table-hover' v-if="pricing.length > 0">
@@ -7,12 +14,16 @@
         <th>Seller Username</th>
         <th>Has # cards</th>
         <th>Total price</th>
+        <th>Missing cards</th>
       </thead>
       <tbody>
         <tr v-for="item in pricing" :key="item.seller_id">
           <td><a :href="item.seller_url" target="_blank">{{ item.seller_username }}</a></td>
-          <td>{{ item.total_count }}</td>
+          <td>{{ item.total_count }} / {{ totalCardCount }}</td>
           <td>{{ item.total_price.toFixed(2) }}€</td>
+          <td>
+            {{ item.missing_cards | formatMissingCards }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -39,7 +50,6 @@
 import PricingClient from '../clients/PricingClient'
 import Spinner from './MtgSpinnerRound'
 import hasCards from '../mixins/hasCards'
-import {CALCULATE_PRICING} from '../events'
 
 export default {
   props: ['wishlist'],
@@ -55,8 +65,19 @@ export default {
     }
   },
   mixins: [hasCards],
-  mounted () {
-    this.$eventBus.$on(CALCULATE_PRICING, this.submitPricingJob)
+  filters: {
+    formatMissingCards (cards) {
+      return cards.map(card => `${card.quantity} ${card.name}`).join(', ')
+    }
+  },
+  computed: {
+    totalCardCount () {
+      let result = 0
+      for (let card of this.wishlist.cards) {
+        result += card.quantity
+      }
+      return result
+    }
   },
   methods: {
     submitPricingJob () {
@@ -73,6 +94,8 @@ export default {
     getPricingResult () {
       console.log('Getting pricing result')
       this.loading = true
+      this.errorMessage = null
+      this.infoMessage = null
       this.pricingClient.getPricingJobResult(this.pricingJobId).then(resp => {
         if (resp.job_result === null && (resp.job_status === 'started' || resp.job_status === 'queued')) {
           setTimeout(this.getPricingResult, 1000)

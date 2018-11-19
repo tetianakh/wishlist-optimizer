@@ -106,11 +106,13 @@ class MkmPricingService:
                 self._best_prices[seller_id]['total_price'] += found * offer['price']  # noqa
                 found_count += found
                 need_count -= found
-            self._best_prices[seller_id]['found_cards'][card_name] = found_count  # noqa
+            if card_name not in self._best_prices[seller_id]['found_cards']:
+                self._best_prices[seller_id]['found_cards'][card_name] = 0
+            self._best_prices[seller_id]['found_cards'][card_name] += found_count  # noqa
 
     def _update_missing_cards(self, best_sellers):
         for seller in best_sellers:
-            logger.info(seller)
+            logger.info('Pricing job result: %s', seller)
             missing_cards = dict(self._missing_cards)
             found_cards = seller.pop('found_cards')
             for card in self._wishlist:

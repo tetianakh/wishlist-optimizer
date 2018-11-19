@@ -10,7 +10,7 @@
       <div v-b-tooltip.hover :title="tooltipTitle">
         <b-button
           v-b-modal="'saveWishlistModal'"
-          variant="success"
+          variant="info"
           :disabled="!authenticated"
           v-if="hasCards"
           class="margin">Save wishlist</b-button>

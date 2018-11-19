@@ -19,8 +19,6 @@ library.add(faTrash)
 library.add(faCheck)
 library.add(faTimes)
 
-Vue.prototype.$eventBus = new Vue()
-
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueAxios, axios)

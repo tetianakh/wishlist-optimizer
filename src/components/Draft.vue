@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <file-upload-modal></file-upload-modal>
+    <file-upload-modal v-on:new-cards="addCards"></file-upload-modal>
 
     <b-modal id="saveWishlistModal" ok-title="Save" @ok="saveWishlist">
       <template slot="modal-title">
@@ -37,8 +37,11 @@
 
     </b-modal>
 
-    <new-card modalId="newCardModal"></new-card>
-    <cards-table v-if="hasCards" :cards="wishlist.cards"></cards-table>
+    <new-card modalId="newCardModal" v-on:new-card="addCard"></new-card>
+    <cards-table v-if="hasCards"
+      v-on:update-card="updateCard"
+      v-on:delete-card="deleteCard"
+      :cards="wishlist.cards"></cards-table>
   </page>
 </template>
 
@@ -53,7 +56,6 @@ import hasCards from '../mixins/hasCards'
 import languagesLoader from '../mixins/languagesLoader'
 import FileUploadButton from './FileUploadButton'
 import FileUploadModal from './FileUploadModal'
-import {NEW_CARD, UPDATE_CARD, DELETE_CARD, NEW_CARDS} from '../events'
 import tokenStore from '../store/token'
 import draftStore from '../store/draft'
 
@@ -82,10 +84,6 @@ export default {
     if (draftStore.hasDraft()) {
       this.wishlist = draftStore.getDraft()
     }
-    this.$eventBus.$on(NEW_CARD, this.addCard)
-    this.$eventBus.$on(UPDATE_CARD, this.updateCard)
-    this.$eventBus.$on(DELETE_CARD, this.deleteCard)
-    this.$eventBus.$on(NEW_CARDS, this.addCards)
     if (this.wishlist.cards.length > 0) {
       this.nextCardId = this.wishlist.cards[this.wishlist.cards.length - 1].id + 1
     }

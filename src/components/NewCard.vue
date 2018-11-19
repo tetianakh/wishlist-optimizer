@@ -85,7 +85,7 @@ export default {
         this.modalErrorMessage = 'Please fill in card name'
         return
       }
-      this.$eventBus.$emit(NEW_CARD, this.newCard)
+      this.$emit(NEW_CARD, this.newCard)
       this.newCard = {
         name: '',
         quantity: 1,

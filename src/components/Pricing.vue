@@ -74,7 +74,7 @@ export default {
     totalCardCount () {
       let result = 0
       for (let card of this.wishlist.cards) {
-        result += card.quantity
+        result += parseInt(card.quantity)
       }
       return result
     }

@@ -15,19 +15,20 @@
         :options="$store.state.availableLanguages" multiple ></b-form-select>
     </td>
     <td>
-      <font-awesome-icon v-if="!editing" icon="edit" @click="activateUpdate()" class="hoverable"/>
-      <font-awesome-icon v-else icon="check" @click="updateCard()" class="hoverable"/>
+      <font-awesome-icon v-if="!editing" icon="edit" @click="activateUpdate" class="hoverable"/>
+      <font-awesome-icon v-else icon="check" @click="updateCard" class="hoverable"/>
     </td>
     <td>
-      <font-awesome-icon v-if="!editing" icon="trash" @click="deleteCard()" class="hoverable"/>
-      <font-awesome-icon v-else icon="times" @click="closeUpdate()" class="hoverable"/>
+      <font-awesome-icon v-if="!editing" icon="trash" @click="deleteCard" class="hoverable"/>
+      <font-awesome-icon v-else icon="times" @click="closeUpdate" class="hoverable"/>
     </td>
   </tr>
 
 </template>
 
 <script>
-import {UPDATE_CARD, DELETE_CARD} from '../events'
+import {DELETE_CARD, UPDATE_CARD} from '../events'
+
 export default {
   props: ['idx', 'card'],
   data () {
@@ -43,11 +44,11 @@ export default {
 
   methods: {
     updateCard () {
-      this.$eventBus.$emit(UPDATE_CARD, {idx: this.idx, card: this.card})
+      this.$emit(UPDATE_CARD, {idx: this.idx, card: this.card})
       this.closeUpdate()
     },
     deleteCard (cardId, idx) {
-      this.$eventBus.$emit(DELETE_CARD, {idx: this.idx, cardId: this.card.id})
+      this.$emit(DELETE_CARD, {idx: this.idx, cardId: this.card.id})
     },
     activateUpdate () {
       this.editing = true

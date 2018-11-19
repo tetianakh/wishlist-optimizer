@@ -12,9 +12,14 @@
         class="margin">Delete wishlist</b-button>
     </div>
 
-    <file-upload-modal></file-upload-modal>
-    <new-card modalId="newCardModal"></new-card>
-    <cards-table v-if="hasCards" :cards="wishlist.cards"></cards-table>
+    <file-upload-modal v-on:new-cards="addCards"></file-upload-modal>
+
+    <new-card modalId="newCardModal" v-on:new-card="addCard"></new-card>
+
+    <cards-table v-if="hasCards"
+      @update-card="updateCard"
+      @delete-card="deleteCard"
+      :cards="wishlist.cards"></cards-table>
   </page>
 </template>
 
@@ -29,7 +34,6 @@ import hasCards from '../mixins/hasCards'
 import languagesLoader from '../mixins/languagesLoader'
 import FileUploadButton from './FileUploadButton'
 import FileUploadModal from './FileUploadModal'
-import {NEW_CARD, UPDATE_CARD, DELETE_CARD, NEW_CARDS} from '../events'
 
 export default {
   components: {
@@ -46,12 +50,6 @@ export default {
       wishlist: {},
       wishlistClient: new WishlistClient()
     }
-  },
-  mounted () {
-    this.$eventBus.$on(NEW_CARD, this.addCard)
-    this.$eventBus.$on(UPDATE_CARD, this.updateCard)
-    this.$eventBus.$on(DELETE_CARD, this.deleteCard)
-    this.$eventBus.$on(NEW_CARDS, this.addCards)
   },
   mixins: [hasCards, languagesLoader],
   created () {

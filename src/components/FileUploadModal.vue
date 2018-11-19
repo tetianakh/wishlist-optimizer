@@ -54,7 +54,7 @@ export default {
         }
         result.push(card)
       }
-      this.$eventBus.$emit(NEW_CARDS, result)
+      this.$emit(NEW_CARDS, result)
     }
   }
 }

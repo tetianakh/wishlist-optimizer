@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ class MkmPricingService:
             }
             for c in wishlist
         ]
+        self._total_card_count = sum(c['quantity'] for c in self._wishlist)
         self._languages_service = languages_service
         self._best_prices = {}
         self._missing_cards = {}
@@ -66,7 +68,9 @@ class MkmPricingService:
         for card in self._wishlist:
             name = card['name']
             if name not in offers:
-                self._missing_cards.update({name: card['quantity']})
+                if name not in self._missing_cards:
+                    self._missing_cards[name] = 0
+                self._missing_cards[name] += card['quantity']
                 continue
             self._calculate_best_prices(
                 name, card['quantity'], offers[name]
@@ -111,14 +115,21 @@ class MkmPricingService:
             self._best_prices[seller_id]['found_cards'][card_name] += found_count  # noqa
 
     def _update_missing_cards(self, best_sellers):
+        wishlist = defaultdict(int)
+        for card in self._wishlist:
+            wishlist[card['name']] += card['quantity']
+
         for seller in best_sellers:
+            if seller['total_count'] == self._total_card_count:
+                # all cards have been found
+                seller['missing_cards'] = []
+                continue
             missing_cards = dict(self._missing_cards)
             found_cards = seller.pop('found_cards')
-            for card in self._wishlist:
-                found = found_cards.get(card['name'], 0)
-                need = card['quantity']
+            for card_name, need in wishlist.items():
+                found = found_cards.get(card_name, 0)
                 if found < need:
-                    missing_cards[card['name']] = need - found
+                    missing_cards[card_name] = need - found
 
             seller['missing_cards'] = [
                 {'name': k, 'quantity': v} for (k, v) in missing_cards.items()

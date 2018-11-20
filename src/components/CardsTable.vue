@@ -1,5 +1,5 @@
 <template lang="html">
-  <table class="table table-hover">
+  <table class="table table-hover table-sm" id="cards-table">
     <thead>
       <tr>
         <th>#</th>
@@ -40,4 +40,7 @@ export default {
 </script>
 
 <style lang="css">
+#cards-table {
+  margin-bottom: 150px;
+}
 </style>

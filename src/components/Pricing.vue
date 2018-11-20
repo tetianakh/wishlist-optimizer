@@ -10,7 +10,7 @@
     </div>
     <spinner v-if="loading"></spinner>
 
-    <table class='table table-hover' v-if="pricing.length > 0">
+    <table class='table table-hover table-sm' v-if="pricing.length > 0">
       <thead>
         <th>Seller Username</th>
         <th>Has # cards</th>

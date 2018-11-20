@@ -39,6 +39,9 @@ export default {
     handleFileRead (e) {
       const content = this.fileReader.result
       const result = []
+      if (!content) {
+        return
+      }
       for (let line of content.split('\n')) {
         line = line.split(' ')
         const quantity = parseInt(line[0].trim())

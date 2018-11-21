@@ -10,11 +10,16 @@
       <div v-b-tooltip.hover :title="tooltipTitle">
         <b-button
           v-b-modal="'saveWishlistModal'"
-          variant="info"
+          variant="success"
           :disabled="!authenticated"
           v-if="hasCards"
-          class="margin">Save wishlist</b-button>
+          class="margin">Save Wishlist</b-button>
       </div>
+      <b-button
+        variant="danger"
+        v-if="hasCards"
+        class="margin"
+        @click="clearAll">Delete All Cards</b-button>
     </div>
 
     <file-upload-modal v-on:new-cards="addCards"></file-upload-modal>
@@ -98,6 +103,13 @@ export default {
     }
   },
   methods: {
+    clearAll () {
+      this.wishlist = {
+        name: '',
+        cards: []
+      }
+      draftStore.setDraft(this.wishlist)
+    },
     addCard (card) {
       card.id = this.nextCardId++
       this.wishlist.cards.push(card)

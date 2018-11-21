@@ -5,7 +5,7 @@
 
     <div class="row centered">
         <button class="btn btn-success margin" type="button" @click="addNewWishlist">
-          Add new wishlist</button>
+          Add New Wishlist</button>
     </div>
 
     <div class="row centered">

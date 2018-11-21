@@ -2,7 +2,7 @@
   <b-button
     v-b-modal="'uploadFileModal'"
     variant="info"
-    class="margin">Upload from file</b-button>
+    class="margin">Upload From File</b-button>
 </template>
 
 <script>

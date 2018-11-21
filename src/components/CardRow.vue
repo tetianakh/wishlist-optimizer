@@ -61,4 +61,7 @@ export default {
 </script>
 
 <style lang="css">
+td > p {
+  margin-bottom: auto;
+}
 </style>

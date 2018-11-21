@@ -10,18 +10,22 @@
         {{ errorMessage }}
     </b-alert>
     <b-form-file v-model="file" :state="Boolean(file)" accept=".txt" placeholder="Choose a file..."></b-form-file>
+    <b-form-checkbox v-model="removeBasics" class="margin">Remove basic lands</b-form-checkbox>
   </b-modal>
 </template>
 
 <script>
 import {NEW_CARDS} from '../events'
 
+const BASICS = ['mountain', 'island', 'plains', 'swamp', 'forest']
+
 export default {
   data () {
     return {
       file: null,
       errorMessage: null,
-      fileReader: null
+      fileReader: null,
+      removeBasics: true
     }
   },
   methods: {
@@ -49,15 +53,21 @@ export default {
         if (!quantity) {
           continue
         }
+        // make sure there are no multiple spaces between words
+        const name = line.slice(1).map(word => word.trim()).join(' ')
+        if (BASICS.includes(name.toLowerCase())) {
+          continue
+        }
         const card = {
           quantity: quantity,
-          // make sure there are no multiple spaces between words
-          name: line.slice(1).map(word => word.trim()).join(' '),
+          name: name,
           languages: []
         }
         result.push(card)
       }
-      this.$emit(NEW_CARDS, result)
+      if (result.length > 0) {
+        this.$emit(NEW_CARDS, result)
+      }
     }
   }
 }

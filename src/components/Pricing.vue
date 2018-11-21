@@ -6,7 +6,7 @@
         v-if="hasCards"
         :disabled="loading"
         @click="submitPricingJob"
-        class="margin">Get Pricing</b-button>
+        class="margin">Get Prices</b-button>
     </div>
     <spinner v-if="loading"></spinner>
 

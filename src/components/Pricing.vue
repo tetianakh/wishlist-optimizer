@@ -62,7 +62,8 @@ export default {
       infoMessage: null,
       pricing: [],
       pricingJobId: null,
-      loading: false
+      loading: false,
+      totalCardCount: 0
     }
   },
   mixins: [hasCards],
@@ -71,14 +72,8 @@ export default {
       return cards.map(card => `${card.quantity} ${card.name}`).join(', ')
     }
   },
-  computed: {
-    totalCardCount () {
-      let result = 0
-      for (let card of this.wishlist.cards) {
-        result += parseInt(card.quantity)
-      }
-      return result
-    }
+  mounted () {
+    this.setTotalCardCount()
   },
   methods: {
     submitPricingJob () {
@@ -92,6 +87,13 @@ export default {
         this.getPricingResult()
       })
     },
+    setTotalCardCount () {
+      let totalCardCount = 0
+        for (let card of this.wishlist.cards) {
+          totalCardCount += parseInt(card.quantity)
+        }
+      this.totalCardCount = totalCardCount
+    },
     getPricingResult () {
       console.log('Getting pricing result')
       this.loading = true
@@ -104,6 +106,7 @@ export default {
           this.loading = false
           console.error(resp.job_result.error)
           this.errorMessage = 'Failed to fetch pricing data'
+          this.setTotalCardCount()
         } else {
           this.loading = false
           console.log(resp.job_result)
@@ -111,6 +114,7 @@ export default {
           if (this.pricing.length === 0) {
             this.infoMessage = 'No data was found for these cards'
           }
+          this.setTotalCardCount()
         }
       }).catch(e => {
         console.error(e)

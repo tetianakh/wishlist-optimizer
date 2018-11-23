@@ -3,9 +3,10 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Card Name</th>
-        <th>Card Quantity</th>
-        <th>Card Languages</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Languages</th>
+        <th>Expansions</th>
         <th></th>
         <th></th>
       </tr>

@@ -1,5 +1,5 @@
 <template lang="html">
-  <b-modal :id="modalId" ok-title="Add" @ok="addCard">
+  <b-modal :id="modalId" ok-title="Add" @ok="addCard" @cancel="clear">
     <template slot="modal-title">
       Add new card
     </template>
@@ -19,6 +19,7 @@
           <multiselect
           :options="searchedCardNames"
           @search-change="onCardSearch"
+          @select="onCardSelect"
           v-model="newCard.name"
           :multiple="false"
           :searchable="true"
@@ -45,6 +46,18 @@
         id="cardLanguagesInput" multiple></b-form-select>
     </b-form-group>
 
+    <b-form-group
+      label="Card Expansions:"
+      label-for="cardExpansionsInput">
+      <b-form-select
+        v-if="!isLoadingExpansions"
+        v-model="newCard.expansions"
+        :options="availableExpansions"
+        id="cardExpansionsInput"
+        multiple></b-form-select>
+      <p v-else>Loading...</p>
+    </b-form-group>
+
     </b-form>
 
   </b-modal>
@@ -54,6 +67,7 @@
 import Multiselect from 'vue-multiselect'
 import {NEW_CARD} from '../events'
 import MtgClient from '../clients/MtgClient'
+import ExpansionsClient from '../clients/ExpansionsClient'
 
 export default {
   components: {Multiselect},
@@ -65,10 +79,14 @@ export default {
       newCard: {
         name: '',
         quantity: 1,
-        languages: []
+        languages: [],
+        expansions: []
       },
       isLoading: false,
-      mtgClient: new MtgClient()
+      isLoadingExpansions: false,
+      mtgClient: new MtgClient(),
+      expansionsClient: new ExpansionsClient(),
+      availableExpansions: []
     }
   },
   computed: {
@@ -79,6 +97,15 @@ export default {
   methods: {
     limitText (count) {
       return `and ${count} other cards`
+    },
+    clear () {
+      console.log('clearing')
+      this.newCard = {
+        name: '',
+        quantity: 1,
+        languages: [],
+        expansions: []
+      }
     },
     addCard (event) {
       if (!this.newCard.name || !this.newCard.quantity) {
@@ -93,6 +120,15 @@ export default {
         languages: []
       }
       this.searchedCards = []
+    },
+    onCardSelect (cardName) {
+      console.log(cardName)
+      this.isLoadingExpansions = true
+      this.expansionsClient.getCardExpansions(cardName).then(response => {
+        console.log(response)
+        this.availableExpansions = response || []
+        this.isLoadingExpansions = false
+      })
     },
     onCardSearch (query) {
       if (query.length < 3) {

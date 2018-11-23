@@ -8,14 +8,18 @@
       <slot></slot>
     </div>
 
+    <wo-footer>
+    </wo-footer>
   </div>
+
 </template>
 
 <script>
 import Navbar from './Navbar'
+import WoFooter from './Footer'
 
 export default {
-  components: {Navbar}
+  components: {Navbar, WoFooter}
 }
 </script>
 

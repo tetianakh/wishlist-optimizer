@@ -72,9 +72,6 @@ export default {
       return cards.map(card => `${card.quantity} ${card.name}`).join(', ')
     }
   },
-  mounted () {
-    this.setTotalCardCount()
-  },
   methods: {
     submitPricingJob () {
       if (!this.wishlist || !this.wishlist.cards) {
@@ -89,9 +86,9 @@ export default {
     },
     setTotalCardCount () {
       let totalCardCount = 0
-        for (let card of this.wishlist.cards) {
-          totalCardCount += parseInt(card.quantity)
-        }
+      for (let card of this.wishlist.cards) {
+        totalCardCount += parseInt(card.quantity)
+      }
       this.totalCardCount = totalCardCount
     },
     getPricingResult () {
@@ -117,7 +114,7 @@ export default {
   handlePriceJobError (resp) {
     this.loading = false
     console.error(resp.job_result.error)
-    if(resp.job_result.error === 'Rate limit reached') {
+    if (resp.job_result.error === 'Rate limit reached') {
       this.errorMessage = 'MKM API rate limit has been reached. Please come back tomorrow.'
     } else {
       this.errorMessage = 'Failed to fetch pricing data'

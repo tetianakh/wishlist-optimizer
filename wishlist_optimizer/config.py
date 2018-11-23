@@ -12,6 +12,8 @@ class BaseConfig(object):
     ACCESS_TOKEN_SECRET = os.getenv('MKM_ACCESS_TOKEN_SECRET')
     GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
     GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    PRODUCTS_CACHE_TTL = 60 * 60  # in seconds
+    ARTICLES_CACHE_TTL = 60 * 5  # in seconds
 
 
 class DevelopmentConfig(BaseConfig):

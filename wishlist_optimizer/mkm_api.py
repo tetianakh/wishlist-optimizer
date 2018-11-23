@@ -7,6 +7,9 @@ import aiohttp
 from flask import current_app
 from requests_oauthlib import OAuth1
 
+from wishlist_optimizer.cache import ttl_cache
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 MTG = 1
@@ -130,6 +133,7 @@ class MkmApi:
         logger.info('Card: %s, product ids: %s', card_name, ids)
         return ids
 
+    @ttl_cache(60 * 60)
     async def _get_product_data(self, card_name):
         params = {
             'search': card_name.lower(),
@@ -166,6 +170,7 @@ class MkmApi:
     def _remove_slashes_and_spaces(card_name):
         return card_name.replace(' ', '').replace('/', '')
 
+    @ttl_cache(60 * 5)
     async def get_articles(self, product_id, language_id=None):
         params = None
         if language_id:

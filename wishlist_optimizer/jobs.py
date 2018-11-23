@@ -1,19 +1,14 @@
 import logging
 import time
 import asyncio
-import redis
-from rq import Queue
 from flask import current_app
 
 from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.mkm_api import MkmApi, HttpClient, RateLimitReached
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 from wishlist_optimizer.mkm_config import get_config
+from wishlist_optimizer.redis import get_queue
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 
@@ -41,19 +36,6 @@ def get_pricing(wishlist):
         'result': result,
         'error': error
     }
-
-
-__queue = None
-
-
-def get_queue():
-    global __queue
-    if not __queue:
-        __queue = Queue(
-            name='default',
-            connection=redis.from_url(current_app.config['REDIS_URL'])
-        )
-    return __queue
 
 
 def schedule_job(job, *args, **kwargs):

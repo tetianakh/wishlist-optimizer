@@ -103,18 +103,9 @@ export default {
         if (resp.job_result === null && (resp.job_status === 'started' || resp.job_status === 'queued')) {
           setTimeout(this.getPricingResult, 1000)
         } else if (resp.job_status === 'failed' || resp.job_result.error !== null) {
-          this.loading = false
-          console.error(resp.job_result.error)
-          this.errorMessage = 'Failed to fetch pricing data'
-          this.setTotalCardCount()
+          this.handlePriceJobError(resp)
         } else {
-          this.loading = false
-          console.log(resp.job_result)
-          this.pricing = resp.job_result.result === null ? [] : resp.job_result.result
-          if (this.pricing.length === 0) {
-            this.infoMessage = 'No data was found for these cards'
-          }
-          this.setTotalCardCount()
+          this.handlePriceJobSuccess(resp)
         }
       }).catch(e => {
         console.error(e)
@@ -122,6 +113,25 @@ export default {
         this.errorMessage = 'Failed to fetch pricing data'
       })
     }
+  },
+  handlePriceJobError (resp) {
+    this.loading = false
+    console.error(resp.job_result.error)
+    if(resp.job_result.error === 'Rate limit reached') {
+      this.errorMessage = 'MKM API rate limit has been reached. Please come back tomorrow.'
+    } else {
+      this.errorMessage = 'Failed to fetch pricing data'
+    }
+    this.setTotalCardCount()
+  },
+  handlePriceJobSuccess (resp) {
+    this.loading = false
+    console.log(resp.job_result)
+    this.pricing = resp.job_result.result === null ? [] : resp.job_result.result
+    if (this.pricing.length === 0) {
+      this.infoMessage = 'No data was found for these cards'
+    }
+    this.setTotalCardCount()
   }
 }
 </script>

@@ -46,7 +46,7 @@ export default {
   },
   filters: {
     join: function (values) {
-      return values.join(', ')
+    return values ? values.join(', ') : ''
     }
   },
   methods: {

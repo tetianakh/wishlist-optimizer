@@ -1,4 +1,5 @@
 import logging
+import time
 import asyncio
 import redis
 from rq import Queue
@@ -9,11 +10,15 @@ from wishlist_optimizer.mkm_api import MkmApi, HttpClient, RateLimitReached
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 from wishlist_optimizer.mkm_config import get_config
 
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 
 def get_pricing(wishlist):
+    start = time.time()
     config = get_config(current_app)
     loop = asyncio.get_event_loop()
     client = HttpClient(loop, config)
@@ -31,6 +36,7 @@ def get_pricing(wishlist):
         error = str(e)
     finally:
         loop.run_until_complete(client.close())
+    logger.info('FINISHED job, lasted %s', time.time() - start)
     return {
         'result': result,
         'error': error

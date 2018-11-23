@@ -2,6 +2,7 @@ import asyncio
 import logging
 import time
 from collections import defaultdict
+from itertools import groupby
 
 logger = logging.getLogger(__name__)
 
@@ -58,17 +59,14 @@ class MkmPricingService:
                 yield card, article
 
     def run(self):
-        start = time.time()
         language_id_map = self._languages_service.get_language_mkm_ids()
         for card in self._wishlist:
             self._set_language_ids(card, language_id_map)
 
         product_ids = self._get_card_product_ids(self._wishlist)
         articles = self._get_articles(product_ids)
-
         offers = self._group_by_seller(articles)
 
-        # for card_name, card_offers in offers.items():
         for card in self._wishlist:
             name = card['name']
             if name not in offers:
@@ -85,7 +83,6 @@ class MkmPricingService:
             key=lambda a: (a['total_count'], -a['total_price']),
             reverse=True
         )
-        logger.info('FINISH run, lasted %s', time.time() - start)
 
         best_prices = result[:10]
         self._update_missing_cards(best_prices)
@@ -141,17 +138,14 @@ class MkmPricingService:
 
     @staticmethod
     def _group_by_seller(articles):
-        start = time.time()
-        offers = {}
-        for card, article in articles:
-            card_name = card['name']
-            seller_id = article['seller_id']
-            if card_name not in offers:
-                offers[card_name] = {}  # noqa
-            if seller_id not in offers[card_name]:
-                offers[card_name][seller_id] = []
-            offers[card_name][seller_id].append(article)
-        logger.info('FINISH _group_by_seller, lasted %s', time.time() - start)
+        offers = defaultdict(dict)
+        # sort data by card name and seller id
+        articles = sorted(articles, key=lambda x: (x[0]['name'], x[1]['seller_id']))  # noqa
+        # group by card name
+        for card_name, card_articles in groupby(articles, lambda x: x[0]['name']):  # noqa
+            # group by seller ID
+            for seller_id, articles_by_seller in groupby(card_articles, lambda x: x[1]['seller_id']):  # noqa
+                offers[card_name][seller_id] = [a[1] for a in articles_by_seller]  # noqa
         return offers
 
     def _set_language_ids(self, card, language_id_map):

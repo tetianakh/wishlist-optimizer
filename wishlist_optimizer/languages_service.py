@@ -8,7 +8,7 @@ class LanguagesService:
     def get_language_mkm_ids(self):
         return {l.name: l.mkm_id for l in Language.query.all()}
 
-    def find_by_name(self, names):
+    def find_by_names(self, names):
         result = (
             Language.query.filter_by(name=name).first()
             for name in set(names)

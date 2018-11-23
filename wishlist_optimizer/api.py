@@ -5,11 +5,13 @@ from wishlist_optimizer.wishlist_service import WishlistService
 from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.jobs import check_job_status, schedule_job, get_pricing
 from wishlist_optimizer.auth import login_required
+from wishlist_optimizer.expansions_service import ExpansionService
 
 
 api = Blueprint('api', __name__)
 languages_service = LanguagesService()
-wishlist_service = WishlistService(languages_service)
+expansion_service = ExpansionService()
+wishlist_service = WishlistService(languages_service, expansion_service)
 
 logger = logging.getLogger(__name__)
 
@@ -127,3 +129,16 @@ def get_pricing_job_status(job_id):
 @api.route('/languages', methods=('GET',))
 def get_languages():
     return jsonify(languages_service.get_all_languages())
+
+
+@api.route('/expansions', methods=('GET',))
+def get_card_expansions():
+    response = {
+        'expansions': []
+    }
+    card_name = request.args.get('card_name')
+    if not card_name:
+        return jsonify(response)
+    exps = expansion_service.get_card_expansions(card_name)
+    response['expansions'] = exps
+    return jsonify(response)

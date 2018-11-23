@@ -114,8 +114,19 @@ class MkmApi:
             return []
         return [{'name': e['enName'], 'code': e['abbreviation']} for e in data]
 
+    async def get_expansions(self, card_name):
+        logger.info('Getting expansions for card %s', card_name)
+        data = await self._get_product_data(card_name)
+        return [p['expansionName'] for p in data]
+
     async def find_product_ids(self, card_name):
         logger.info('Searching product ids for card %s', card_name)
+        data = await self._get_product_data(card_name)
+        ids = [p['idProduct'] for p in data]
+        logger.info('Card: %s, product ids: %s', card_name, ids)
+        return ids
+
+    async def _get_product_data(self, card_name):
         params = {
             'search': card_name.lower(),
             'exact': "true" if len(card_name) < 4 else "false",
@@ -124,15 +135,8 @@ class MkmApi:
 
         data = await self._http.get(
             'products/find', params=params, headers={}, field='product'
-        )
-        if not data:
-            return set()
-        ids = {
-            p['idProduct'] for p in data
-            if self._matches(card_name, p)
-        }
-        logger.info('Card: %s, product ids: %s', card_name, ids)
-        return ids
+        ) or []
+        return [p for p in data if self._matches(card_name, p)]
 
     def _matches(self, card_name, product):
         if product['categoryName'] != CARD:

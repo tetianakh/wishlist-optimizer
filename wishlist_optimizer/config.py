@@ -20,8 +20,8 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'postgres://localhost:5432/wishlists'
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
-    # MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"
-    MKM_URL = "https://api.cardmarket.com/ws/v2.0/output.json"
+    MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"
+    # MKM_URL = "https://api.cardmarket.com/ws/v2.0/output.json"
     MKM_USER_URL = "https://sandbox.cardmarket.com/en/Magic/Users"
     GOOGLE_REDIRECT_URL = 'http://localhost:5000/oauth'
 

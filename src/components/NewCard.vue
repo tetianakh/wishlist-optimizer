@@ -106,6 +106,7 @@ export default {
         languages: [],
         expansions: []
       }
+      this.availableExpansions = []
     },
     addCard (event) {
       if (!this.newCard.name || !this.newCard.quantity) {

@@ -7,19 +7,14 @@ from flask import current_app
 from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.mkm_api import MkmApi, HttpClient, RateLimitReached
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
+from wishlist_optimizer.mkm_config import get_config
 
 
 logger = logging.getLogger(__name__)
 
 
 def get_pricing(wishlist):
-    config = {
-        "app_token": current_app.config['APP_TOKEN'],
-        "app_secret": current_app.config['APP_SECRET'],
-        "access_token": current_app.config['ACCESS_TOKEN'],
-        "access_token_secret": current_app.config['ACCESS_TOKEN_SECRET'],
-        "url": current_app.config['MKM_URL']
-    }
+    config = get_config(current_app)
     loop = asyncio.get_event_loop()
     client = HttpClient(loop, config)
     api = MkmApi(client)

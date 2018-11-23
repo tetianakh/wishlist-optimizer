@@ -30,6 +30,11 @@ cards_to_languages = db.Table('cards_to_languages',
     db.Column('language_id', db.Integer, db.ForeignKey('language.id'), primary_key=True)  # noqa
 )
 
+cards_to_expansions = db.Table('cards_to_expansions',
+    db.Column('card_id', db.Integer, db.ForeignKey('card.id'), primary_key=True),  # noqa
+    db.Column('expansion_id', db.Integer, db.ForeignKey('expansion.id'), primary_key=True)  # noqa
+)
+
 
 class Card(db.Model):
     __tablename__ = 'card'
@@ -43,13 +48,18 @@ class Card(db.Model):
         'Language', secondary=cards_to_languages, lazy='subquery',
         backref=db.backref('cards', lazy=True)
     )
+    expansions = db.relationship(
+        'Expansion', secondary=cards_to_expansions, lazy='subquery',
+        backref=db.backref('cards', lazy=True)
+    )
 
     def to_dict(self):
         return dict(
             id=self.id,
             name=self.name,
             quantity=self.quantity,
-            languages=[l.name for l in self.languages]
+            languages=[l.name for l in self.languages],
+            expansions=[e.name for e in self.expansions]
         )
 
 
@@ -79,3 +89,13 @@ class User(db.Model):
             self.id, self.sub,
             '<token>' if self.refresh_token else self.refresh_token
         )
+
+
+class Expansion(db.Model):
+    __tablename__ = 'expansion'
+    __table_args__ = (
+        db.UniqueConstraint('code', name='unique_exp_code'),
+    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False)
+    code = db.Column(db.String(32), nullable=False)

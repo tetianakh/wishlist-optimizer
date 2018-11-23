@@ -96,13 +96,23 @@ class HttpClient:
         return result
 
     async def close(self):
-
         await self._session.close()
 
 
 class MkmApi:
     def __init__(self, client):
         self._http = client
+
+    async def get_all_expansions(self):
+        logger.info('Getting all expansions')
+        url = 'games/%s/expansions' % MTG
+        data = await self._http.get(
+            url, params={}, headers={}, field='expansion'
+        )
+        if not data:
+            logger.info('No expansions were found!')
+            return []
+        return [{'name': e['enName'], 'code': e['abbreviation']} for e in data]
 
     async def find_product_ids(self, card_name):
         logger.info('Searching product ids for card %s', card_name)

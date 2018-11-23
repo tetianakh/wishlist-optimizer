@@ -14,7 +14,8 @@ class MkmPricingService:
             {
                 'name': c['name'],
                 'quantity': int(c['quantity']),
-                'languages': c.get('languages', [])
+                'languages': c.get('languages', []),
+                'expansions': c.get('expansions')
             }
             for c in wishlist
         ]
@@ -29,7 +30,10 @@ class MkmPricingService:
         return card, await self._api.get_articles(product_id, language_id)
 
     def _get_card_product_ids(self, cards):
-        tasks = [self._api.find_product_ids(c['name']) for c in cards]
+        tasks = [
+            self._api.get_product_ids(card['name'], card.get('expansions'))
+            for card in cards
+        ]
         results = self._loop.run_until_complete(asyncio.gather(*tasks))
         for card, product_ids in zip(cards, results):
             for product_id in product_ids:

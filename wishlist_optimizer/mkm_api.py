@@ -119,10 +119,14 @@ class MkmApi:
         data = await self._get_product_data(card_name)
         return [p['expansionName'] for p in data]
 
-    async def find_product_ids(self, card_name):
+    async def get_product_ids(self, card_name, expansions):
         logger.info('Searching product ids for card %s', card_name)
         data = await self._get_product_data(card_name)
-        ids = [p['idProduct'] for p in data]
+        if expansions:
+            expansions = set(expansions)
+            ids = [p['idProduct'] for p in data if p['expansionName'] in expansions]  # noqa
+        else:
+            ids = [p['idProduct'] for p in data]
         logger.info('Card: %s, product ids: %s', card_name, ids)
         return ids
 

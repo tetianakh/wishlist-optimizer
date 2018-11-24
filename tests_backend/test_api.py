@@ -1,11 +1,4 @@
 import json
-import time
-
-import jwt
-
-from wishlist_optimizer.wishlist_service import WishlistService
-from wishlist_optimizer.languages_service import LanguagesService
-from wishlist_optimizer.expansions_service import ExpansionService
 
 from wishlist_optimizer.models import Wishlist, User
 

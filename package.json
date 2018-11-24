@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit test_frontend/unit/*.js",
+    "test:unit": "vue-cli-service test:unit tests_frontend/unit/*.js",
     "postinstall": "vue-cli-service build"
   },
   "dependencies": {

@@ -49,18 +49,6 @@ def delete_wishlist(user_id, wishlist_id):
     return ('', 204)
 
 
-@api.route('/wishlists/<int:wishlist_id>/cards', methods=('GET',))
-@login_required
-def get_cards(user_id, wishlist_id):
-    return jsonify(
-        {
-            'cards': wishlist_service.get_wishlist(
-                user_id, wishlist_id
-            )['cards']
-         }
-    )
-
-
 @api.route('/wishlists/<int:wishlist_id>/cards', methods=('POST',))
 @login_required
 def add_card(user_id, wishlist_id):

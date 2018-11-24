@@ -54,7 +54,7 @@ import hasCards from '../mixins/hasCards'
 
 export default {
   props: ['wishlist'],
-  components: {Spinner},
+  components: { Spinner },
   data () {
     return {
       pricingClient: new PricingClient(),
@@ -109,26 +109,26 @@ export default {
         this.loading = false
         this.errorMessage = 'Failed to fetch pricing data'
       })
+    },
+    handlePriceJobError (resp) {
+      this.loading = false
+      console.error(resp.job_result.error)
+      if (resp.job_result.error === 'Rate limit reached') {
+        this.errorMessage = 'MKM API rate limit has been reached. Please come back tomorrow.'
+      } else {
+        this.errorMessage = 'Failed to fetch pricing data'
+      }
+      this.setTotalCardCount()
+    },
+    handlePriceJobSuccess (resp) {
+      this.loading = false
+      console.log(resp.job_result)
+      this.pricing = resp.job_result.result === null ? [] : resp.job_result.result
+      if (this.pricing.length === 0) {
+        this.infoMessage = 'No data was found for these cards'
+      }
+      this.setTotalCardCount()
     }
-  },
-  handlePriceJobError (resp) {
-    this.loading = false
-    console.error(resp.job_result.error)
-    if (resp.job_result.error === 'Rate limit reached') {
-      this.errorMessage = 'MKM API rate limit has been reached. Please come back tomorrow.'
-    } else {
-      this.errorMessage = 'Failed to fetch pricing data'
-    }
-    this.setTotalCardCount()
-  },
-  handlePriceJobSuccess (resp) {
-    this.loading = false
-    console.log(resp.job_result)
-    this.pricing = resp.job_result.result === null ? [] : resp.job_result.result
-    if (this.pricing.length === 0) {
-      this.infoMessage = 'No data was found for these cards'
-    }
-    this.setTotalCardCount()
   }
 }
 </script>

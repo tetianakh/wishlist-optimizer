@@ -18,7 +18,7 @@ class BaseConfig(object):
 
 class TestingConfig(BaseConfig):
     LOG_LEVEL = logging.DEBUG
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost:5432/test"
     APP_TOKEN = 'MKM_APP_TOKEN'
     APP_SECRET = 'MKM_APP_SECRET'
     ACCESS_TOKEN = 'MKM_ACCESS_TOKEN'
@@ -32,7 +32,7 @@ class TestingConfig(BaseConfig):
 
 class DevelopmentConfig(BaseConfig):
     LOG_LEVEL = logging.DEBUG
-    SQLALCHEMY_DATABASE_URI = 'postgres://localhost:5432/wishlists'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost:5432/wishlists'
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
     MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"

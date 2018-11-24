@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "vue-cli-service test:unit"
+    "test": "vue-cli-service test:unit",
+    "postinstall": "vue-cli-service build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.8",

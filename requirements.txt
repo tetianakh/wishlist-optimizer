@@ -1,0 +1,17 @@
+Flask==1.0.2
+Flask-Migrate==2.3.0
+Flask-Script==2.0.6
+Flask-SQLAlchemy==2.3.2
+redis==2.10.6
+requests==2.20.0
+requests-oauthlib==1.0.0
+rq==0.12.0
+gunicorn==19.9.0
+psycopg2-binary==2.7.6.1
+Flask-Cors==3.0.6
+aiohttp==3.4.4
+google-api-python-client==1.7.4
+google-auth==1.6.0
+google-auth-httplib2==0.0.3
+google-auth-oauthlib==0.2.0
+CacheControl==0.12.5

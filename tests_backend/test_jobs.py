@@ -1,11 +1,11 @@
-import asyncio
-
 from wishlist_optimizer.jobs import get_pricing
 from wishlist_optimizer.mkm_api import MkmApi
 from wishlist_optimizer.languages_service import LanguagesService
 
 from unittest import mock
 import pytest
+
+from tests_backend.conftest import amock
 
 
 def get_wishlist(quantity=1, languages=None, expansions=None):
@@ -19,12 +19,6 @@ def get_wishlist(quantity=1, languages=None, expansions=None):
             }
         ]
     }
-
-
-def amock(result):
-    f = asyncio.Future()
-    f.set_result(result)
-    return f
 
 
 LANGS_MAP = {
@@ -147,12 +141,12 @@ def test_handles_duplicated_card_names_in_wishlist(
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([
         {
-            'language': 1,  # English only
+            'language': 1,
             'price': 0.1,
             'seller_username': 'seller',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
-            'count': 2,
+            'count': 2,  # only two shocks are available
             'id': 456,
         }
     ])
@@ -173,3 +167,10 @@ def test_handles_duplicated_card_names_in_wishlist(
             'total_price': 0.2
         }
     ]
+
+
+@mock.patch.object(MkmApi, 'get_product_ids', return_value=amock([]))
+def test_filters_product_ids_by_expansion(mock_pids, mock_langs, app):
+    expansions = ['Kaladesh', 'Dominaria']
+    get_pricing(get_wishlist(expansions=expansions))
+    mock_pids.assert_called_once_with('Shock', expansions)

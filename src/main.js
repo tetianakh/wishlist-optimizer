@@ -34,7 +34,7 @@ Vue.use(VueAuthenticate, {
 
   providers: {
     google: {
-      clientId: '1000794530745-gnf0qu137rac5kgcskkphuohfqlp8ahu.apps.googleusercontent.com',
+      clientId: process.env.VUE_APP_GOOGLE_ID,
       requiredUrlParams: ['scope', 'access_type'],
       accessType: 'offline',
       redirectUri: oauthRedirectUri

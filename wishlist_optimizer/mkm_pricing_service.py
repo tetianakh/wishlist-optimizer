@@ -23,6 +23,7 @@ class MkmPricingService:
         self._languages_service = languages_service
         self._best_prices = {}
         self._missing_cards = {}
+        self._used_offers = defaultdict(int)
 
     async def _get_card_articles(self, card, product_id, language_id):
         if language_id is None:
@@ -89,6 +90,7 @@ class MkmPricingService:
 
     def _calculate_best_prices(self, card_name, card_count, offers):
         for seller_id, offer_list in offers.items():
+
             if seller_id not in self._best_prices:
                 self._best_prices[seller_id] = {
                     'total_count': 0,
@@ -105,9 +107,10 @@ class MkmPricingService:
             for offer in offer_list:
                 if found_count >= card_count:
                     break
-                found = min(need_count, offer['count'])
+                found = min(need_count, offer['count'] - self._used_offers[offer['id']])  # noqa
                 self._best_prices[seller_id]['total_count'] += found
                 self._best_prices[seller_id]['total_price'] += found * offer['price']  # noqa
+                self._used_offers[offer['id']] += found
                 found_count += found
                 need_count -= found
             if card_name not in self._best_prices[seller_id]['found_cards']:
@@ -120,12 +123,14 @@ class MkmPricingService:
             wishlist[card['name']] += card['quantity']
 
         for seller in best_sellers:
+            # remove found cards for all sellers
+            found_cards = seller.pop('found_cards')
             if seller['total_count'] == self._total_card_count:
                 # all cards have been found
                 seller['missing_cards'] = []
                 continue
             missing_cards = dict(self._missing_cards)
-            found_cards = seller.pop('found_cards')
+
             for card_name, need in wishlist.items():
                 found = found_cards.get(card_name, 0)
                 if found < need:

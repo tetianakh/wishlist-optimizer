@@ -1,0 +1,19 @@
+matrix:
+  include:
+    - language: python
+      python: 3.6
+      install:
+        - pip install -r requirements.txt
+        - pip install -r requirements-dev.txt
+      script:
+        - pytest tests_backend -vv
+
+    - language: node_js
+      node_js: 9.4.0
+      install:
+        - npm install
+      script:
+        - npm run test:unit
+
+notifications:
+  email: false

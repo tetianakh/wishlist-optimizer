@@ -6,13 +6,14 @@ from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 
 
-def create_app(app_name='WISHLIST_OPTIMIZER'):
+def create_app(app_name='WISHLIST_OPTIMIZER', config_name=None):
     app = Flask(
         app_name, static_folder="./dist/static", template_folder="./dist"
     )
+    config_name = config_name or 'DevelopmentConfig'
     app_settings = os.getenv(
         'APP_SETTINGS',
-        'wishlist_optimizer.config.DevelopmentConfig'
+        'wishlist_optimizer.config.%s' % config_name
     )
     app.config.from_object(app_settings)
 

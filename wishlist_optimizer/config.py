@@ -16,14 +16,26 @@ class BaseConfig(object):
     ARTICLES_CACHE_TTL = 60 * 5  # in seconds
 
 
+class TestingConfig(BaseConfig):
+    LOG_LEVEL = logging.DEBUG
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    APP_TOKEN = 'MKM_APP_TOKEN'
+    APP_SECRET = 'MKM_APP_SECRET'
+    ACCESS_TOKEN = 'MKM_ACCESS_TOKEN'
+    ACCESS_TOKEN_SECRET = 'MKM_ACCESS_TOKEN_SECRET'
+    GOOGLE_CLIENT_SECRET = 'GOOGLE_CLIENT_SECRET'
+    GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID'
+    MKM_URL = "http://dummy.mkm.url"
+    MKM_USER_URL = "http://dummy.user.url"
+    GOOGLE_REDIRECT_URL = 'http://localhost:5000/oauth'
+
+
 class DevelopmentConfig(BaseConfig):
     LOG_LEVEL = logging.DEBUG
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///data.db'
     SQLALCHEMY_DATABASE_URI = 'postgres://localhost:5432/wishlists'
     REDIS_URL = 'redis://localhost:6379/0'
     DEBUG = True
     MKM_URL = "https://sandbox.cardmarket.com/ws/v2.0/output.json"
-    # MKM_URL = "https://api.cardmarket.com/ws/v2.0/output.json"
     MKM_USER_URL = "https://sandbox.cardmarket.com/en/Magic/Users"
     GOOGLE_REDIRECT_URL = 'http://localhost:5000/oauth'
 

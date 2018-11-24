@@ -46,6 +46,8 @@ def log_in_with_google():
 def login_required(view):
     @wraps(view)
     def inner(*args, **kwargs):
+        if 'Authorization' not in request.headers:
+            return jsonify({'error': 'Authorization header is missing'}), 401
         jwt_token = request.headers['Authorization'].replace('Bearer ', '')
         try:
             user_id = user_service.validate_token(jwt_token)

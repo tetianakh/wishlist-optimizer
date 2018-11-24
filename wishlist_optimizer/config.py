@@ -19,6 +19,7 @@ class BaseConfig(object):
 class TestingConfig(BaseConfig):
     LOG_LEVEL = logging.DEBUG
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost:5432/test"
+    GOOGLE_ISS = 'GOOGLE_ISS'
     APP_TOKEN = 'MKM_APP_TOKEN'
     APP_SECRET = 'MKM_APP_SECRET'
     ACCESS_TOKEN = 'MKM_ACCESS_TOKEN'

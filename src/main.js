@@ -25,7 +25,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueAxios, axios)
 
-const baseApiUrl = process.env.API_URL.replace('/api', '')
+const baseApiUrl = process.env.VUE_APP_API_URL.replace('/api', '')
 const oauthRedirectUri = baseApiUrl + '/oauth'
 console.log(oauthRedirectUri)
 console.log(baseApiUrl)

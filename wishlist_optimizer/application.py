@@ -30,9 +30,11 @@ def create_app(app_name='WISHLIST_OPTIMIZER'):
 
     @app.route('/favicon.ico')
     def favicon():
+        print(app.template_folder)
         return send_from_directory(
-            os.path.join(app.root_path, 'static'),
-            'favicon.ico', mimetype='image/vnd.microsoft.icon'
+            app.template_folder,
+            'favicon.ico',
+            mimetype='image/vnd.microsoft.icon'
         )
 
     from wishlist_optimizer.models import db

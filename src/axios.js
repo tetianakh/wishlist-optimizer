@@ -5,7 +5,7 @@ import tokenStore from './store/token'
 import router from './router'
 
 const instance = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.VUE_APP_API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -22,7 +22,7 @@ instance.interceptors.request.use(
   error => Promise.reject(error)
 )
 
-const BASE_AUTH_URL = process.env.API_URL.replace('/api', '/auth')
+const BASE_AUTH_URL = process.env.VUE_APP_API_URL.replace('/api', '/auth')
 
 const updateToken = () => {
   const headers = {'Authorization': tokenStore.getToken()}

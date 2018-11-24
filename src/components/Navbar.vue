@@ -2,7 +2,7 @@
   <b-navbar toggleable="md" type="light" fixed=top class="header">
 
     <b-navbar-brand>
-      <img src="/static/logo.png" alt="Logo" height="40" width="40" id="imglogo">
+      <img src="../assets/logo.png" alt="Logo" height="40" width="40" id="imglogo">
     </b-navbar-brand>
 
       <b-navbar-nav>

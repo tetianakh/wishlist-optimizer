@@ -25,7 +25,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueAxios, axios)
 
-const baseApiUrl = process.env.API_URL.replace('/api', '')
+const baseApiUrl = process.env.VUE_APP_API_URL.replace('/api', '')
 const oauthRedirectUri = baseApiUrl + '/oauth'
 console.log(oauthRedirectUri)
 console.log(baseApiUrl)
@@ -34,7 +34,7 @@ Vue.use(VueAuthenticate, {
 
   providers: {
     google: {
-      clientId: '1000794530745-gnf0qu137rac5kgcskkphuohfqlp8ahu.apps.googleusercontent.com',
+      clientId: process.env.VUE_APP_GOOGLE_ID,
       requiredUrlParams: ['scope', 'access_type'],
       accessType: 'offline',
       redirectUri: oauthRedirectUri

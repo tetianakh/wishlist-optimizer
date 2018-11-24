@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import {logOut, tokenIsExpired} from './auth'
+import { logOut, tokenIsExpired } from './auth'
 import tokenStore from './store/token'
 import router from './router'
 
@@ -25,8 +25,8 @@ instance.interceptors.request.use(
 const BASE_AUTH_URL = process.env.VUE_APP_API_URL.replace('/api', '/auth')
 
 const updateToken = () => {
-  const headers = {'Authorization': tokenStore.getToken()}
-  return axios.post(`${BASE_AUTH_URL}/refresh`, {}, {headers})
+  const headers = { 'Authorization': tokenStore.getToken() }
+  return axios.post(`${BASE_AUTH_URL}/refresh`, {}, { headers })
     .then(resp => resp.data.token)
 }
 
@@ -63,7 +63,7 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(null, (error) => {
   if (error.config && error.response && error.response.status === 404) {
-    router.push({'name': 'NotFound'})
+    router.push({ 'name': 'NotFound' })
     return
   }
   Promise.reject(error)

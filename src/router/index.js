@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
   // redirect to login page if not logged in and trying to access a restricted page
   const authRequired = !publicPages.includes(to.name)
   if (authRequired && !tokenStore.isAuthenticated()) {
-    return next({name: 'Login'})
+    return next({ name: 'Login' })
   }
   return next()
 })

@@ -6,7 +6,7 @@ export default class PricingClient {
   }
 
   submitPricingCalculationJob (wishlist) {
-    return this.http.post('pricing', {'wishlist': wishlist}).then(resp => {
+    return this.http.post('pricing', { 'wishlist': wishlist }).then(resp => {
       console.log(resp.data.job_status)
       return resp.data
     })

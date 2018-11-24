@@ -8,7 +8,7 @@ const EXP_TIME_WINDOW = 10 // seconds
 const logOut = () => {
   tokenStore.logOut()
   // location.reload()
-  router.push({name: 'Login'})
+  router.push({ name: 'Login' })
 }
 
 const tokenIsExpired = () => {
@@ -17,4 +17,4 @@ const tokenIsExpired = () => {
   return decoded.exp < (now - EXP_TIME_WINDOW)
 }
 
-export {logOut, tokenIsExpired}
+export { logOut, tokenIsExpired }

@@ -11,8 +11,10 @@ export default {
 </script>
 
 <style>
-@import url('vue-multiselect/dist/vue-multiselect.min.css');
-@import url('https://fonts.googleapis.com/css?family=Lato');
+@import '~vue-multiselect/dist/vue-multiselect.min.css';
+@import 'https://fonts.googleapis.com/css?family=Lato';
+@import 'https://fonts.googleapis.com/css?family=Roboto:400';
+
 #app {
   font-family: 'Lato', sans-serif;
   -webkit-font-smoothing: antialiased;

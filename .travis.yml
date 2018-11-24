@@ -9,7 +9,7 @@ matrix:
         - pip install -r requirements-dev.txt
       script:
         - pycodestyle wishlist_optimizer
-        - wishlist_optimizer tests_backend
+        - pycodestyle tests_backend
         - pytest tests_backend -vv
 
     - language: node_js

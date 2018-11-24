@@ -118,7 +118,8 @@ export default {
       this.newCard = {
         name: '',
         quantity: 1,
-        languages: []
+        languages: [],
+        expansions: []
       }
       this.searchedCards = []
     },

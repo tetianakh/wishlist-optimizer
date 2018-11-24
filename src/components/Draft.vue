@@ -115,11 +115,11 @@ export default {
       this.wishlist.cards.push(card)
       draftStore.setDraft(this.wishlist)
     },
-    deleteCard ({idx, cardId}) {
+    deleteCard ({ idx, cardId }) {
       this.wishlist.cards.splice(idx, 1)
       draftStore.setDraft(this.wishlist)
     },
-    updateCard ({idx, card}) {
+    updateCard ({ idx, card }) {
       this.wishlist.cards[idx] = card
       draftStore.setDraft(this.wishlist)
     },

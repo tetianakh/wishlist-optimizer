@@ -59,7 +59,7 @@ export default {
       })
     },
     addNewWishlist () {
-      this.$router.push({name: 'Draft'})
+      this.$router.push({ name: 'Draft' })
     },
     deleteWishlist (wishlistId, idx) {
       this.client.removeWishlist(wishlistId).then(() => {

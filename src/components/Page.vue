@@ -19,7 +19,7 @@ import Navbar from './Navbar'
 import WoFooter from './Footer'
 
 export default {
-  components: {Navbar, WoFooter}
+  components: { Navbar, WoFooter }
 }
 </script>
 

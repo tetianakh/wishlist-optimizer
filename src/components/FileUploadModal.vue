@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {NEW_CARDS} from '../events'
+import { NEW_CARDS } from '../events'
 
 const BASICS = ['mountain', 'island', 'plains', 'swamp', 'forest']
 

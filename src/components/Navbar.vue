@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     onLogIn () {
-      this.$router.push({'name': 'Login'})
+      this.$router.push({ 'name': 'Login' })
     },
     onLogOut () {
       tokenStore.logOut()
@@ -37,7 +37,7 @@ export default {
       location.reload()
     },
     getClasses (name) {
-      const classes = {link: true}
+      const classes = { link: true }
       if (name === this.$router.history.current.name) {
         classes.active = true
       }

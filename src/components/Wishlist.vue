@@ -63,23 +63,23 @@ export default {
         this.wishlist.cards.push(resp.card)
       })
     },
-    deleteCard ({idx, cardId}) {
+    deleteCard ({ idx, cardId }) {
       this.wishlistClient.removeCard(this.$route.params.id, cardId).then(() => {
         this.wishlist.cards.splice(idx, 1)
       })
     },
     deleteWishlist () {
       this.wishlistClient.removeWishlist(this.$route.params.id).then(() => {
-        this.$router.push({'name': 'Home'})
+        this.$router.push({ 'name': 'Home' })
       })
     },
-    updateCard ({idx, card}) {
+    updateCard ({ idx, card }) {
       this.wishlistClient.updateCard(this.$route.params.id, card).then(resp => {
         this.wishlist.cards[idx] = resp.card
       })
     },
     addCards (cards) {
-      this.wishlistClient.addCards(this.$route.params.id, {cards}).then(resp => {
+      this.wishlistClient.addCards(this.$route.params.id, { cards }).then(resp => {
         this.wishlist = resp.wishlist
       })
     }

@@ -65,12 +65,12 @@
 
 <script>
 import Multiselect from 'vue-multiselect'
-import {NEW_CARD} from '../events'
+import { NEW_CARD } from '../events'
 import MtgClient from '../clients/MtgClient'
 import ExpansionsClient from '../clients/ExpansionsClient'
 
 export default {
-  components: {Multiselect},
+  components: { Multiselect },
   props: ['modalId'],
   data () {
     return {

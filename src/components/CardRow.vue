@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import {DELETE_CARD, UPDATE_CARD} from '../events'
+import { DELETE_CARD, UPDATE_CARD } from '../events'
 import ExpansionsClient from '../clients/ExpansionsClient'
 
 export default {
@@ -51,11 +51,11 @@ export default {
   },
   methods: {
     updateCard () {
-      this.$emit(UPDATE_CARD, {idx: this.idx, card: this.card})
+      this.$emit(UPDATE_CARD, { idx: this.idx, card: this.card })
       this.closeUpdate()
     },
     deleteCard (cardId, idx) {
-      this.$emit(DELETE_CARD, {idx: this.idx, cardId: this.card.id})
+      this.$emit(DELETE_CARD, { idx: this.idx, cardId: this.card.id })
     },
     activateUpdate () {
       this.editing = true

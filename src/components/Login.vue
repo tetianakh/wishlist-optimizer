@@ -46,9 +46,9 @@ export default {
       this.$auth.authenticate(provider).then((authResponse) => {
         tokenStore.logIn(authResponse.data.token)
         if (draftStore.hasDraft()) {
-          this.$router.push({name: 'Draft'})
+          this.$router.push({ name: 'Draft' })
         } else {
-          this.$router.push({name: 'Home'})
+          this.$router.push({ name: 'Home' })
         }
       }).catch(e => {
         console.error(e)

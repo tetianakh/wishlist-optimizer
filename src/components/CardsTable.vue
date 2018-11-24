@@ -23,11 +23,11 @@
 
 <script>
 import CardRow from './CardRow'
-import {UPDATE_CARD, DELETE_CARD} from '../events'
+import { UPDATE_CARD, DELETE_CARD } from '../events'
 
 export default {
   props: ['cards'],
-  components: {CardRow},
+  components: { CardRow },
   methods: {
     // propagate events to parent component
     updateCard (args) {

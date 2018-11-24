@@ -36,6 +36,16 @@ def get_wishlist():
     }
 
 
+def create_wishlist(client, wishlist=None):
+    return client.post(
+        '/api/wishlists',
+        data=json.dumps(wishlist or get_wishlist()),
+        headers={
+            'Content-Type': 'application/json',
+        }
+    ).get_json()['wishlist']['id']
+
+
 def test_save_empty_wishlist_via_api(db_session, client, user):
     wishlist = {
         'name': 'name',
@@ -87,13 +97,58 @@ def test_can_retrieve_wishlist(db_session, client, user):
 
 
 def test_delete_wishlist(db_session, client, user):
-    wishlist_id = client.post(
-        '/api/wishlists',
-        data=json.dumps(get_wishlist()),
-        headers={
-            'Content-Type': 'application/json',
-        }
-    ).get_json()['wishlist']['id']
+    wishlist_id = create_wishlist(client)
     resp = client.delete(f'/api/wishlists/{wishlist_id}')
     assert resp.status == '204 NO CONTENT'
     assert db_session.query(Wishlist).get(wishlist_id) is None
+
+
+def test_add_card(db_session, client, user):
+    empty_wishlist = {
+        'name': 'name',
+        'cards': []
+    }
+    wishlist_id = create_wishlist(client, empty_wishlist)
+    card = {
+        'name': 'Shock',
+        'languages': ['English'],
+        'quantity': 2,
+        'expansions': ['Dominaria']
+    }
+    client.post(f'/api/wishlists/{wishlist_id}/cards',
+                data=json.dumps(card),
+                content_type='application/json')
+    cards = db_session.query(Wishlist).get(wishlist_id).cards
+    assert len(cards) == 1
+    card = cards[0].to_dict()
+    assert cards[0].name == 'Shock'
+    assert card['languages'] == ['English']
+    assert card['expansions'] == ['Dominaria']
+    assert card['quantity'] == 2
+
+
+def test_bulk_add_cards(db_session, client, user):
+    empty_wishlist = {
+        'name': 'name',
+        'cards': []
+    }
+    wishlist_id = create_wishlist(client, empty_wishlist)
+    cards = [
+        {
+            'name': 'Shock',
+            'quantity': 2,
+        },
+        {
+            'name': 'Bomat',
+            'quantity': 4
+        }
+    ]
+    client.post(f'/api/wishlists/{wishlist_id}/cards_batch',
+                data=json.dumps({'cards': cards}),
+                content_type='application/json')
+    cards = db_session.query(Wishlist).get(wishlist_id).cards
+    assert len(cards) == 2
+    assert cards[0].name == 'Shock'
+    assert cards[0].quantity == 2
+    assert cards[1].name == 'Bomat'
+    assert cards[1].quantity == 4

@@ -37,7 +37,7 @@
       </b-alert>
 
       <b-form>
-        <b-form-input v-model="wishlist.name"></b-form-input>
+        <b-form-input v-model="wishlist.name" @keydown.enter.native="saveWishlist"></b-form-input>
       </b-form>
 
     </b-modal>

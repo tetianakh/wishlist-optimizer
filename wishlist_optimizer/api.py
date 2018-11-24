@@ -78,14 +78,14 @@ def add_cards(user_id, wishlist_id):
     ), 201
 
 
-@api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['DELETE',])  # noqa
+@api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['DELETE'])  # noqa
 @login_required
 def delete_card(user_id, wishlist_id, card_id):
     wishlist_service.remove_card(user_id, card_id)
     return '', 204
 
 
-@api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['PUT',])  # noqa
+@api.route('/wishlists/<int:wishlist_id>/cards/<int:card_id>', methods=['PUT'])  # noqa
 @login_required
 def update_card(user_id, wishlist_id, card_id):
     return jsonify(

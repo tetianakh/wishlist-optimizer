@@ -16,11 +16,15 @@ wishlist_service = WishlistService(languages_service, expansion_service)
 logger = logging.getLogger(__name__)
 
 
-@api.route('/wishlists', methods=('GET', 'POST'))
+@api.route('/wishlists', methods=('GET',))
 @login_required
 def get_wishlists(user_id):
-    if request.method == 'GET':
-        return jsonify({'wishlists': wishlist_service.get_wishlists(user_id)})
+    return jsonify({'wishlists': wishlist_service.get_wishlists(user_id)})
+
+
+@api.route('/wishlists', methods=('POST',))
+@login_required
+def add_wishlist(user_id):
     return jsonify(
         {
             'wishlist': wishlist_service.create_wishlist(

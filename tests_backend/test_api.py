@@ -84,3 +84,16 @@ def test_can_retrieve_wishlist(db_session, client, user):
     ).get_json()['wishlist']['id']
     resp = client.get(f'/api/wishlists/{wishlist_id}')
     assert resp
+
+
+def test_delete_wishlist(db_session, client, user):
+    wishlist_id = client.post(
+        '/api/wishlists',
+        data=json.dumps(get_wishlist()),
+        headers={
+            'Content-Type': 'application/json',
+        }
+    ).get_json()['wishlist']['id']
+    resp = client.delete(f'/api/wishlists/{wishlist_id}')
+    assert resp.status == '204 NO CONTENT'
+    assert db_session.query(Wishlist).get(wishlist_id) is None

@@ -22,6 +22,20 @@ def user(db_session):
     return u
 
 
+def get_wishlist():
+    return {
+        'name': 'name',
+        'cards': [
+            {
+                'name': 'Shock',
+                'languages': ['English'],
+                'expansions': ['Dominaria'],
+                'quantity': 4
+            },
+        ]
+    }
+
+
 def test_save_empty_wishlist_via_api(db_session, client, user):
     wishlist = {
         'name': 'name',
@@ -42,30 +56,31 @@ def test_save_empty_wishlist_via_api(db_session, client, user):
 
 
 def test_save_wishlist_with_cards(db_session, client, user):
-        wishlist = {
-            'name': 'name',
-            'cards': [
-                {
-                    'name': 'Shock',
-                    'languages': ['English'],
-                    'expansions': ['Dominaria'],
-                    'quantity': 4
-                },
-            ]
+    resp = client.post(
+        '/api/wishlists',
+        data=json.dumps(get_wishlist()),
+        headers={
+            'Content-Type': 'application/json',
         }
-        resp = client.post(
-            '/api/wishlists',
-            data=json.dumps(wishlist),
-            headers={
-                'Content-Type': 'application/json',
-            }
-        )
-        assert resp.status == '201 CREATED'
-        result = resp.get_json()['wishlist']
-        card = result['cards'][0]
-        assert len(result['cards']) == 1
-        assert card['name'] == 'Shock'
-        assert card['languages'] == ['English']
-        assert card['expansions'] == ['Dominaria']
-        assert result['name'] == 'name'
-        assert db_session.query(Wishlist).get(result['id']).to_dict() == result
+    )
+    assert resp.status == '201 CREATED'
+    result = resp.get_json()['wishlist']
+    card = result['cards'][0]
+    assert len(result['cards']) == 1
+    assert card['name'] == 'Shock'
+    assert card['languages'] == ['English']
+    assert card['expansions'] == ['Dominaria']
+    assert result['name'] == 'name'
+    assert db_session.query(Wishlist).get(result['id']).to_dict() == result
+
+
+def test_can_retrieve_wishlist(db_session, client, user):
+    wishlist_id = client.post(
+        '/api/wishlists',
+        data=json.dumps(get_wishlist()),
+        headers={
+            'Content-Type': 'application/json',
+        }
+    ).get_json()['wishlist']['id']
+    resp = client.get(f'/api/wishlists/{wishlist_id}')
+    assert resp

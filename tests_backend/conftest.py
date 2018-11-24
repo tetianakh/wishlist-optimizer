@@ -21,7 +21,7 @@ def client(app):
 
 
 @pytest.yield_fixture(scope="session")
-def database(app):
+def database(app, request):
     with app.app_context():
         db.create_all()
         db.session.add(Language(name='English', mkm_id=1))
@@ -31,6 +31,7 @@ def database(app):
         db.session.add(Expansion(name='Dominaria', code='DOM'))
         db.session.commit()
         yield db
+        db.drop_all()
 
 
 @pytest.fixture(scope='session')

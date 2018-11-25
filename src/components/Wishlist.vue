@@ -1,7 +1,8 @@
 <template lang="html">
   <page>
-    <h1 v-if="!editingName" @click="editingName=true" class="hoverable">{{ wishlist.name }} </h1>
-    <b-form-input v-else id="nameInput" v-model="wishlist.name" type="text" @keydown.enter.native="updateName"></b-form-input>
+    <h1 v-if="!editingName" @click="activateEditName" class="hoverable">{{ wishlist.name }} </h1>
+    <input v-else id="nameInput" ref="nameInput" v-model="newName" type="text" @keydown.enter="updateName" @blur="closeEditName"></input>
+
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
@@ -50,13 +51,15 @@ export default {
     return {
       wishlist: {},
       wishlistClient: new WishlistClient(),
-      editingName: false
+      editingName: false,
+      newName: ''
     }
   },
   mixins: [hasCards, languagesLoader],
   created () {
     this.wishlistClient.getWishlist(this.$route.params.id).then(resp => {
       this.wishlist = resp.wishlist
+      this.newName = resp.wishlist.name
     })
   },
   methods: {
@@ -85,15 +88,26 @@ export default {
         this.wishlist = resp.wishlist
       })
     },
+    closeEditName () {
+      this.editingName = false
+      this.newName = this.wishlist.name
+    },
+    activateEditName () {
+      this.editingName = true
+      this.$nextTick(() => this.$refs.nameInput.focus())
+    },
     updateName (event) {
-      if (!this.wishlist.name){
+      if (!this.newName) {
         event.preventDefault()
         return
       }
+      if (this.newName == this.wishlist.name){
+        return
+      }
       this.editingName = false
-      this.wishlistClient.renameWishlist(this.wishlist.id, this.wishlist.name).then(resp =>
+      this.wishlistClient.renameWishlist(this.wishlist.id, this.newName).then(resp => {
         this.wishlist.name = resp.name
-      )
+      })
     }
   }
 }
@@ -102,6 +116,15 @@ export default {
 <style lang="css">
 #nameInput {
   margin: auto;
-  width: 200px;
+  width: 300px;
+  height: 3.5rem;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-radius: 0;
+  border-bottom: 2px solid grey;
+  padding: 0px 0px 15px 0px;
+  font-size: 2.5rem;
+  text-align: center;
 }
 </style>

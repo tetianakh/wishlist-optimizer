@@ -77,7 +77,7 @@ def rename_wishlist(user_id, wishlist_id):
             )}
         )
     except ValueError as e:
-        return jsonify({'error': e.message}), 400
+        return jsonify({'error': str(e)}), 400
 
 
 @api.route('/wishlists/<int:wishlist_id>/cards_batch', methods=('POST',))

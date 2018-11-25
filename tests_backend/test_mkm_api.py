@@ -132,7 +132,7 @@ async def test_get_article(http_client, app):
     result = await api.get_articles('some_product_id')
     http_client.get.assert_called_once_with(
         'articles/some_product_id',
-        params=None, headers={}, field='article'
+        params={}, headers={}, field='article'
     )
     assert len(result) == 1
     assert result[0] == {
@@ -151,8 +151,25 @@ async def test_filters_articles_by_language(http_client, app):
     response = amock([get_article()])
     http_client.get.return_value = response
     api = MkmApi(http_client)
-    await api.get_articles('some_product_id', 10)
+    await api.get_articles('some_product_id', language_id=10)
     params = {'idLanguage': 10}
+    http_client.get.assert_called_once_with(
+        'articles/some_product_id',
+        params=params, headers={}, field='article'
+    )
+
+
+@pytest.mark.parametrize(['foil', 'params'], (
+    (True, {'isFoil': 'true'}),
+    (False, {'isFoil': 'false'}),
+    (None, {})
+))
+@pytest.mark.asyncio
+async def test_filters_articles_by_foil(foil, params, http_client, app):
+    response = amock([get_article()])
+    http_client.get.return_value = response
+    api = MkmApi(http_client)
+    await api.get_articles('some_product_id', foil=foil)
     http_client.get.assert_called_once_with(
         'articles/some_product_id',
         params=params, headers={}, field='article'

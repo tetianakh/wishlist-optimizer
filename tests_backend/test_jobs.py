@@ -8,7 +8,7 @@ import pytest
 from tests_backend.conftest import amock
 
 
-def get_wishlist(quantity=1, languages=None, expansions=None):
+def get_wishlist(quantity=1, languages=None, expansions=None, foil=None):
     return {
         'cards': [
             {
@@ -16,6 +16,7 @@ def get_wishlist(quantity=1, languages=None, expansions=None):
                 'quantity': quantity,
                 'languages': languages or [],
                 'expansions': expansions or [],
+                'foil': foil
             }
         ]
     }
@@ -174,3 +175,14 @@ def test_filters_product_ids_by_expansion(mock_pids, mock_langs, app):
     expansions = ['Kaladesh', 'Dominaria']
     get_pricing(get_wishlist(expansions=expansions))
     mock_pids.assert_called_once_with('Shock', expansions)
+
+
+@mock.patch.object(MkmApi, 'get_product_ids')
+@mock.patch.object(MkmApi, 'get_articles')
+def test_calls_get_articles_with_correct_params(
+        mock_get_articles, mock_get_pids, mock_langs, app):
+    mock_get_pids.return_value = amock([123])
+    mock_get_articles.return_value = amock([])
+
+    get_pricing(get_wishlist(languages=['English'], foil=True))
+    mock_get_articles.assert_called_once_with(123, language_id=1, foil=True)

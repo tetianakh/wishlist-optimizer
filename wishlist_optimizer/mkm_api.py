@@ -171,10 +171,13 @@ class MkmApi:
         return card_name.replace(' ', '').replace('/', '')
 
     @ttl_cache(60 * 5)
-    async def get_articles(self, product_id, language_id=None):
-        params = None
+    async def get_articles(self, product_id, language_id=None, foil=None):
+        params = {}
         if language_id:
-            params = {'idLanguage': language_id}
+            params['idLanguage'] = language_id
+        if foil is not None:
+            params['isFoil'] = 'true' if foil else 'false'
+
         url = 'articles/{}'.format(product_id)
 
         data = await self._http.get(

@@ -15,7 +15,8 @@ class MkmPricingService:
                 'name': c['name'],
                 'quantity': int(c['quantity']),
                 'languages': c.get('languages', []),
-                'expansions': c.get('expansions')
+                'expansions': c.get('expansions'),
+                'foil': c.get('foil')
             }
             for c in wishlist
         ]
@@ -28,7 +29,9 @@ class MkmPricingService:
     async def _get_card_articles(self, card, product_id, language_id):
         if language_id is None:
             return card, await self._api.get_articles(product_id)
-        return card, await self._api.get_articles(product_id, language_id)
+        return card, await self._api.get_articles(
+            product_id, language_id=language_id, foil=card['foil']
+        )
 
     def _get_card_product_ids(self, cards):
         tasks = [

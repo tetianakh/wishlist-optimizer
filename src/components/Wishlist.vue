@@ -114,7 +114,7 @@ export default {
 </script>
 
 <style lang="css">
-#nameInput {
+#nameInput:focus {
   margin: auto;
   width: 300px;
   height: 3.5rem;
@@ -126,5 +126,6 @@ export default {
   padding: 0px 0px 15px 0px;
   font-size: 2.5rem;
   text-align: center;
+  outline: 0;
 }
 </style>

@@ -92,6 +92,19 @@ class WishlistService:
         db.session.delete(wishlist)
         db.session.commit()
 
+    def rename_wishlist(self, user_id, wishlist_id, data):
+        logger.info('Renaming wishlist %s to %s', wishlist_id, data)
+        if 'name' not in data:
+            raise ValueError('Missing name in the request body')
+        if not data['name'] or not isinstance(data['name'], str):
+            raise ValueError('Invalid name')
+        wishlist = Wishlist.query.get(wishlist_id)
+        if wishlist.user_id != user_id:
+            raise ObjectNotFound
+        wishlist.name = data['name']
+        db.session.commit()
+        return data['name']
+
     def _get_foil(self, data):
         foil = data.get('foil')
         if foil not in (True, False):

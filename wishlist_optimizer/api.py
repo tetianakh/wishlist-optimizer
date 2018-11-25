@@ -56,10 +56,28 @@ def add_card(user_id, wishlist_id):
         data = request.get_json()
     except Exception as e:
         logger.exception('Failed to read json request: %s', e)
-        return 'Failed to read json request', 400
+        return jsonify({'error': 'Failed to read json request'}), 400
     return jsonify(
         {'card': wishlist_service.add_card(user_id, wishlist_id, data)}
     ), 201
+
+
+@api.route('/wishlists/<int:wishlist_id>/name', methods=('PUT',))
+@login_required
+def rename_wishlist(user_id, wishlist_id):
+    try:
+        data = request.get_json()
+    except Exception as e:
+        logger.exception('Failed to read json request: %s', e)
+        return jsonify({'error': 'Failed to read json request'}), 400
+    try:
+        return jsonify(
+            {'name': wishlist_service.rename_wishlist(
+                user_id, wishlist_id, data
+            )}
+        )
+    except ValueError as e:
+        return jsonify({'error': e.message}), 400
 
 
 @api.route('/wishlists/<int:wishlist_id>/cards_batch', methods=('POST',))

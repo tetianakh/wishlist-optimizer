@@ -193,3 +193,20 @@ def test_foil(foil, expected, db_session, client, user):
         url, data=json.dumps(card), content_type='application/json'
     ).get_json()['card']
     assert result['foil'] is expected
+
+
+def test_rename_wishlist(db_session, client, user):
+    empty_wishlist = {
+        'name': 'old name',
+        'cards': []
+    }
+    wishlist_id = create_wishlist(client, empty_wishlist)['id']
+    resp = client.put(
+        f'/api/wishlists/{wishlist_id}/name',
+        data=json.dumps({'name': 'new name'}),
+        content_type='application/json'
+    )
+    wishlist = db_session.query(Wishlist).get(wishlist_id)
+    assert resp.status == '200 OK'
+    assert wishlist.name == 'new name'
+    assert resp.get_json()['name'] == 'new name'

@@ -4,7 +4,7 @@ from unittest import mock
 from tests_backend.conftest import amock
 
 
-from wishlist_optimizer.mkm_api import HttpClient, MkmApi  # noqa
+from wishlist_optimizer.mkm_api import HttpClient, MkmApi
 
 
 def get_product(
@@ -36,7 +36,9 @@ def get_article(article_id=123, language_id=1, price=0.1, count=1):
 @pytest.yield_fixture
 def http_client(event_loop):
     with mock.patch.object(HttpClient, 'get'):
-        yield HttpClient(event_loop, {'url': 'http://some.url'})
+        client = HttpClient(event_loop, {'url': 'http://some.url'})
+        yield client
+        event_loop.run_until_complete(client.close())
 
 
 @pytest.mark.parametrize(['name'], (

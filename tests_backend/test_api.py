@@ -1,6 +1,6 @@
 import json
 
-from wishlist_optimizer.models import Wishlist, User
+from wishlist_optimizer.models import Wishlist, User, Card
 
 from . import USER_ID
 
@@ -36,7 +36,7 @@ def create_wishlist(client, wishlist=None):
         headers={
             'Content-Type': 'application/json',
         }
-    ).get_json()['wishlist']['id']
+    ).get_json()['wishlist']
 
 
 def test_save_empty_wishlist_via_api(db_session, client, user):
@@ -90,7 +90,7 @@ def test_can_retrieve_wishlist(db_session, client, user):
 
 
 def test_delete_wishlist(db_session, client, user):
-    wishlist_id = create_wishlist(client)
+    wishlist_id = create_wishlist(client)['id']
     resp = client.delete(f'/api/wishlists/{wishlist_id}')
     assert resp.status == '204 NO CONTENT'
     assert db_session.query(Wishlist).get(wishlist_id) is None
@@ -101,7 +101,7 @@ def test_add_card(db_session, client, user):
         'name': 'name',
         'cards': []
     }
-    wishlist_id = create_wishlist(client, empty_wishlist)
+    wishlist_id = create_wishlist(client, empty_wishlist)['id']
     card = {
         'name': 'Shock',
         'languages': ['English'],
@@ -125,7 +125,7 @@ def test_bulk_add_cards(db_session, client, user):
         'name': 'name',
         'cards': []
     }
-    wishlist_id = create_wishlist(client, empty_wishlist)
+    wishlist_id = create_wishlist(client, empty_wishlist)['id']
     cards = [
         {
             'name': 'Shock',
@@ -145,3 +145,30 @@ def test_bulk_add_cards(db_session, client, user):
     assert cards[0].quantity == 2
     assert cards[1].name == 'Bomat'
     assert cards[1].quantity == 4
+
+
+def test_update_card(db_session, client, user):
+    wishlist = create_wishlist(client)
+    wishlist_id = wishlist['id']
+    old_card = wishlist['cards'][0]
+    card_id = old_card['id']
+    assert old_card['name'] == 'Shock'
+    assert old_card['quantity'] == 4
+    assert old_card['languages'] == ['English']
+    assert old_card['expansions'] == ['Dominaria']
+    new_card = {
+        'name': 'Bomat',
+        'quantity': 4,
+        'languages': ['German'],
+        'expansions': ['Kaladesh']
+    }
+    url = f'/api/wishlists/{wishlist_id}/cards/{card_id}'
+    resp = client.put(
+        url, data=json.dumps(new_card), content_type='application/json'
+    )
+    assert resp.status == '200 OK'
+    updated_card = db_session.query(Card).get(card_id).to_dict()
+    assert updated_card['name'] == new_card['name']
+    assert updated_card['quantity'] == new_card['quantity']
+    assert updated_card['languages'] == new_card['languages']
+    assert updated_card['expansions'] == new_card['expansions']

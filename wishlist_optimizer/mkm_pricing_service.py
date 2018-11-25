@@ -20,6 +20,7 @@ class MkmPricingService:
             }
             for c in wishlist
         ]
+        logger.info(self._wishlist)
         self._total_card_count = sum(c['quantity'] for c in self._wishlist)
         self._languages_service = languages_service
         self._best_prices = {}
@@ -28,7 +29,9 @@ class MkmPricingService:
 
     async def _get_card_articles(self, card, product_id, language_id):
         if language_id is None:
-            return card, await self._api.get_articles(product_id)
+            return card, await self._api.get_articles(
+                product_id, foil=card['foil']
+            )
         return card, await self._api.get_articles(
             product_id, language_id=language_id, foil=card['foil']
         )

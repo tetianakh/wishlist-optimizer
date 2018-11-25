@@ -39,6 +39,14 @@
     </b-form-group>
 
     <b-form-group
+      label="Foil?"
+      label-for="foilSelect">
+      <b-form-select v-model="newCard.foil"
+        :options="foilOptions"
+        id="foilSelect"></b-form-select>
+    </b-form-group>
+
+    <b-form-group
       label="Card languages:"
       label-for="cardLanguagesInput">
       <b-form-select v-model="newCard.languages"
@@ -68,6 +76,7 @@ import Multiselect from 'vue-multiselect'
 import { NEW_CARD } from '../events'
 import MtgClient from '../clients/MtgClient'
 import ExpansionsClient from '../clients/ExpansionsClient'
+import foilOptions from '../mixins/foilOptions'
 
 export default {
   components: { Multiselect },
@@ -80,7 +89,8 @@ export default {
         name: '',
         quantity: 1,
         languages: [],
-        expansions: []
+        expansions: [],
+        foil: null
       },
       isLoading: false,
       isLoadingExpansions: false,
@@ -89,6 +99,7 @@ export default {
       availableExpansions: []
     }
   },
+  mixins: [foilOptions],
   computed: {
     searchedCardNames () {
       return Array.from(new Set(this.searchedCards.map(c => c.name)))
@@ -104,9 +115,11 @@ export default {
         name: '',
         quantity: 1,
         languages: [],
-        expansions: []
+        expansions: [],
+        foil: null
       }
       this.availableExpansions = []
+      this.searchedCards = []
     },
     addCard (event) {
       if (!this.newCard.name || !this.newCard.quantity) {
@@ -114,14 +127,9 @@ export default {
         this.modalErrorMessage = 'Please fill in card name'
         return
       }
+      console.log(this.newCard)
       this.$emit(NEW_CARD, this.newCard)
-      this.newCard = {
-        name: '',
-        quantity: 1,
-        languages: [],
-        expansions: []
-      }
-      this.searchedCards = []
+      this.clear()
     },
     onCardSelect (cardName) {
       console.log(cardName)

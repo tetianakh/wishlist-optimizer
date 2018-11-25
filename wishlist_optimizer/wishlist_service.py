@@ -67,11 +67,13 @@ class WishlistService:
         expansions = self._expansion_service.find_by_names(
             data.get('expansions', [])
         )
+        foil = self._get_foil(data)
         return Card(
             name=data['name'].title(),
             quantity=data['quantity'],
             languages=languages,
             expansions=expansions,
+            foil=foil
         )
 
     def remove_card(self, user_id, card_id):
@@ -90,6 +92,12 @@ class WishlistService:
         db.session.delete(wishlist)
         db.session.commit()
 
+    def _get_foil(self, data):
+        foil = data.get('foil')
+        if foil not in (True, False):
+            return None
+        return foil
+
     def update_card(self, user_id, card_id, data):
         logger.debug("Updating card %s: %s", card_id, data)
         card = Card.query.get(card_id)
@@ -103,10 +111,7 @@ class WishlistService:
         card.expansions = self._expansion_service.find_by_names(
             data.get('expansions', [])
         )
-        foil = data.get('foil')
-        if foil not in (True, False):
-            foil = None
-        card.foil = foil
+        card.foil = self._get_foil(data)
         db.session.commit()
         return card.to_dict()
 

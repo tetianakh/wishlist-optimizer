@@ -7,6 +7,7 @@
         <th>Quantity</th>
         <th>Languages</th>
         <th>Expansions</th>
+        <th>Foil?</th>
         <th></th>
         <th></th>
       </tr>

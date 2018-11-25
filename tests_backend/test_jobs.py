@@ -179,10 +179,20 @@ def test_filters_product_ids_by_expansion(mock_pids, mock_langs, app):
 
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
-def test_calls_get_articles_with_correct_params(
+def test_calls_get_articles_with_correct_params_with_language(
         mock_get_articles, mock_get_pids, mock_langs, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([])
 
     get_pricing(get_wishlist(languages=['English'], foil=True))
     mock_get_articles.assert_called_once_with(123, language_id=1, foil=True)
+
+
+@mock.patch.object(MkmApi, 'get_product_ids')
+@mock.patch.object(MkmApi, 'get_articles')
+def test_calls_get_articles_with_correct_params_without_language(
+        mock_get_articles, mock_get_pids, mock_langs, app):
+    mock_get_pids.return_value = amock([123])
+    mock_get_articles.return_value = amock([])
+    get_pricing(get_wishlist(foil=True))
+    mock_get_articles.assert_called_once_with(123, foil=True)

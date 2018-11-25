@@ -20,6 +20,11 @@
         :options="availableExpansions" multiple ></b-form-select>
     </td>
     <td>
+      <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.foil | humanize }}</p>
+      <b-form-select v-else  v-model="card.foil"
+        :options="foilOptions" ></b-form-select>
+    </td>
+    <td>
       <font-awesome-icon v-if="!editing" icon="edit" @click="activateUpdate" class="hoverable"/>
       <font-awesome-icon v-else icon="check" @click="updateCard" class="hoverable"/>
     </td>
@@ -34,6 +39,7 @@
 <script>
 import { DELETE_CARD, UPDATE_CARD } from '../events'
 import ExpansionsClient from '../clients/ExpansionsClient'
+import foilOptions from '../mixins/foilOptions'
 
 export default {
   props: ['idx', 'card'],
@@ -45,10 +51,11 @@ export default {
     }
   },
   filters: {
-    join: function (values) {
+    join (values) {
       return values ? values.join(', ') : ''
     }
   },
+  mixins: [foilOptions],
   methods: {
     updateCard () {
       this.$emit(UPDATE_CARD, { idx: this.idx, card: this.card })

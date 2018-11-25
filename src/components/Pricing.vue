@@ -3,6 +3,7 @@
     <div class="margin">
       <b-button
         variant="success"
+        size="sm"
         v-if="hasCards"
         :disabled="loading"
         @click="submitPricingJob"

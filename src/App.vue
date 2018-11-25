@@ -21,6 +21,27 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   text-align: center;
-  margin-top: 100px;
+  margin-top: 70px;
+  font-size: 14px;
 }
+
+.margin {
+  margin: 5px;
+}
+
+/* @media (min-width: 480px) {
+    #app {font-size: 14px;}
+} */
+
+/* @media (min-width: 576px) {
+    #app {font-size: 14px;}
+} */
+
+@media (min-width: 768px) {
+  #app {
+    font-size: 16px;
+    margin-top: 120px;
+  }
+}
+
 </style>

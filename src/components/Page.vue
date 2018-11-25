@@ -33,7 +33,4 @@ export default {
     justify-content: center;
   }
 
-  .margin {
-    margin: 10px;
-  }
 </style>

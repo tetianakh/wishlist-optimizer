@@ -4,8 +4,8 @@
     <h1>Wishlists</h1>
 
     <div class="row centered">
-        <button class="btn btn-success margin" type="button" @click="addNewWishlist">
-          Add New Wishlist</button>
+        <b-button class="margin" size="sm" variant="success" @click="addNewWishlist">
+          Add New Wishlist</b-button>
     </div>
 
     <div class="row centered">

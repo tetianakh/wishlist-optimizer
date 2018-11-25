@@ -1,6 +1,5 @@
 <template lang="html">
   <tr>
-    <td>{{ idx + 1 }}</td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.name }}</p>
       <b-form-input v-else v-model="card.name" type="text" @keydown.enter.native="updateCard()"></b-form-input>

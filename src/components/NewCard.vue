@@ -1,5 +1,5 @@
 <template lang="html">
-  <b-modal :id="modalId" ok-title="Add" @ok="addCard" @cancel="clear">
+  <b-modal :id="modalId" button-size="sm" ok-title="Add" @ok="addCard" @cancel="clear">
     <template slot="modal-title">
       Add new card
     </template>

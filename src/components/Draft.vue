@@ -11,6 +11,7 @@
         <b-button
           v-b-modal="'saveWishlistModal'"
           variant="success"
+          size="sm"
           :disabled="!authenticated"
           v-if="hasCards"
           class="margin">Save Wishlist</b-button>
@@ -19,12 +20,13 @@
         variant="danger"
         v-if="hasCards"
         class="margin"
+        size="sm"
         @click="clearAll">Delete All Cards</b-button>
     </div>
 
     <file-upload-modal v-on:new-cards="addCards"></file-upload-modal>
 
-    <b-modal id="saveWishlistModal" ok-title="Save" @ok="saveWishlist">
+    <b-modal id="saveWishlistModal" button-size="sm" ok-title="Save" @ok="saveWishlist">
       <template slot="modal-title">
         Enter wishlist name:
       </template>

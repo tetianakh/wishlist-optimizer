@@ -1,5 +1,5 @@
 <template lang="html">
-  <b-modal id="uploadFileModal" ok-title="Upload" @ok="handleFileUpload">
+  <b-modal id="uploadFileModal" button-size="sm" ok-title="Upload" @ok="handleFileUpload">
     <template slot="modal-title">
       Select a file to upload:
     </template>

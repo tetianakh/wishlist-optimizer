@@ -5,15 +5,21 @@
       <img src="../assets/logo.png" alt="Logo" height="40" width="40" id="imglogo">
     </b-navbar-brand>
 
+    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+
+    <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
         <b-nav-item><router-link to="/" :class="getClasses('Home')" >Wishlists</router-link></b-nav-item>
         <b-nav-item><router-link to="/draft" :class="getClasses('Draft')">New wishlist</router-link></b-nav-item>
       </b-navbar-nav>
 
-    <b-navbar-nav class="ml-auto">
-      <a href='#' v-if="!authenticated" @click="onLogIn" :class="getClasses('Login')">Log in</a>
-      <a href='#' v-if="authenticated" @click="onLogOut" :class="getClasses()">Log out</a>
-    </b-navbar-nav>
+
+      <b-navbar-nav class="ml-auto">
+        <a href='#' v-if="!authenticated" @click="onLogIn" :class="getClasses('Login')">Log in</a>
+        <a href='#' v-if="authenticated" @click="onLogOut" :class="getClasses()">Log out</a>
+      </b-navbar-nav>
+
+    </b-collapse>
 
   </b-navbar>
 </template>

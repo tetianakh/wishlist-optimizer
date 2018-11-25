@@ -9,6 +9,7 @@
       <new-card-button></new-card-button>
       <file-upload-button></file-upload-button>
       <b-button
+        size="sm"
         @click="deleteWishlist"
         variant="danger"
         class="margin">Delete wishlist</b-button>

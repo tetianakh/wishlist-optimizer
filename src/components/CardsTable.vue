@@ -2,7 +2,6 @@
   <table class="table table-hover table-sm" id="cards-table">
     <thead>
       <tr>
-        <th>#</th>
         <th>Name</th>
         <th>Quantity</th>
         <th>Languages</th>

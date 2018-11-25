@@ -239,3 +239,40 @@ def test_gets_correct_quantity_of_foil_cards(
     assert result['error'] is None
     assert result['result'][0]['total_count'] == 15
     assert result['result'][0]['total_price'] == 51
+
+
+@mock.patch.object(MkmApi, 'get_product_ids')
+@mock.patch.object(MkmApi, 'get_articles')
+def test_reportsc_cards_that_no_seller_has_as_missing(
+        mock_get_articles, mock_get_pids, mock_langs, app):
+    mock_get_pids.return_value = amock([123])
+
+    async def get_articles(product_id, language_id=None, foil=None):
+        if language_id == 1:
+            return [{
+                'language': 1,
+                'price': 10,
+                'seller_username': 'seller',
+                'seller_url': 'seller_url',
+                'seller_id': 'seller_id',
+                'count': 4,
+                'id': 789,
+            }]
+        return []  # no cards in other languages
+
+    mock_get_articles.side_effect = get_articles
+    wishlist = get_wishlist(foil=False, quantity=4, languages=['English'])
+    wishlist['cards'].append({
+        'name': 'Missing card',
+        'quantity': 4,
+        'languages': ['German'],
+        'expansions': [],
+    })
+    result = get_pricing(wishlist)
+    print(result)
+    assert result['error'] is None
+    assert result['result'][0]['total_count'] == 4
+    assert result['result'][0]['total_price'] == 40
+    assert result['result'][0]['missing_cards'] == [
+        {'name': 'Missing card', 'quantity': 4}
+    ]

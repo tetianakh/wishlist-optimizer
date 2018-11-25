@@ -74,14 +74,15 @@ class MkmPricingService:
         offers = self._group_by_seller(articles)
 
         for card in self._wishlist:
-            name = self._card_to_key(card)
-            if name not in offers:
-                if name not in self._missing_cards:
-                    self._missing_cards[name] = 0
-                self._missing_cards[name] += card['quantity']
+            card_key = self._card_to_key(card)
+            if card_key not in offers:
+                if card_key not in self._missing_cards:
+                    card_name = self._get_name_from_key(card_key)
+                    self._missing_cards[card_name] = 0
+                self._missing_cards[card_name] += card['quantity']
                 continue
             self._calculate_best_prices(
-                name, card['quantity'], offers[name]
+                card_key, card['quantity'], offers[card_key]
             )
 
         result = list(self._best_prices.values())
@@ -128,6 +129,7 @@ class MkmPricingService:
         for name, value in card_key:
             if name == 'name':
                 return value
+        raise ValueError(f'Failed to get name from key {card_key}')
 
     def _update_missing_cards(self, best_sellers):
         wishlist = defaultdict(int)

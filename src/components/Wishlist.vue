@@ -1,7 +1,7 @@
 <template lang="html">
   <page>
     <h1 v-if="!editingName" @click="activateEditName" class="hoverable">{{ wishlist.name }} </h1>
-    <input v-else id="nameInput" ref="nameInput" v-model="newName" type="text" @keydown.enter="updateName" @blur="closeEditName"></input>
+    <input v-else id="nameInput" ref="nameInput" v-model="newName" type="text" @keydown.enter="updateName" @blur="closeEditName"/>
 
     <pricing :wishlist="wishlist"></pricing>
 
@@ -102,7 +102,7 @@ export default {
         event.preventDefault()
         return
       }
-      if (this.newName == this.wishlist.name){
+      if (this.newName === this.wishlist.name) {
         return
       }
       this.editingName = false

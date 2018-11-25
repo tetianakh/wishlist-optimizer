@@ -13,7 +13,6 @@
         <b-nav-item><router-link to="/draft" :class="getClasses('Draft')">New wishlist</router-link></b-nav-item>
       </b-navbar-nav>
 
-
       <b-navbar-nav class="ml-auto">
         <a href='#' v-if="!authenticated" @click="onLogIn" :class="getClasses('Login')">Log in</a>
         <a href='#' v-if="authenticated" @click="onLogOut" :class="getClasses()">Log out</a>

@@ -38,4 +38,9 @@ export default class WishlistClient {
   removeWishlist (wishlistId) {
     return this.http.delete(`wishlists/${wishlistId}`).then(resp => resp.data)
   }
+  renameWishlist (wishlistId, newName) {
+    return this.http.put(`wishlists/${wishlistId}/name`, {name: newName}).then(
+      resp => resp.data
+    )
+  }
 }

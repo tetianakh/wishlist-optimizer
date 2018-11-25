@@ -1,6 +1,7 @@
 <template lang="html">
   <page>
-    <h1>{{ wishlist.name }}</h1>
+    <h1 v-if="!editingName" @click="editingName=true" class="hoverable">{{ wishlist.name }} </h1>
+    <b-form-input v-else id="nameInput" v-model="wishlist.name" type="text" @keydown.enter.native="updateName"></b-form-input>
     <pricing :wishlist="wishlist"></pricing>
 
     <div class="row centered">
@@ -48,7 +49,8 @@ export default {
   data () {
     return {
       wishlist: {},
-      wishlistClient: new WishlistClient()
+      wishlistClient: new WishlistClient(),
+      editingName: false
     }
   },
   mixins: [hasCards, languagesLoader],
@@ -82,11 +84,24 @@ export default {
       this.wishlistClient.addCards(this.$route.params.id, { cards }).then(resp => {
         this.wishlist = resp.wishlist
       })
+    },
+    updateName (event) {
+      if (!this.wishlist.name){
+        event.preventDefault()
+        return
+      }
+      this.editingName = false
+      this.wishlistClient.renameWishlist(this.wishlist.id, this.wishlist.name).then(resp =>
+        this.wishlist.name = resp.name
+      )
     }
   }
 }
 </script>
 
 <style lang="css">
-
+#nameInput {
+  margin: auto;
+  width: 200px;
+}
 </style>

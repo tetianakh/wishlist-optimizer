@@ -14,6 +14,7 @@
     <table class='table table-hover table-sm' v-if="pricing.length > 0">
       <thead>
         <th>Seller Username</th>
+        <th>Seller Country</th>
         <th>Has # cards</th>
         <th>Total price</th>
         <th>Missing cards</th>
@@ -21,6 +22,7 @@
       <tbody>
         <tr v-for="item in pricing" :key="item.seller_id">
           <td><a :href="item.seller_url" target="_blank">{{ item.seller_username }}</a></td>
+          <td>{{ item.seller_country }}</td>
           <td>{{ item.total_count }} / {{ totalCardCount }}</td>
           <td>{{ item.total_price.toFixed(2) }}€</td>
           <td>

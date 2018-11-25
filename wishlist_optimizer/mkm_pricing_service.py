@@ -105,7 +105,8 @@ class MkmPricingService:
                     'found_cards': {},
                     'seller_id': offer_list[0]['seller_id'],
                     'seller_username': offer_list[0]['seller_username'],
-                    'seller_url': offer_list[0]['seller_url']
+                    'seller_url': offer_list[0]['seller_url'],
+                    'seller_country': offer_list[0]['seller_country']
                 }
 
             offer_list = sorted(offer_list, key=lambda o: o['price'])

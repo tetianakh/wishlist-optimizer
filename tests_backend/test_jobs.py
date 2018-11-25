@@ -56,6 +56,7 @@ def test_single_product_single_article(
             'seller_username': 'seller',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
+            'seller_country': 'AT',
             'count': 1,
             'id': 456,
         }
@@ -69,7 +70,9 @@ def test_single_product_single_article(
             'seller_url': 'seller_url',
             'seller_username': 'seller',
             'total_count': 1,
-            'total_price': 0.1
+            'total_price': 0.1,
+            'seller_country': 'AT',
+
         }
     ]
 
@@ -87,14 +90,17 @@ def test_gets_cards_from_multiple_articles(
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
             'count': 2,
+            'seller_country': 'AT',
             'id': 456,
         },
         {
             'language': 1,
             'price': 0.1,
             'seller_username': 'seller',
+            'seller_country': 'AT',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
+            'seller_country': 'AT',
             'count': 1,
             'id': 456,
         }
@@ -117,6 +123,7 @@ def test_reports_missing_cards(
             'seller_username': 'seller',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
+            'seller_country': 'AT',
             'count': 1,
             'id': 456,
         }
@@ -129,6 +136,7 @@ def test_reports_missing_cards(
             'seller_id': 'seller_id',
             'seller_url': 'seller_url',
             'seller_username': 'seller',
+            'seller_country': 'AT',
             'total_count': 1,
             'total_price': 0.1
         }
@@ -147,6 +155,7 @@ def test_handles_duplicated_card_names_in_wishlist(
             'seller_username': 'seller',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
+            'seller_country': 'AT',
             'count': 2,  # only two shocks are available
             'id': 456,
         }
@@ -164,6 +173,7 @@ def test_handles_duplicated_card_names_in_wishlist(
             'seller_id': 'seller_id',
             'seller_url': 'seller_url',
             'seller_username': 'seller',
+            'seller_country': 'AT',
             'total_count': 2,  # only 2 were available
             'total_price': 0.2
         }
@@ -212,6 +222,7 @@ def test_gets_correct_quantity_of_foil_cards(
                 'seller_username': 'seller',
                 'seller_url': 'seller_url',
                 'seller_id': 'seller_id',
+                'seller_country': 'AT',
                 'count': 5,
                 'id': 789,
             }]
@@ -221,6 +232,7 @@ def test_gets_correct_quantity_of_foil_cards(
             'seller_username': 'seller',
             'seller_url': 'seller_url',
             'seller_id': 'seller_id',
+            'seller_country': 'AT',
             'count': 20,
             'id': 456,
         }]
@@ -255,6 +267,7 @@ def test_reportsc_cards_that_no_seller_has_as_missing(
                 'seller_username': 'seller',
                 'seller_url': 'seller_url',
                 'seller_id': 'seller_id',
+                'seller_country': 'AT',
                 'count': 4,
                 'id': 789,
             }]

@@ -26,6 +26,7 @@ def get_article(article_id=123, language_id=1, price=0.1, count=1):
         'language': {'idLanguage': language_id},
         'price': price,
         'seller': {
+            'address': {'country': 'D'},
             'username': 'some_seller',
             'idUser': 'some_id',
         },
@@ -139,6 +140,7 @@ async def test_get_article(http_client, app):
         'language': 1,
         'price': 0.1,
         'seller_username': 'some_seller',
+        'seller_country': 'D',
         'seller_url': 'http://dummy.user.url/some_seller',
         'seller_id': 'some_id',
         'count': 1,

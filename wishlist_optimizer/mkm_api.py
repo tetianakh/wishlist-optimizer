@@ -198,6 +198,7 @@ class MkmApi:
             'seller_username': username,
             'seller_url': seller_url,
             'seller_id': full_data['seller']['idUser'],
+            'seller_country': full_data['seller']['address']['country'],
             'count': full_data['count'],
             'id': full_data['idArticle'],
         }

@@ -198,26 +198,15 @@ def test_calls_get_articles_with_correct_params_without_language(
     mock_get_articles.assert_called_once_with(123, foil=True)
 
 
-@pytest.mark.skip(reason='Flaky test')
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_gets_correct_quantity_of_foil_cards(
         mock_get_articles, mock_get_pids, mock_langs, app):
     mock_get_pids.return_value = amock([123])
-    mock_get_articles.side_effect = [
-        amock([
-            {
-                'language': 1,
-                'price': 0.1,
-                'seller_username': 'seller',
-                'seller_url': 'seller_url',
-                'seller_id': 'seller_id',
-                'count': 20,
-                'id': 456,
-            }
-        ]),
-        amock([
-            {
+
+    async def get_articles(product_id, foil=None):
+        if foil:
+            return [{
                 'language': 1,
                 'price': 10,  # foil
                 'seller_username': 'seller',
@@ -225,9 +214,18 @@ def test_gets_correct_quantity_of_foil_cards(
                 'seller_id': 'seller_id',
                 'count': 5,
                 'id': 789,
-            }
-        ]),
-    ]
+            }]
+        return [{
+            'language': 1,
+            'price': 0.1,
+            'seller_username': 'seller',
+            'seller_url': 'seller_url',
+            'seller_id': 'seller_id',
+            'count': 20,
+            'id': 456,
+        }]
+
+    mock_get_articles.side_effect = get_articles
     wishlist = get_wishlist(foil=False, quantity=10)
     wishlist['cards'].append({
         'name': 'Shock',

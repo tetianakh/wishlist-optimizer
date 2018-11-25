@@ -103,6 +103,10 @@ class WishlistService:
         card.expansions = self._expansion_service.find_by_names(
             data.get('expansions', [])
         )
+        foil = data.get('foil')
+        if foil not in (True, False):
+            foil = None
+        card.foil = foil
         db.session.commit()
         return card.to_dict()
 

@@ -160,7 +160,8 @@ def test_update_card(db_session, client, user):
         'name': 'Bomat',
         'quantity': 4,
         'languages': ['German'],
-        'expansions': ['Kaladesh']
+        'expansions': ['Kaladesh'],
+        'foil': True
     }
     url = f'/api/wishlists/{wishlist_id}/cards/{card_id}'
     resp = client.put(
@@ -172,3 +173,23 @@ def test_update_card(db_session, client, user):
     assert updated_card['quantity'] == new_card['quantity']
     assert updated_card['languages'] == new_card['languages']
     assert updated_card['expansions'] == new_card['expansions']
+    assert updated_card['foil'] is True
+
+
+@pytest.mark.parametrize(['foil', 'expected'], (
+    (True, True),
+    (False, False),
+    (None, None),
+    ('foo', None)
+))
+def test_foil(foil, expected, db_session, client, user):
+    wishlist = create_wishlist(client)
+    wishlist_id = wishlist['id']
+    card = wishlist['cards'][0]
+    card['foil'] = foil
+    card_id = card['id']
+    url = f'/api/wishlists/{wishlist_id}/cards/{card_id}'
+    result = client.put(
+        url, data=json.dumps(card), content_type='application/json'
+    ).get_json()['card']
+    assert result['foil'] is expected

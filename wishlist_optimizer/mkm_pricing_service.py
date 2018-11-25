@@ -74,7 +74,7 @@ class MkmPricingService:
         offers = self._group_by_seller(articles)
 
         for card in self._wishlist:
-            name = card['name']
+            name = self._card_to_key(card)
             if name not in offers:
                 if name not in self._missing_cards:
                     self._missing_cards[name] = 0
@@ -94,7 +94,7 @@ class MkmPricingService:
         self._update_missing_cards(best_prices)
         return best_prices
 
-    def _calculate_best_prices(self, card_name, card_count, offers):
+    def _calculate_best_prices(self, card_key, card_count, offers):
         for seller_id, offer_list in offers.items():
 
             if seller_id not in self._best_prices:
@@ -119,9 +119,15 @@ class MkmPricingService:
                 self._used_offers[offer['id']] += found
                 found_count += found
                 need_count -= found
+            card_name = self._get_name_from_key(card_key)
             if card_name not in self._best_prices[seller_id]['found_cards']:
                 self._best_prices[seller_id]['found_cards'][card_name] = 0
             self._best_prices[seller_id]['found_cards'][card_name] += found_count  # noqa
+
+    def _get_name_from_key(self, card_key):
+        for name, value in card_key:
+            if name == 'name':
+                return value
 
     def _update_missing_cards(self, best_sellers):
         wishlist = defaultdict(int)
@@ -146,17 +152,25 @@ class MkmPricingService:
                 {'name': k, 'quantity': v} for (k, v) in missing_cards.items()
             ]
 
-    @staticmethod
-    def _group_by_seller(articles):
+    def _group_by_seller(self, articles):
         offers = defaultdict(dict)
         # sort data by card name and seller id
-        articles = sorted(articles, key=lambda x: (x[0]['name'], x[1]['seller_id']))  # noqa
+        articles = sorted(articles, key=lambda x: (self._card_to_key(x[0]), x[1]['seller_id']))  # noqa
         # group by card name
-        for card_name, card_articles in groupby(articles, lambda x: x[0]['name']):  # noqa
+        for card_key, card_articles in groupby(articles, lambda x: self._card_to_key(x[0])):  # noqa
             # group by seller ID
             for seller_id, articles_by_seller in groupby(card_articles, lambda x: x[1]['seller_id']):  # noqa
-                offers[card_name][seller_id] = [a[1] for a in articles_by_seller]  # noqa
+                offers[card_key][seller_id] = [a[1] for a in articles_by_seller]  # noqa
         return offers
+
+    @staticmethod
+    def _card_to_key(card):
+        result = []
+        for key, value in card.items():
+            if isinstance(value, list):
+                value = tuple(value)
+            result.append((key, value))
+        return tuple(result)
 
     def _set_language_ids(self, card, language_id_map):
         language_ids = [language_id_map[name] for name in card['languages']]

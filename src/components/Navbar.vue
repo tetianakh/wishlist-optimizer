@@ -17,6 +17,12 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
+        <div class="donate">
+          <a href="https://paypal.me/vampirictutor" target="_blank">
+            <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+          </a>
+        </div>
+
         <a href='#' v-if="!authenticated" @click="onLogIn" :class="getClasses('Login')">Log in</a>
         <a href='#' v-if="authenticated" @click="onLogOut" :class="getClasses()">Log out</a>
       </b-navbar-nav>
@@ -83,5 +89,9 @@ export default {
 }
 .active {
   text-decoration: underline;
+}
+
+.donate {
+  margin-right: 15px;
 }
 </style>

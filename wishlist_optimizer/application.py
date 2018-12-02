@@ -80,6 +80,11 @@ def configure_logging(log_level, log_format):
                 'level': 'INFO',
                 'propagate': False
             },
+            'oauthlib.oauth1.rfc5849': {
+                'handlers': ['default'],
+                'level': 'INFO',
+                'propagate': False
+            }
         }
     )
 

@@ -3,29 +3,44 @@ import logging
 from collections import defaultdict
 from itertools import groupby
 
+from wishlist_optimizer.condition_service import ConditionService
+from wishlist_optimizer.expansions_service import ExpansionService
+
 logger = logging.getLogger(__name__)
 
 
 class MkmPricingService:
     def __init__(self, loop, api, wishlist, languages_service):
+        self._languages_service = languages_service
         self._loop = loop
         self._api = api
-        self._wishlist = [
-            {
-                'name': c['name'],
-                'quantity': int(c['quantity']),
-                'languages': c.get('languages', []),
-                'expansions': c.get('expansions'),
-                'foil': c.get('foil')
-            }
-            for c in wishlist
-        ]
+        self._wishlist = self._prep_wishlist(wishlist)
         logger.info(self._wishlist)
         self._total_card_count = sum(c['quantity'] for c in self._wishlist)
-        self._languages_service = languages_service
         self._best_prices = {}
         self._missing_cards = {}
         self._used_offers = defaultdict(int)
+
+    def _prep_wishlist(self, cards):
+        condition_service = ConditionService()
+        expansion_service = ExpansionService()
+        return [
+            {
+                'name': c['name'],
+                'quantity': int(c['quantity']),
+                'languages': [
+                    l.name for l in self._languages_service.find_by_names(
+                        c.get('languages', [])
+                    )
+                ],
+                'expansions': [e.name for e in expansion_service.find_by_names(
+                    c.get('expansions', [])
+                )],
+                'foil': c.get('foil'),
+                'min_condition': condition_service.get_condition(c)
+            }
+            for c in cards
+        ]
 
     async def _get_card_articles(self, card, product_id, language_id):
         if language_id is None:

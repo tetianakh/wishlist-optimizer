@@ -1,6 +1,5 @@
 from wishlist_optimizer.jobs import get_pricing
 from wishlist_optimizer.mkm_api import MkmApi
-from wishlist_optimizer.languages_service import LanguagesService
 
 from unittest import mock
 import pytest
@@ -29,16 +28,12 @@ LANGS_MAP = {
 }
 
 
-@pytest.yield_fixture
-def mock_langs():
-    with mock.patch.object(
-            LanguagesService, 'get_language_mkm_ids', return_value=LANGS_MAP
-            ) as m:
-        yield m
+def echo(arg):
+    return arg
 
 
 @mock.patch.object(MkmApi, 'get_product_ids', return_value=amock([]))
-def test_no_products_found(mock_api, mock_langs, app):
+def test_no_products_found(mock_api, db_session, app):
     result = get_pricing(get_wishlist())
     assert result['error'] is None
     assert result['result'] == []
@@ -47,7 +42,7 @@ def test_no_products_found(mock_api, mock_langs, app):
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_single_product_single_article(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([
         {
@@ -80,7 +75,7 @@ def test_single_product_single_article(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_gets_cards_from_multiple_articles(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([
         {
@@ -114,7 +109,7 @@ def test_gets_cards_from_multiple_articles(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_reports_missing_cards(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([
         {
@@ -146,7 +141,7 @@ def test_reports_missing_cards(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_handles_duplicated_card_names_in_wishlist(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([
         {
@@ -181,8 +176,8 @@ def test_handles_duplicated_card_names_in_wishlist(
 
 
 @mock.patch.object(MkmApi, 'get_product_ids', return_value=amock([]))
-def test_filters_product_ids_by_expansion(mock_pids, mock_langs, app):
-    expansions = ['Kaladesh', 'Dominaria']
+def test_filters_product_ids_by_expansion(mock_pids, db_session, app):
+    expansions = ['Dominaria', ]
     get_pricing(get_wishlist(expansions=expansions))
     mock_pids.assert_called_once_with('Shock', expansions)
 
@@ -190,7 +185,7 @@ def test_filters_product_ids_by_expansion(mock_pids, mock_langs, app):
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_calls_get_articles_with_correct_params_with_language(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([])
 
@@ -201,7 +196,7 @@ def test_calls_get_articles_with_correct_params_with_language(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_calls_get_articles_with_correct_params_without_language(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([])
     get_pricing(get_wishlist(foil=True))
@@ -211,7 +206,7 @@ def test_calls_get_articles_with_correct_params_without_language(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_gets_correct_quantity_of_foil_cards(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
 
     async def get_articles(product_id, foil=None):
@@ -256,7 +251,7 @@ def test_gets_correct_quantity_of_foil_cards(
 @mock.patch.object(MkmApi, 'get_product_ids')
 @mock.patch.object(MkmApi, 'get_articles')
 def test_reportsc_cards_that_no_seller_has_as_missing(
-        mock_get_articles, mock_get_pids, mock_langs, app):
+        mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
 
     async def get_articles(product_id, language_id=None, foil=None):

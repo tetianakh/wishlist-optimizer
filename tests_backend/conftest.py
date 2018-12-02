@@ -23,6 +23,7 @@ def client(app):
 @pytest.yield_fixture(scope="session")
 def database(app, request):
     with app.app_context():
+        db.drop_all()
         db.create_all()
         db.session.add(Language(name='English', mkm_id=1))
         db.session.add(Language(name='French', mkm_id=2))

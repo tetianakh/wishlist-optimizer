@@ -2,7 +2,8 @@
   <tr>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.name }}</p>
-      <b-form-input v-else v-model="card.name" type="text" @keydown.enter.native="updateCard()"></b-form-input>
+      <b-form-input v-else v-model="card.name" type="text"
+        @keydown.enter.native="updateCard()"></b-form-input>
     </td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.quantity }}</p>
@@ -11,23 +12,27 @@
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.languages | join }}</p>
       <b-form-select v-else  v-model="card.languages"
-        :options="$store.state.availableLanguages" multiple ></b-form-select>
+        :options="$store.state.availableLanguages" multiple
+        @keydown.enter.native="updateCard()"></b-form-select>
     </td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.expansions | join }}</p>
       <b-form-select v-else  v-model="card.expansions"
-        :options="availableExpansions" multiple ></b-form-select>
+        :options="availableExpansions" multiple
+        @keydown.enter.native="updateCard()"></b-form-select>
     </td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>{{ card.foil | humanizeBoolean }}</p>
       <b-form-select v-else  v-model="card.foil"
-        :options="foilOptions" ></b-form-select>
+        :options="foilOptions"
+        @keydown.enter.native="updateCard()"></b-form-select>
     </td>
     <td>
       <p v-if="!editing" @click="activateUpdate()" class='hoverable'>
         {{  humanizeCondition(card.min_condition) }}</p>
       <b-form-select v-else  v-model="card.min_condition"
-        :options="conditionOptions" ></b-form-select>
+        :options="conditionOptions"
+        @keydown.enter.native="updateCard()"></b-form-select>
     </td>
     <td>
       <font-awesome-icon v-if="!editing" icon="edit" @click="activateUpdate" class="hoverable"/>

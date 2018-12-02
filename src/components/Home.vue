@@ -54,7 +54,7 @@ export default {
       return tokenStore.isAuthenticated()
     },
     newWishlistButtonName () {
-      if (draftStore.hasDraft) {
+      if (draftStore.hasDraft()) {
         return "Go to Unsaved Wishlist"
       }
       return "Add New Wishlist"

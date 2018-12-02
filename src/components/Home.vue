@@ -55,9 +55,9 @@ export default {
     },
     newWishlistButtonName () {
       if (draftStore.hasDraft()) {
-        return "Go to Unsaved Wishlist"
+        return 'Go to Unsaved Wishlist'
       }
-      return "Add New Wishlist"
+      return 'Add New Wishlist'
     }
   },
   mounted () {

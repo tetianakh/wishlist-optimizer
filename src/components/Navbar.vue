@@ -18,8 +18,8 @@
 
       <b-navbar-nav class="ml-auto">
         <div class="donate">
-          <a href="https://paypal.me/vampirictutor" target="_blank">
-            <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+          <a href="https://paypal.me/vampirictutor" target="_blank" :class="getClasses()">
+            Donate
           </a>
         </div>
 
@@ -43,9 +43,9 @@ export default {
     },
     newWishlistLinkName () {
       if (draftStore.hasDraft()) {
-        return "Unsaved Wishlist"
+        return 'Unsaved Wishlist'
       }
-      return "New Wishlist"
+      return 'New Wishlist'
     }
   },
   methods: {

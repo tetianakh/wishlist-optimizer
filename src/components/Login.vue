@@ -73,7 +73,6 @@ $button-active-blue: #1669F2;
 $light-grey: #f9f9f9;
 $dark-grey: #d8dee2;
 
-
 h3 {
   margin-top: 40px;
 }

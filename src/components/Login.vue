@@ -1,5 +1,10 @@
 <template lang="html">
   <page>
+
+  <img src="../assets/logo.png" alt="Logo" width="70px">
+
+  <h3>Sign in to VampiricTutor</h3>
+  <p>Signing in allows you to save your wishlists.</p>
     <div class="wrapper">
       <div>
         <b-alert variant="danger"
@@ -9,9 +14,7 @@
             {{ errorMessage }}
         </b-alert>
       </div>
-    </div>
-    <div class="wrapper">
-      <h2>Sign in to VampiricTutor:</h2>
+
       <div class="google-btn" v-if="!authenticated" @click="onLogIn('google')">
         <div class="google-icon-wrapper">
           <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
@@ -19,6 +22,7 @@
         <p class="btn-text"><b>Sign in with Google</b></p>
       </div>
     </div>
+
   </page>
 </template>
 
@@ -66,9 +70,26 @@ export default {
 $white: #fff;
 $google-blue: #4285f4;
 $button-active-blue: #1669F2;
+$light-grey: #f9f9f9;
+$dark-grey: #d8dee2;
+
+body {
+  background-color: $light-grey;
+}
+
+h3 {
+  margin-top: 40px;
+}
 
 .wrapper {
+  width: 300px;
   text-align: center;
+  background-color: $white;
+  border: 1px solid $dark-grey;
+  margin: 0px auto 40px auto;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
 }
 
 .google-btn {
@@ -76,12 +97,11 @@ $button-active-blue: #1669F2;
   width: 203px;
   height: 42px;
   background-color: $white;
+  border-color: $light-grey;
   border-radius: 2px;
   box-shadow: 0 3px 4px 0 rgba(0,0,0,.25);
   text-align: center;
   cursor: pointer;
-  margin-top: 40px;
-  margin-bottom: 40px;
   display: inline-block;
   .google-icon-wrapper {
     position: absolute;

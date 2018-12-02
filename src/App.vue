@@ -21,12 +21,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   text-align: center;
-  margin-top: 70px;
+  margin-top: 8em;
   font-size: 14px;
 }
 
 .margin {
-  margin: 5px;
+  margin: 0.5em;
 }
 
 /* @media (min-width: 480px) {
@@ -40,7 +40,7 @@ export default {
 @media (min-width: 768px) {
   #app {
     font-size: 16px;
-    margin-top: 120px;
+    margin-top: 10em;
   }
 }
 

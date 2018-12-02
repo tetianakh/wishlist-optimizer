@@ -39,6 +39,14 @@
     </b-form-group>
 
     <b-form-group
+      label="Minimal condition"
+      label-for="conditionSelect">
+      <b-form-select v-model="newCard.min_condition"
+        :options="conditionOptions"
+        id="conditionSelect"></b-form-select>
+    </b-form-group>
+
+    <b-form-group
       label="Foil?"
       label-for="foilSelect">
       <b-form-select v-model="newCard.foil"
@@ -77,6 +85,7 @@ import { NEW_CARD } from '../events'
 import MtgClient from '../clients/MtgClient'
 import ExpansionsClient from '../clients/ExpansionsClient'
 import foilOptions from '../mixins/foilOptions'
+import conditionOptions from '../mixins/conditionOptions'
 
 export default {
   components: { Multiselect },
@@ -99,7 +108,7 @@ export default {
       availableExpansions: []
     }
   },
-  mixins: [foilOptions],
+  mixins: [foilOptions, conditionOptions],
   computed: {
     searchedCardNames () {
       return Array.from(new Set(this.searchedCards.map(c => c.name)))

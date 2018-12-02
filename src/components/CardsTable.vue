@@ -7,6 +7,7 @@
         <th>Languages</th>
         <th>Expansions</th>
         <th>Foil?</th>
+        <th>Min condition</th>
         <th></th>
         <th></th>
       </tr>

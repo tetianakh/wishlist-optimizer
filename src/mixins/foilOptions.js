@@ -9,7 +9,7 @@ var foilOptions = {
     }
   },
   filters: {
-    humanize (value) {
+    humanizeBoolean (value) {
       if (value === true) return 'yes'
       if (value === false) return 'no'
       return 'any'

@@ -43,12 +43,11 @@ class MkmPricingService:
         ]
 
     async def _get_card_articles(self, card, product_id, language_id):
-        if language_id is None:
-            return card, await self._api.get_articles(
-                product_id, foil=card['foil']
-            )
         return card, await self._api.get_articles(
-            product_id, language_id=language_id, foil=card['foil']
+            product_id,
+            language_id=language_id,
+            foil=card['foil'],
+            min_condition=card['min_condition'],
         )
 
     def _get_card_product_ids(self, cards):

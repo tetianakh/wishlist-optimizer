@@ -45,7 +45,7 @@ class Card(db.Model):
     quantity = db.Column(db.Integer, default=lambda: 1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     foil = db.Column(db.Boolean, nullable=True)
-    min_condition = db.Column(db.String(2))
+    min_condition = db.Column(db.String(2), nullable=True)
     wishlist_id = db.Column(db.Integer, db.ForeignKey('wishlist.id'))
     languages = db.relationship(
         'Language', secondary=cards_to_languages, lazy='subquery',

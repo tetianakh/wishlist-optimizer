@@ -2,7 +2,6 @@ from wishlist_optimizer.jobs import get_pricing
 from wishlist_optimizer.mkm_api import MkmApi
 
 from unittest import mock
-import pytest
 
 from tests_backend.conftest import amock
 
@@ -190,7 +189,9 @@ def test_calls_get_articles_with_correct_params_with_language(
     mock_get_articles.return_value = amock([])
 
     get_pricing(get_wishlist(languages=['English'], foil=True))
-    mock_get_articles.assert_called_once_with(123, language_id=1, foil=True)
+    mock_get_articles.assert_called_once_with(
+        123, language_id=1, foil=True, min_condition=None
+    )
 
 
 @mock.patch.object(MkmApi, 'get_product_ids')
@@ -200,7 +201,9 @@ def test_calls_get_articles_with_correct_params_without_language(
     mock_get_pids.return_value = amock([123])
     mock_get_articles.return_value = amock([])
     get_pricing(get_wishlist(foil=True))
-    mock_get_articles.assert_called_once_with(123, foil=True)
+    mock_get_articles.assert_called_once_with(
+        123, language_id=None, foil=True, min_condition=None
+    )
 
 
 @mock.patch.object(MkmApi, 'get_product_ids')
@@ -209,7 +212,7 @@ def test_gets_correct_quantity_of_foil_cards(
         mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
 
-    async def get_articles(product_id, foil=None):
+    async def get_articles(product_id, foil=None, **kwargs):
         if foil:
             return [{
                 'language': 1,
@@ -254,7 +257,7 @@ def test_reportsc_cards_that_no_seller_has_as_missing(
         mock_get_articles, mock_get_pids, db_session, app):
     mock_get_pids.return_value = amock([123])
 
-    async def get_articles(product_id, language_id=None, foil=None):
+    async def get_articles(product_id, language_id=None, **kwargs):
         if language_id == 1:
             return [{
                 'language': 1,

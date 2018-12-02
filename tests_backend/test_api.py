@@ -118,7 +118,7 @@ def test_add_card(db_session, client, user):
     assert card['languages'] == ['English']
     assert card['expansions'] == ['Dominaria']
     assert card['quantity'] == 2
-    assert card['min_condition'] == 'NM'  # default
+    assert card['min_condition'] is None
 
 
 def test_bulk_add_cards(db_session, client, user):
@@ -215,7 +215,7 @@ def test_rename_wishlist(db_session, client, user):
 
 @pytest.mark.parametrize(['min_cond', 'exp'], (
     ('EX', 'EX'),
-    ('foo', 'NM')
+    ('foo', None)
 ))
 def test_add_card_with_min_condition(db_session, client, user, min_cond, exp):
     empty_wishlist = {

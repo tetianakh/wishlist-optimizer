@@ -44,5 +44,6 @@ export default {
 <style lang="css">
 #cards-table {
   margin-bottom: 150px;
+  margin-top: 15px;
 }
 </style>

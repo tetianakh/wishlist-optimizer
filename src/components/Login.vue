@@ -11,6 +11,7 @@
       </div>
     </div>
     <div class="wrapper">
+      <h2>Sign in to VampiricTutor:</h2>
       <div class="google-btn" v-if="!authenticated" @click="onLogIn('google')">
         <div class="google-icon-wrapper">
           <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
@@ -79,7 +80,8 @@ $button-active-blue: #1669F2;
   box-shadow: 0 3px 4px 0 rgba(0,0,0,.25);
   text-align: center;
   cursor: pointer;
-  margin-top: 100px;
+  margin-top: 40px;
+  margin-bottom: 40px;
   display: inline-block;
   .google-icon-wrapper {
     position: absolute;

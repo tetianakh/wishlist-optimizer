@@ -73,9 +73,6 @@ $button-active-blue: #1669F2;
 $light-grey: #f9f9f9;
 $dark-grey: #d8dee2;
 
-body {
-  background-color: $light-grey;
-}
 
 h3 {
   margin-top: 40px;
@@ -84,7 +81,7 @@ h3 {
 .wrapper {
   width: 300px;
   text-align: center;
-  background-color: $white;
+  background-color: $light-grey;
   border: 1px solid $dark-grey;
   margin: 0px auto 40px auto;
   border-radius: 5px;
@@ -97,7 +94,6 @@ h3 {
   width: 203px;
   height: 42px;
   background-color: $white;
-  border-color: $light-grey;
   border-radius: 2px;
   box-shadow: 0 3px 4px 0 rgba(0,0,0,.25);
   text-align: center;

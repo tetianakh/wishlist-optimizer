@@ -10,9 +10,11 @@ class ObjectNotFound(Exception):
 
 
 class WishlistService:
-    def __init__(self, languages_service, expansion_service):
+    def __init__(
+            self, languages_service, expansion_service, condition_service):
         self._languages_service = languages_service
         self._expansion_service = expansion_service
+        self._condition_service = condition_service
 
     def get_wishlists(self, user_id):
         return [
@@ -68,12 +70,14 @@ class WishlistService:
             data.get('expansions', [])
         )
         foil = self._get_foil(data)
+        min_condition = self._condition_service.get_condition(data)
         return Card(
             name=data['name'].title(),
             quantity=data['quantity'],
             languages=languages,
             expansions=expansions,
-            foil=foil
+            foil=foil,
+            min_condition=min_condition
         )
 
     def remove_card(self, user_id, card_id):
@@ -125,6 +129,7 @@ class WishlistService:
             data.get('expansions', [])
         )
         card.foil = self._get_foil(data)
+        card.min_condition = self._condition_service.get_condition(data)
         db.session.commit()
         return card.to_dict()
 

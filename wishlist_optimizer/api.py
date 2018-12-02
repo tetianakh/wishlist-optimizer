@@ -6,12 +6,15 @@ from wishlist_optimizer.languages_service import LanguagesService
 from wishlist_optimizer.jobs import check_job_status, schedule_job, get_pricing
 from wishlist_optimizer.auth import login_required
 from wishlist_optimizer.expansions_service import ExpansionService
+from wishlist_optimizer.condition_service import ConditionService
 
 
 api = Blueprint('api', __name__)
 languages_service = LanguagesService()
 expansion_service = ExpansionService()
-wishlist_service = WishlistService(languages_service, expansion_service)
+wishlist_service = WishlistService(
+    languages_service, expansion_service, ConditionService()
+)
 
 logger = logging.getLogger(__name__)
 

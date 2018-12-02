@@ -118,6 +118,7 @@ def test_add_card(db_session, client, user):
     assert card['languages'] == ['English']
     assert card['expansions'] == ['Dominaria']
     assert card['quantity'] == 2
+    assert card['min_condition'] == 'NM'  # default
 
 
 def test_bulk_add_cards(db_session, client, user):
@@ -210,3 +211,28 @@ def test_rename_wishlist(db_session, client, user):
     assert resp.status == '200 OK'
     assert wishlist.name == 'new name'
     assert resp.get_json()['name'] == 'new name'
+
+
+@pytest.mark.parametrize(['min_cond', 'exp'], (
+    ('EX', 'EX'),
+    ('foo', 'NM')
+))
+def test_add_card_with_min_condition(db_session, client, user, min_cond, exp):
+    empty_wishlist = {
+        'name': 'name',
+        'cards': []
+    }
+    wishlist_id = create_wishlist(client, empty_wishlist)['id']
+    card = {
+        'name': 'Shock',
+        'languages': ['English'],
+        'quantity': 2,
+        'expansions': ['Dominaria'],
+        'min_condition': min_cond,
+    }
+    client.post(f'/api/wishlists/{wishlist_id}/cards',
+                data=json.dumps(card),
+                content_type='application/json')
+    cards = db_session.query(Wishlist).get(wishlist_id).cards
+    card = cards[0].to_dict()
+    assert card['min_condition'] == exp

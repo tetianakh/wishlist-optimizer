@@ -2,15 +2,18 @@
   <b-navbar toggleable="md" type="light" fixed=top class="header">
 
     <b-navbar-brand>
-      <img src="../assets/logo.png" alt="Logo" height="40" width="40" id="imglogo">
+      <router-link to="/" >
+        <img src="../assets/logo.png" alt="Logo" height="40" width="40" id="imglogo">
+      </router-link>
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
-        <b-nav-item><router-link to="/" :class="getClasses('Home')" >Wishlists</router-link></b-nav-item>
-        <b-nav-item><router-link to="/draft" :class="getClasses('Draft')">New wishlist</router-link></b-nav-item>
+        <b-nav-item><router-link to="/" :class="getClasses('Home')" >Home</router-link></b-nav-item>
+        <b-nav-item><router-link to="/draft" :class="getClasses('Draft')">
+        {{ newWishlistLinkName }}</router-link></b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
@@ -25,11 +28,18 @@
 
 <script>
 import tokenStore from '../store/token'
+import draftStore from '../store/draft'
 
 export default {
   computed: {
     authenticated () {
       return tokenStore.isAuthenticated()
+    },
+    newWishlistLinkName () {
+      if (draftStore.hasDraft) {
+        return "Unsaved Wishlist"
+      }
+      return "New Wishlist"
     }
   },
   methods: {

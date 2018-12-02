@@ -1,6 +1,6 @@
 <template lang="html">
   <page>
-    <h1>New wishlist</h1>
+    <h2>New wishlist</h2>
     <p></p>
     <pricing :wishlist="wishlist"></pricing>
 

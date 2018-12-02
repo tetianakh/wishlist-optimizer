@@ -24,7 +24,7 @@ const router = new Router({
   mode: 'history'
 })
 
-const publicPages = ['Login', 'NotFound', 'Draft', 'Blank']
+const publicPages = ['Login', 'NotFound', 'Draft', 'Blank', 'Home']
 
 router.beforeEach((to, from, next) => {
   // redirect to home page if logged in and trying to access login page

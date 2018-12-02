@@ -1,6 +1,6 @@
 <template lang="html">
   <page>
-    <h1 v-if="!editingName" @click="activateEditName" class="hoverable">{{ wishlist.name }} </h1>
+    <h2 v-if="!editingName" @click="activateEditName" class="hoverable">{{ wishlist.name }} </h2>
     <input v-else id="nameInput" ref="nameInput" v-model="newName" type="text" @keydown.enter="updateName" @blur="closeEditName"/>
 
     <pricing :wishlist="wishlist"></pricing>
@@ -125,7 +125,7 @@ export default {
   border-radius: 0;
   border-bottom: 2px solid grey;
   padding: 0px 0px 15px 0px;
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
   outline: 0;
 }

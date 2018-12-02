@@ -36,7 +36,7 @@ export default {
       return tokenStore.isAuthenticated()
     },
     newWishlistLinkName () {
-      if (draftStore.hasDraft) {
+      if (draftStore.hasDraft()) {
         return "Unsaved Wishlist"
       }
       return "New Wishlist"

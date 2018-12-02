@@ -1,4 +1,5 @@
 import logging
+from logging.config import dictConfig
 import os
 
 import requests
@@ -10,12 +11,17 @@ def create_app(app_name='WISHLIST_OPTIMIZER', config_name=None):
     app = Flask(
         app_name, static_folder="./dist/static", template_folder="./dist"
     )
+
     config_name = config_name or 'DevelopmentConfig'
     app_settings = os.getenv(
         'APP_SETTINGS',
         'wishlist_optimizer.config.%s' % config_name
     )
     app.config.from_object(app_settings)
+
+    configure_logging(
+        log_level=app.config['LOG_LEVEL'], log_format=app.config['LOG_FORMAT']
+    )
 
     from wishlist_optimizer.api import api
     app.register_blueprint(api, url_prefix="/api")
@@ -41,8 +47,40 @@ def create_app(app_name='WISHLIST_OPTIMIZER', config_name=None):
     from wishlist_optimizer.models import db
     db.init_app(app)
 
-    logging.basicConfig(level=app.config['LOG_LEVEL'])
-
     CORS(app)
 
     return app
+
+
+def configure_logging(log_level, log_format):
+    # logging.basicConfig(
+    #     level=log_level, format=log_format
+    # )
+    logging_config = dict(
+        version=1,
+        disable_existing_loggers=False,
+        formatters={
+            'fmt': {'format': log_format}
+        },
+        handlers={
+            'default': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'fmt',
+                'level': log_level
+            }
+        },
+        loggers={
+            '': {
+                'handlers': ['default'],
+                'level': log_level,
+                'propagate': True
+            },
+            'rq.worker': {
+                'handlers': ['default'],
+                'level': 'INFO',
+                'propagate': False
+            },
+        }
+    )
+
+    dictConfig(logging_config)

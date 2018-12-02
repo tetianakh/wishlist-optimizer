@@ -8,6 +8,7 @@ from flask import current_app
 from requests_oauthlib import OAuth1
 
 from wishlist_optimizer.cache import ttl_cache
+from wishlist_optimizer.config import PRODUCTS_CACHE_TTL, ARTICLES_CACHE_TTL
 
 
 logging.basicConfig(level=logging.INFO)
@@ -133,7 +134,7 @@ class MkmApi:
         logger.info('Card: %s, product ids: %s', card_name, ids)
         return ids
 
-    @ttl_cache(60 * 60)
+    @ttl_cache(PRODUCTS_CACHE_TTL)
     async def _get_product_data(self, card_name):
         params = {
             'search': card_name.lower(),
@@ -170,7 +171,7 @@ class MkmApi:
     def _remove_slashes_and_spaces(card_name):
         return card_name.replace(' ', '').replace('/', '')
 
-    @ttl_cache(60 * 5)
+    @ttl_cache(ARTICLES_CACHE_TTL)
     async def get_articles(self, product_id, language_id=None, foil=None):
         params = {}
         if language_id:

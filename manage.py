@@ -6,7 +6,6 @@ from rq import Connection, Worker
 from wishlist_optimizer.application import create_app
 from wishlist_optimizer.models import db, Card, Wishlist, Language
 from wishlist_optimizer import jobs
-from wishlist_optimizer.redis import setup_scheduler
 
 
 app = create_app()
@@ -34,7 +33,6 @@ def run_worker():
     redis_url = app.config['REDIS_URL']
     redis_connection = redis.from_url(redis_url)
     with Connection(redis_connection):
-        setup_scheduler(jobs.populate_expansions)
         worker = Worker(app.config['QUEUES'])
         worker.work()
 

@@ -8,6 +8,7 @@ from wishlist_optimizer.mkm_api import MkmApi, HttpClient, RateLimitReached
 from wishlist_optimizer.mkm_pricing_service import MkmPricingService
 from wishlist_optimizer.mkm_config import get_config
 from wishlist_optimizer.redis import get_queue
+from wishlist_optimizer.models import db, Expansion
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,19 @@ def get_pricing(wishlist):
         'result': result,
         'error': error
     }
+
+
+def populate_expansions():
+    loop = asyncio.get_event_loop()
+    client = HttpClient(loop, get_config(current_app))
+    expansions = loop.run_until_complete(MkmApi(client).get_all_expansions())
+    for exp in expansions:
+        if Expansion.query.filter_by(code=exp['code']).first():
+            continue
+        db.session.add(Expansion(name=exp['name'], code=exp['code']))
+        logger.info("Saving expansion %s" % exp['name'])
+    db.session.commit()
+    loop.run_until_complete(client.close())
 
 
 def schedule_job(job, *args, **kwargs):

@@ -4,3 +4,9 @@
 
 This repo contains source code for [vampirictutor.com](https://www.vampirictutor.com), a wishlist optimizer for [Magic Card Market](https://www.cardmarket.com/en/Magic).
 There you can find sellers that have Magic The Gathering cards you want to buy, and choose the one with the lowest price.
+
+# Development
+
+To run the app backend locally: `python runserver.py`
+
+To run the app frontend locally: `npm run serve` 

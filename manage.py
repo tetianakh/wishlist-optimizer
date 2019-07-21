@@ -2,12 +2,12 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 import redis
 from rq import Connection, Worker
-import asyncio
 
 from wishlist_optimizer.application import create_app
-from wishlist_optimizer.models import db, Card, Wishlist, Language, Expansion
-from wishlist_optimizer.mkm_api import MkmApi, HttpClient
-from wishlist_optimizer.mkm_config import get_config
+from wishlist_optimizer.models import db, Card, Wishlist, Language
+from wishlist_optimizer import jobs
+from wishlist_optimizer.redis import setup_scheduler
+
 
 app = create_app()
 
@@ -34,6 +34,7 @@ def run_worker():
     redis_url = app.config['REDIS_URL']
     redis_connection = redis.from_url(redis_url)
     with Connection(redis_connection):
+        setup_scheduler(jobs.populate_expansions)
         worker = Worker(app.config['QUEUES'])
         worker.work()
 
@@ -56,16 +57,7 @@ def populate_languages():
 
 @manager.command
 def populate_expansions():
-    loop = asyncio.get_event_loop()
-    client = HttpClient(loop, get_config(app))
-    expansions = loop.run_until_complete(MkmApi(client).get_all_expansions())
-    for exp in expansions:
-        if Expansion.query.filter_by(code=exp['code']).first():
-            continue
-        db.session.add(Expansion(name=exp['name'], code=exp['code']))
-        print("Saving expansion %s" % exp['name'])
-    db.session.commit()
-    loop.run_until_complete(client.close())
+    jobs.populate_expansions()
 
 
 if __name__ == '__main__':
